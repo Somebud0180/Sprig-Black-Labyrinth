@@ -12,10 +12,11 @@ https://sprig.hackclub.com/gallery/getting_started
 const background = "t";
 const wall = "w";
 const player = "p";
-const key = "a";
+const key = "y";
 const lightPost = "q";
 const lightLantern = "e";
-const wallLantern = "r";
+const hangingLantern = "r";
+
 
 // Main Menu Bitmaps
 const arrow = "z";
@@ -348,23 +349,24 @@ const lightLanternSprite = bitmap`
 ...2LLL66LLL2...
 ...100LLLL001...
 ....L000000L....`;
-const wallLanternSprite = bitmap`
+const hangingLanternSprite = bitmap`
 ................
 ................
 ................
-.......6666.....
-......611116....
-.....611LL116...
-....611L11L11L.L
-....61L1111L1LLL
-....61L1111L1LLL
-....611L11L11L.L
-.....611LL116...
-......611116....
-.......6666.....
+......6666......
+.....611116.....
+....611LL116....
+...611L11L116...
+...61L1111L16...
+...61L1111L16...
+...611L11L116...
+....611LL116....
+.....611116.....
+......6666......
 ................
 ................
 ................`;
+
 
 // Sounds
 const errorSFX = tune`
@@ -479,13 +481,13 @@ w...w..w.w..w.w..www
 w.wwwwww.w.ww.ww.w.w
 w....w......w......w
 wwwwww.wwwwwwwwwwwww
-w....w........w...aw
+w....w........w...yw
 w.w..w.wwwww..w..w.w
 www.ww..w..w.ww.ww.w
 w.......w.....w..w.w
 w.wwwww.wwwwwwwwww.w
 w....w..w..........w
-w.ww.w.ww....rwww.ww
+w.ww.w.ww..r..www.ww
 w.w..w........w....w
 wwwwwwwwwwwwwwwwwwww`,
 ]
@@ -847,8 +849,8 @@ function grabKey() {
 }
 
 function displaySpritesInRange() {
-  // Filter out the player sprite from allSprites
-  const otherSprites = allSprites.filter(sprite => sprite.type != player);
+  // Filter out the player sprite and wallLantern from allSprites
+  const otherSprites = allSprites.filter(sprite => sprite.type !== player && sprite.type !== hangingLantern);
 
   if (getFirst(player)) {
     // Get the player's coordinates
@@ -856,9 +858,9 @@ function displaySpritesInRange() {
     let playerX = playerCoord.x;
     let playerY = playerCoord.y;
 
-    //let lanternCoord = getFirst(wallLantern);
-    //let lanternX = lanternCoord.x;
-    //let lanternY = lanternCoord.y;
+    let lanternCoord = getFirst(hangingLantern);
+    let lanternX = lanternCoord.x;
+    let lanternY = lanternCoord.y;
 
     // Define the range around the player
     const range = 3;
@@ -866,19 +868,13 @@ function displaySpritesInRange() {
     for (let allSprite of otherSprites) {
       let spriteX = allSprite.x;
       let spriteY = allSprite.y;
-      addSprite(spriteX, spriteY, allSprite.type);
-    }
-
-    for (let allSprite of otherSprites) {
-      let spriteX = allSprite.x;
-      let spriteY = allSprite.y;
 
       // Calculate the distance between the block and the player
       const distancePlayer = Math.abs(spriteX - playerX) + Math.abs(spriteY - playerY);
-      // const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
+      const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
 
-      // Check if the block is within the specified range around the player
-      if (distancePlayer <= range) {
+      // Check if the block is within the specified range around the player or wallLantern
+      if (distancePlayer <= range || distanceLantern <= range) {
         if (!getTile(spriteX, spriteY)) {
           // If block is within range, add it to the game
           addSprite(spriteX, spriteY, allSprite.type);
@@ -917,7 +913,7 @@ function setSprites() {
         // Game Sprites
         [wall, wallSprite],
         [player, currentPlayer],
-        [wallLantern, wallLanternSprite],
+        [hangingLantern, hangingLanternSprite],
         [key, keySprite],
       );
     } else if (menuMode == 2) {
@@ -940,7 +936,7 @@ function setSprites() {
       [background, backgroundSprite],
       [wall, wallSprite],
       [player, currentPlayer],
-      [wallLantern, wallLanternSprite],
+      [hangingLantern, hangingLanternSprite],
       [key, keySprite],
     );
   }

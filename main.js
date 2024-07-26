@@ -9,9 +9,10 @@ https://sprig.hackclub.com/gallery/getting_started
 */
 
 // Game Bitmaps
-const player = "p";
-const wall = "w";
 const background = "t";
+const wall = "w";
+const player = "p";
+const key = "a";
 const lightPost = "q";
 const lightLantern = "e";
 const wallLantern = "r";
@@ -280,21 +281,38 @@ const playerSprite = bitmap`
 ...1000110001...
 ....111..111....`;
 const playerWithKeySprite = bitmap`
+......1111......
+.....100001.....
+....10022001....
+...1002222001...
+...1022222201...
+...10222222016..
+...1022222206.6.
+...10222222016..
+...102222220166.
+...10022220016..
+....10022001.66.
+.....100001.....
+.....101101.....
+....11011011....
+...1000110001...
+....111..111....`;
+const keySprite = bitmap`
 ................
-......0000......
-.....002200.....
-....00222200....
-....02222220....
-....022222206...
-....02222226.6..
-....022222206...
-....0222222066..
-....002222006...
-.....002200.66..
-......0000......
-......0..0......
-......0..0......
-....000..000....
+................
+................
+................
+.......6........
+......666.......
+.....66.66......
+......666.......
+.......6........
+.......666......
+.......6........
+.......666......
+................
+................
+................
 ................`;
 const lightPostSprite = bitmap`
 ....L00LL00L....
@@ -397,14 +415,15 @@ let downLGuide = `Moves player
 downward`;
 let rightLGuide = `Moves player to 
 the right`;
-let upRGuide = `...`;
+let upRGuide = `Skips the level
+in-game`;
 let leftRGuide = `Returns to menu
 (Level is saved)`;
 let downRGuide = `Back button in
 the menu`;
 let rightRGuide = `Confirm menu
-selection, also 
-acts as level skip`;
+selection, grabs 
+the key in-game`;
 
 // Game Default States
 let gameState = 0; // 0 for Main Menu; 1 for In-game
@@ -460,13 +479,13 @@ w...w..w.w..w.w..www
 w.wwwwww.w.ww.ww.w.w
 w....w......w......w
 wwwwww.wwwwwwwwwwwww
-w....w........w....w
+w....w........w...aw
 w.w..w.wwwww..w..w.w
 www.ww..w..w.ww.ww.w
 w.......w.....w..w.w
 w.wwwww.wwwwwwwwww.w
 w....w..w..........w
-w.ww.w.ww.....www.ww
+w.ww.w.ww....rwww.ww
 w.w..w........w....w
 wwwwwwwwwwwwwwwwwwww`,
 ]
@@ -479,7 +498,7 @@ onInput("w", () => {
   if (gameState == 0) {
     pointerUp();
   } else if (gameState == 1) {
-    // Insert Character Movement code here
+    getFirst(player).y--
   }
 });
 
@@ -487,7 +506,7 @@ onInput("s", () => {
   if (gameState == 0) {
     pointerDown();
   } else if (gameState == 1) {
-    // Insert Character Movement code here
+    getFirst(player).y++
   }
 });
 
@@ -495,7 +514,7 @@ onInput("a", () => {
   if (gameState == 0) {
     pointerUp();
   } else if (gameState == 1) {
-    // Insert Character Movement code here
+    getFirst(player).x--
   }
 });
 
@@ -503,13 +522,14 @@ onInput("d", () => {
   if (gameState == 0) {
     pointerDown();
   } else if (gameState == 1) {
-    // Insert Character Movement code here
+    getFirst(player).x++
   }
 });
 
 onInput("i", () => {
   if (gameState == 1) {
     // Insert Character Movement code here
+    // add nextLevel()
   }
 });
 
@@ -533,13 +553,15 @@ onInput("l", () => {
   if (gameState == 0) {
     pointerContinue();
   } else if (gameState == 1) {
-    // Insert Character Movement code here
+    grabKey();
   }
 });
 
 afterInput(() => {
-  // Updates the visible and invisible blocks when moving
-  displaySpritesInRange();
+  if (gameState == 1) {
+    // Updates the visible and invisible blocks when moving
+    displaySpritesInRange();
+  }
 });
 
 // Menu Code (Derived from Up, Down, Top-down)
@@ -813,33 +835,47 @@ function spawn() {
   displaySpritesInRange(); // Make sure the player is in the map when this is runned
 }
 
+function grabKey() {
+  let playerSprite = getFirst(player);
+  let keySprite = getFirst(key);
+
+  if (playerSprite && keySprite && playerSprite.x == keySprite.x && playerSprite.y == keySprite.y) {
+    // Player and key are on the same tile
+    // Proceed with the logic
+    characterInit(true);
+  }
+}
+
 function displaySpritesInRange() {
+  // Filter out the player sprite from allSprites
+  const otherSprites = allSprites.filter(sprite => sprite.type != player);
+
   if (getFirst(player)) {
     // Get the player's coordinates
     let playerCoord = getFirst(player);
     let playerX = playerCoord.x;
     let playerY = playerCoord.y;
 
-    let lanternCoord = getFirst(wallLantern);
-    let lanternX = lanternCoord.x;
-    let lanternY = lanternCoord.y;
+    //let lanternCoord = getFirst(wallLantern);
+    //let lanternX = lanternCoord.x;
+    //let lanternY = lanternCoord.y;
 
     // Define the range around the player
     const range = 3;
 
-    for (let allSprite of allSprites) {
+    for (let allSprite of otherSprites) {
       let spriteX = allSprite.x;
       let spriteY = allSprite.y;
       addSprite(spriteX, spriteY, allSprite.type);
     }
 
-    for (let allSprite of allSprites) {
-      let spriteX = allSprites.x;
-      let spriteY = allSprites.y;
+    for (let allSprite of otherSprites) {
+      let spriteX = allSprite.x;
+      let spriteY = allSprite.y;
 
       // Calculate the distance between the block and the player
       const distancePlayer = Math.abs(spriteX - playerX) + Math.abs(spriteY - playerY);
-      const distanceLantern = Math.abs(spriteX - playerX) + Math.abs(spriteY - playerY);
+      // const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
 
       // Check if the block is within the specified range around the player
       if (distancePlayer <= range) {
@@ -858,12 +894,9 @@ function displaySpritesInRange() {
 }
 
 function characterInit(holdsKey) {
-  console.log("ChInitl")
   if (holdsKey) {
-    console.log("Key")
     currentPlayer = playerWithKeySprite;
   } else {
-    console.log("NoKey")
     currentPlayer = playerSprite;
   }
   setSprites();
@@ -881,6 +914,11 @@ function setSprites() {
         [lightLantern, lightLanternSprite],
         [arrow, arrowSprite],
         [buttonL, buttonLGlyph],
+        // Game Sprites
+        [wall, wallSprite],
+        [player, currentPlayer],
+        [wallLantern, wallLanternSprite],
+        [key, keySprite],
       );
     } else if (menuMode == 2) {
       setLegend(
@@ -900,9 +938,10 @@ function setSprites() {
   } else if (gameState == 1) {
     setLegend(
       [background, backgroundSprite],
-      [player, currentPlayer],
       [wall, wallSprite],
+      [player, currentPlayer],
       [wallLantern, wallLanternSprite],
+      [key, keySprite],
     );
   }
 }

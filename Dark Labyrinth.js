@@ -11,10 +11,13 @@ https://sprig.hackclub.com/gallery/getting_started
 // Game Bitmaps
 const background = "t";
 const wall = "w";
-const player = "p";
+const player = "y";
 const keyOne = "a";
 const keyTwo = "s";
 const keyThree = "d";
+const doorOne = "u";
+const doorTwo = "i";
+const doorThree = "o";
 const lightPost = "q";
 const lightLantern = "e";
 const hangingLantern = "r";
@@ -71,7 +74,7 @@ const levels = [
 ....................`, // Main Menu
   map`
 wwwwwwwwwwwwwwwwwwww
-wp..................
+w...................
 www.wwwwwwww..wwwwww
 w.....w............w
 w.....w.........r..w
@@ -450,6 +453,57 @@ const keyThreeSprite = bitmap`
 ................
 ................
 ................`;
+const doorOneSprite = bitmap`
+....1CCCCCC1....
+..CC1CCCCCC1CC..
+..CC1CCCCCC1CC..
+.1CC1CCCCCC1CC1.
+.1CC1CCCCCC1CC1.
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1666C
+C1CC1CCCCCC16L6C
+C1CC1CCCCCC16L6C
+C1CC1CCCCCC1666C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C`;
+const doorTwoSprite = bitmap`
+....1CCCCCC1....
+..CC1CCCCCC1CC..
+..CC1CCCCCC1CC..
+.1CC1CCCCCC1CC1.
+.1CC1CCCCCC1CC1.
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1777C
+C1CC1CCCCCC17L7C
+C1CC1CCCCCC17L7C
+C1CC1CCCCCC1777C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C`;
+const doorThreeSprite = bitmap`
+....1CCCCCC1....
+..CC1CCCCCC1CC..
+..CC1CCCCCC1CC..
+.1CC1CCCCCC1CC1.
+.1CC1CCCCCC1CC1.
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1999C
+C1CC1CCCCCC19L9C
+C1CC1CCCCCC19L9C
+C1CC1CCCCCC1999C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C
+C1CC1CCCCCC1CC1C`;
 const lightPostSprite = bitmap`
 ....L00LL00L....
 ....LL0LL0LL....
@@ -501,7 +555,6 @@ const hangingLanternSprite = bitmap`
 ................
 ................
 ................`;
-
 
 // Sounds
 const errorSFX = tune`
@@ -555,7 +608,8 @@ the right`;
 let upRGuide = `Skips the level
 in-game`;
 let leftRGuide = `Returns to menu
-(Level is saved)`;
+(Level and key
+is saved)`;
 let downRGuide = `Back button in
 the menu`;
 let rightRGuide = `Confirm menu
@@ -563,6 +617,7 @@ selection, grabs
 the key in-game`;
 
 // Background Game States
+let widthX; // Used (during spawn) to get actual map width
 let gameState = 0; // 0 for Main Menu; 1 for In-game
 let menuMode = 1; // 1 for Main Menu; 2 for Guide
 let pointerOption = 0;
@@ -572,14 +627,17 @@ let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
 
 // In-Game States
+let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
+let spawnY = 1; // Default Y value used to spawn player on start, used to tell where player to spawn in checkBorder()
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
-let currentLevelVal = lastLevel - 1; // Adjust last level to make sense for current level
+let currentLevelVal = 1; // Adjust last level to make sense for current level
 let currentPlayer = playerSprite;
 let currentKey; // Used to track which key the player is holding
 
 // Loops
 let pointerChangeInterval;
+let checkBorderInterval;
 
 // Start the main menu
 mainMenu();
@@ -606,6 +664,10 @@ onInput("a", () => {
     pointerUp();
   } else if (gameState == 1) {
     getFirst(player).x--
+    if (getFirst(player).x == 0) {
+      // Check if at border and move to lasd map
+      checkBorder("left")
+    }
   }
 });
 
@@ -614,6 +676,10 @@ onInput("d", () => {
     pointerDown();
   } else if (gameState == 1) {
     getFirst(player).x++
+    if (getFirst(player).x == widthX) {
+      // Check if at border and move to next map
+      checkBorder("right")
+    }
   }
 });
 
@@ -635,7 +701,9 @@ onInput("k", () => {
 
 onInput("j", () => {
   if (gameState == 1) {
-    // Check if in-game and allow to open main menu
+    // Check if in-game, then save level and allow to open main menu
+    currentLevelVal = level - 1
+    lastLevel = level; // Remember last level before mainMenu (if Applicable)
     mainMenu();
   }
 });
@@ -652,6 +720,8 @@ afterInput(() => {
   if (gameState == 1) {
     // Updates the visible and invisible blocks when moving
     displaySpritesInRange();
+    spawnX = getFirst(player).x
+    spawnY = getFirst(player).y
   }
 });
 
@@ -666,12 +736,11 @@ function mainMenu() {
   updateGameIntervals();
 
   // Check for current level
-  if (level > 2) {
-    // Check if current level is a in-game level
-    lastLevel = level; // Remember last level before mainMenu (if Applicable)
-  } else {
+  if (level != 0 && level < 2) {
+    // Check if game hasn't started yet and is not from the guide then set default level
     lastLevel = 2;
   }
+  
   currentLevelText = `Current level: ${currentLevelVal}`; // Grab level and add to text
   clearText();
   setSprites();
@@ -922,16 +991,27 @@ function spawn() {
   characterInit();
   updateGameIntervals();
   setMap(levels[level]);
+  widthX = width() - 1 // Check map actual width
+  addSprite(spawnX, spawnY, player)
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
   displaySpritesInRange(); // Make sure the player is in the map when this is runned
 }
 
-function checkBorder() {
-  // Insert top level if statement for checking if in border
-  let playerCoord = getFirst(player);
-  let playerX = playerCoord.x;
-  let playerY = playerCoord.y;
+function checkBorder(direction) {
+  let playerY = getFirst(player).y;
+  if (direction == "right") {
+    spawnX = 0
+    spawnY = playerY
+    level++
+    spawn()
+  } else if (direction == "left") {
+    spawnX = widthX
+    spawnY = playerY
+    level--
+    spawn()
+  }
 }
+
 function grabKey() {
   let playerSprite = getFirst(player);
   let keyOneSprite = getFirst(keyOne);
@@ -1036,13 +1116,15 @@ function setSprites() {
         [lightLantern, lightLanternSprite],
         [arrow, arrowSprite],
         [buttonL, buttonLGlyph],
-        // Game Sprites
-        [wall, wallSprite],
-        [player, currentPlayer],
+        // Game Sprites (Just to make map making easier)
         [hangingLantern, hangingLanternSprite],
+        [player, currentPlayer],
         [keyOne, keyOneSprite],
         [keyTwo, keyTwoSprite],
         [keyThree, keyThreeSprite],
+        [doorOne, doorOneSprite],
+        [doorTwo, doorTwoSprite],
+        [doorThree, doorThreeSprite],
       );
     } else if (menuMode == 2) {
       setLegend(
@@ -1063,11 +1145,14 @@ function setSprites() {
     setLegend(
       [background, backgroundSprite],
       [wall, wallSprite],
-      [player, currentPlayer],
       [hangingLantern, hangingLanternSprite],
+      [player, currentPlayer],
       [keyOne, keyOneSprite],
       [keyTwo, keyTwoSprite],
       [keyThree, keyThreeSprite],
+      [doorOne, doorOneSprite],
+      [doorTwo, doorTwoSprite],
+      [doorThree, doorThreeSprite],
     );
   }
 }
@@ -1086,18 +1171,18 @@ function updateGameIntervals() {
   if (gameState == 1) {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
-    /// clearInterval(yourInterval);
+    //clearInterval(checkBorderInterval);
 
-    // Add your intervals here
+    //checkBorderInterval = setInterval(checkBorder, 1000)
   } else if (gameState == 0) {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
-    /// clearInterval(yourInterval);
+    //clearInterval(checkBorderInterval);
 
     pointerChangeInterval = setInterval(pointerChange, 1000); // Set interval for pointer Sprite swap
   } else {
-    // Clear intervals if game is not active
+    // Clear intervals during unset state
     clearInterval(pointerChangeInterval);
-    /// clearInterval(yourInterval);
+    //clearInterval(checkBorderInterval);
   }
 }

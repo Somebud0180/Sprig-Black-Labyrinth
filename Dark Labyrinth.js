@@ -85,24 +85,40 @@ w.......w..........w
 w.......w.....w....w
 w.......w.....w...aw
 w.......w.....w....w
-ww.wwwwwwww.wwwwwwww
+ww.wwwwwwwwiwwwwwwww
 w...................
 wwwwwwwwwwwwwwwwwwww`,
   map`
 wwwwwwwwwwwwwwwwwwww
-...................w
+...................o
 wwwwwwww....wwwwwwww
 w...w..........w...w
 ww.ww.r......r.w.www
 w..............w...w
 ww.ww...r..r...w.www
-w...w..........w...w
-ww.ww...r..r.......w
-wd..w..........w...w
+w...w..........w..dw
+ww.ww...r..r...u...w
+ws..w..........w...w
 ww.ww.r......r.w.www
 w...w..........w...w
 wwwwwwww....wwwwwwww
 ...................w
+wwwwwwwwwwwwwwwwwwww`,
+  map`
+wwwwwwwwwwwwwwwwwwww
+w.................w.
+wwww..wwwwwwwwwwwwww
+w......w.....w.....w
+w......w.....w.....w
+w......u...d.w.....w
+w......w.....w.....w
+w......wwwwwwwwwww.w
+w.wwwwww........o..w
+w......w........w.ww
+w......w........w..w
+ws.....wa.......w..w
+wwww.wwwwwiwwwwwwwww
+w.................w.
 wwwwwwwwwwwwwwwwwwww`,
 ]
 
@@ -625,6 +641,7 @@ let currentPointer; // Check pointer functions
 let backButtonState = "2"; // 1 is Gray (unselected); 2 is White (selected)
 let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
+let solidSprites; //  Used to track which blocks are solid
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -663,11 +680,11 @@ onInput("a", () => {
   if (gameState == 0) {
     pointerUp();
   } else if (gameState == 1) {
-    getFirst(player).x--
     if (getFirst(player).x == 0) {
       // Check if at border and move to lasd map
       checkBorder("left")
     }
+    getFirst(player).x--
   }
 });
 
@@ -675,11 +692,11 @@ onInput("d", () => {
   if (gameState == 0) {
     pointerDown();
   } else if (gameState == 1) {
-    getFirst(player).x++
     if (getFirst(player).x == widthX) {
       // Check if at border and move to next map
       checkBorder("right")
     }
+    getFirst(player).x++
   }
 });
 
@@ -713,6 +730,7 @@ onInput("l", () => {
     pointerContinue();
   } else if (gameState == 1) {
     grabKey();
+    unlockDoor()
   }
 });
 
@@ -740,7 +758,7 @@ function mainMenu() {
     // Check if game hasn't started yet and is not from the guide then set default level
     lastLevel = 2;
   }
-  
+
   currentLevelText = `Current level: ${currentLevelVal}`; // Grab level and add to text
   clearText();
   setSprites();
@@ -978,7 +996,8 @@ function guideText() {
 // Setup the game
 function initializeGame() {
   characterInit();
-  setSolids([player, wall]);
+  solidSprites = [player, wall, doorOne, doorTwo, doorThree]
+  setSolids(solidSprites);
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
   spawn(); // Start Game
@@ -1003,11 +1022,13 @@ function checkBorder(direction) {
     spawnX = 0
     spawnY = playerY
     level++
+    levelCheck()
     spawn()
   } else if (direction == "left") {
     spawnX = widthX
     spawnY = playerY
     level--
+    levelCheck()
     spawn()
   }
 }
@@ -1033,9 +1054,46 @@ function grabKey() {
   }
 }
 
+function unlockDoor() {
+  let playerCoord = getFirst(player);
+  let surroundingTiles = [
+    getTile(playerCoord.x, playerCoord.y + 1)[0], // Tile below player
+    getTile(playerCoord.x, playerCoord.y - 1)[0], // Tile above player
+    getTile(playerCoord.x + 1, playerCoord.y)[0], // Tile to the right of player
+    getTile(playerCoord.x - 1, playerCoord.y)[0], // Tile to the left of playerd
+  ];
+  let doorOneFound = surroundingTiles.some((tile) => tile && (tile.type == doorOne))
+  let doorTwoFound = surroundingTiles.some((tile) => tile && (tile.type == doorTwo))
+  let doorThreeFound = surroundingTiles.some((tile) => tile && (tile.type == doorThree))
+
+  if (doorOneFound && currentKey == 1) {
+    solidSprites = solidSprites.filter(item => item != doorOne);
+    currentKey = 0
+    setSolids(solidSprites);
+    characterInit()
+  } else if (doorTwoFound && currentKey == 2) {
+    solidSprites = solidSprites.filter(item => item != doorTwo);
+    currentKey = 0
+    setSolids(solidSprites);
+    characterInit()
+  } else if (doorThreeFound && currentKey == 3) {
+    solidSprites = solidSprites.filter(item => item != doorThree);
+    currentKey = 0
+    setSolids(solidSprites);
+    characterInit()
+  }
+}
+
+function levelCheck() {
+  if (level == 4) {
+    solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+  }
+}
+
 function displaySpritesInRange() {
+  console.log(getFirst(player).x)
   // Filter out the player sprite and wallLantern from allSprites
-  const otherSprites = allSprites.filter(sprite => sprite.type !== player && sprite.type !== hangingLantern);
+  const otherSprites = allSprites.filter(sprite => sprite.type != player && sprite.type != hangingLantern);
 
   // Get the player's coordinates
   let playerCoord = getFirst(player);
@@ -1050,8 +1108,10 @@ function displaySpritesInRange() {
   }
 
   // Define the range around the player
-  const range = 3;
+  const range = 4;
   let i = 0
+
+  // Fix hanging lantern amount counter (stuck at 1)
 
   for (let allSprite of otherSprites) {
     let spriteX = allSprite.x;
@@ -1072,20 +1132,22 @@ function displaySpritesInRange() {
         clearTile(spriteX, spriteY);
       }
     }
-    for (i = 0; i <= hangingLantern.length; i++) {
-      let lanternCoord = getAll(hangingLantern)[i];
-      let lanternX = lanternCoord.x;
-      let lanternY = lanternCoord.y;
-  
-      // Calculate the distance between the block and the lantern
-      let spriteX = allSprite.x;
-      let spriteY = allSprite.y;
-      const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
-    
-      // Check if the block is within the specified range around the player or wallLantern
-      if (distanceLantern <= range) {
-      // If block is within range, add it to the game
-      addSprite(spriteX, spriteY, allSprite.type);
+    if (getFirst(hangingLantern)) {
+      for (i = 0; i <= hangingLantern.length; i++) {
+        let lanternCoord = getAll(hangingLantern)[i];
+        let lanternX = lanternCoord.x;
+        let lanternY = lanternCoord.y;
+
+        // Calculate the distance between the block and the lantern
+        let spriteX = allSprite.x;
+        let spriteY = allSprite.y;
+        const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
+
+        // Check if the block is within the specified range around the player or wallLantern
+        if (distanceLantern <= range) {
+          // If block is within range, add it to the game
+          addSprite(spriteX, spriteY, allSprite.type);
+        }
       }
     }
   }
@@ -1167,7 +1229,7 @@ function errorPing() {
 
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 1000); // Set interval for error sound being played
-  
+
   if (gameState == 1) {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);

@@ -8,6 +8,9 @@ https://sprig.hackclub.com/gallery/getting_started
 @addedOn: 2024-00-00
 */
 
+// Future Notes
+// Add sounds for door unlock, key pickup, footsteps?, new level
+
 // Game Bitmaps
 const background = "t";
 const wall = "w";
@@ -54,7 +57,7 @@ const levels = [
 ......k.............
 ....................
 ....................
-....................`, // Guide
+....................`, // Level 0 || Guide
   map`
 ...wwwwwwwwwwwwww...
 ...w............w...
@@ -71,7 +74,7 @@ const levels = [
 ....................
 ....................
 ....................
-....................`, // Main Menu
+....................`, // Level 1 || Main Menu
   map`
 wwwwwwwwwwwwwwwwwwww
 w...................
@@ -87,7 +90,7 @@ w.......w.....w...aw
 w.......w.....w....w
 ww.wwwwwwwwiwwwwwwww
 w...................
-wwwwwwwwwwwwwwwwwwww`,
+wwwwwwwwwwwwwwwwwwww`, // Level 2 || Map 1: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 ...................o
@@ -103,23 +106,55 @@ ww.ww.r......r.w.www
 w...w..........w...w
 wwwwwwww....wwwwwwww
 ...................w
-wwwwwwwwwwwwwwwwwwww`,
+wwwwwwwwwwwwwwwwwwww`, // Level 3 || Map 1: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
-w.................w.
+w...r..........r....
 wwww..wwwwwwwwwwwwww
 w......w.....w.....w
 w......w.....w.....w
-w......u...d.w.....w
+w............w..d..w
 w......w.....w.....w
 w......wwwwwwwwwww.w
-w.wwwwww........o..w
+w.wwwwww........u..w
 w......w........w.ww
 w......w........w..w
-ws.....wa.......w..w
-wwww.wwwwwiwwwwwwwww
-w.................w.
-wwwwwwwwwwwwwwwwwwww`,
+w......w........w..w
+wwww.wwwww.wwwwwwwww
+w...r..........r....
+wwwwwwwwwwwwwwwwwwww`, // Level 4 || Map 2: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+....r..........r....
+wwwww.wwwwwwwww.wwww
+w.....w.....w......w
+w.....w.....w......w
+w.....w..a..w......w
+w.....i.....w......w
+w.....w.....w......w
+www.wwwwwwwww.wwwwww
+w..................w
+w..................w
+w..................w
+wwwwwwwww.wwwwwwwwww
+....r..........r....
+wwwwwwwwwwwwwwwwwwww`, // Level 5 || Map 2: Level 2
+  map`
+wwwwwwwwwwwwwwwwwwww
+....r............w.o
+wwww.wwwwww.wwwwww.w
+w..w.ww...w.w......w
+w.ww.w.sw...w.wwwwww
+w....w.wwwwww.ww...w
+w.ww.www....w..w...w
+w..w.....wwwww.www.w
+ww.w.wwwww.........w
+w..w.......wwwwwww.w
+w.wwww.wwwww...w...w
+w....w.....w.w....ww
+wwww.wwwww.wwwwwwwww
+....r..........r...w
+wwwwwwwwwwwwwwwwwwww`, // Level 6 || Map 2: Level 3
 ]
 
 // Active Sprites
@@ -643,18 +678,23 @@ let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
 let solidSprites; //  Used to track which blocks are solid
 
+// Configurables
+let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
+let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
+
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
 let spawnY = 1; // Default Y value used to spawn player on start, used to tell where player to spawn in checkBorder()
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
 let currentLevelVal = 1; // Adjust last level to make sense for current level
-let currentPlayer = playerSprite;
-let currentKey; // Used to track which key the player is holding
+let currentKey = 3; // Used to track which key the player is holding
+let currentPlayer = playerSprite; // Used to track which player sprite to show (based on key)
 
 // Loops
 let pointerChangeInterval;
 let checkBorderInterval;
+let flickerLightsInterval;
 
 // Start the main menu
 mainMenu();
@@ -1010,6 +1050,7 @@ function spawn() {
   characterInit();
   updateGameIntervals();
   setMap(levels[level]);
+  levelCheck()
   widthX = width() - 1 // Check map actual width
   addSprite(spawnX, spawnY, player)
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
@@ -1022,13 +1063,12 @@ function checkBorder(direction) {
     spawnX = 0
     spawnY = playerY
     level++
-    levelCheck()
     spawn()
   } else if (direction == "left") {
     spawnX = widthX
     spawnY = playerY
+    lastLevel = level
     level--
-    levelCheck()
     spawn()
   }
 }
@@ -1085,13 +1125,20 @@ function unlockDoor() {
 }
 
 function levelCheck() {
-  if (level == 4) {
-    solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+  let leftWall = getTile(0, 1)[0]
+  console.log(leftWall)
+  if (leftWall && lastLevel < level) {
+    console.log("Exists")
+    if (leftWall.type == wall) {
+      console.log("Locked")
+      solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+      setSolids(solidSprites);
+    }
   }
 }
 
 function displaySpritesInRange() {
-  console.log(getFirst(player).x)
+  console.log(getAll(hangingLantern).length)
   // Filter out the player sprite and wallLantern from allSprites
   const otherSprites = allSprites.filter(sprite => sprite.type != player && sprite.type != hangingLantern);
 
@@ -1108,7 +1155,6 @@ function displaySpritesInRange() {
   }
 
   // Define the range around the player
-  const range = 4;
   let i = 0
 
   // Fix hanging lantern amount counter (stuck at 1)
@@ -1121,7 +1167,7 @@ function displaySpritesInRange() {
     const distancePlayer = Math.abs(spriteX - playerX) + Math.abs(spriteY - playerY);
 
     // Check if the block is within the specified range around the player or wallLantern
-    if (distancePlayer <= range) {
+    if (distancePlayer <= playerRange) {
       if (!getTile(spriteX, spriteY)) {
         // If block is within range, add it to the game
         addSprite(spriteX, spriteY, allSprite.type);
@@ -1133,7 +1179,8 @@ function displaySpritesInRange() {
       }
     }
     if (getFirst(hangingLantern)) {
-      for (i = 0; i <= hangingLantern.length; i++) {
+      let lanternAmount = getAll(hangingLantern).length
+      for (i = 0; i < lanternAmount; i++) {
         let lanternCoord = getAll(hangingLantern)[i];
         let lanternX = lanternCoord.x;
         let lanternY = lanternCoord.y;
@@ -1144,13 +1191,25 @@ function displaySpritesInRange() {
         const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
 
         // Check if the block is within the specified range around the player or wallLantern
-        if (distanceLantern <= range) {
+        if (distanceLantern <= lightRange) {
           // If block is within range, add it to the game
           addSprite(spriteX, spriteY, allSprite.type);
         }
       }
     }
   }
+}
+
+function flickerLights() {
+  let randomness = Math.random()
+  if (randomness < 0.2) {
+    lightRange = 2
+  } else if (randomness > 0.8) {
+    lightRange = 4
+  } else {
+    lightRange = 3
+  }
+  displaySpritesInRange();
 }
 
 function characterInit() {
@@ -1229,22 +1288,21 @@ function errorPing() {
 
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 1000); // Set interval for error sound being played
-
   if (gameState == 1) {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
-    //clearInterval(checkBorderInterval);
+    clearInterval(flickerLightsInterval);
 
-    //checkBorderInterval = setInterval(checkBorder, 1000)
+    flickerLightsInterval = setInterval(flickerLights, 1000) // Set interval for light flickering
   } else if (gameState == 0) {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
-    //clearInterval(checkBorderInterval);
+    clearInterval(flickerLightsInterval);
 
-    pointerChangeInterval = setInterval(pointerChange, 1000); // Set interval for pointer Sprite swap
+    pointerChangeInterval = setInterval(pointerChange, 1000); // Set interval for pointer sprite swap
   } else {
     // Clear intervals during unset state
     clearInterval(pointerChangeInterval);
-    //clearInterval(checkBorderInterval);
+    clearInterval(flickerLightsInterval);
   }
 }

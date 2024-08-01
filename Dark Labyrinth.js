@@ -658,7 +658,7 @@ const menuSFX = tune`
 500: C4^500 + E4^500,
 15500`
 
-// Texts
+// Main Menu Text
 let currentLevelText;
 
 let mainMenuTitle = `
@@ -680,12 +680,12 @@ Back
 ----
 `;
 
-// Guide Texts
+// Guide Text
 let menuGuide = `Press   
 
 to activate`;
 
-// Controls
+// Controls Text
 let upLGuide = `Moves player 
 upward`;
 let leftLGuide = `Moves player to 
@@ -704,6 +704,10 @@ the menu`;
 let rightRGuide = `Confirm menu
 selection, grabs 
 the key in-game`;
+
+// Game Text
+let keyFound = `You found a key`
+let boxEmpty = `There's nothing in the box`
 
 // Background Game States
 let widthX; // Used (during spawn) to get actual map width
@@ -726,7 +730,7 @@ let spawnY = 1; // Default Y value used to spawn player on start, used to tell w
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
 let currentLevelVal = 1; // Adjust last level to make sense for current level
-let currentKey = 3; // Used to track which key the player is holding
+let currentKey = 1; // Used to track which key the player is holding
 let currentPlayer = playerSprite; // Used to track which player sprite to show (based on key)
 
 // Loops
@@ -1111,9 +1115,10 @@ function checkBorder(direction) {
 }
 
 function itemInteract() {
-  grabKey();
-  grabBox();
-  unlockDoor();
+  grabKey(); // Check if on a key and grab it
+  grabBox(); // Check if next to a box and if it has a key and grab it
+  unlockDoor(); // Check if next to a door and unlock it
+  characterInit(); // Refreshes character sprite for every interaction
 }
 
 function grabKey() {
@@ -1125,15 +1130,12 @@ function grabKey() {
   if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
     currentKey = 1
-    characterInit();
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
-    characterInit();
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
-    characterInit();
   }
 }
 
@@ -1149,16 +1151,19 @@ function grabBox() {
   let boxOneFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyOne))
   let boxTwoFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyTwo))
   let boxThreeFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyThree))
-  console.log(boxOneFound)
-  console.log(boxTwoFound)
-  console.log(boxThreeFound)
 
   if (boxOneFound) {
     currentKey = 1
+    addText(keyFound, {x: 1, y: height() - 1, color: color`2`})
+    setTimeout(keyTextClear(), 3000);  
   } else if (boxTwoFound) {
     currentKey = 2
+    addText(keyFound, {x: 1, y: height() - 1, color: color`2`})
+    setTimeout(keyTextClear(), 3000);  
   } else if (boxThreeFound) {
     currentKey = 3
+    addText(keyFound, {x: 1, y: height() - 1, color: color`2`})
+    setTimeout(keyTextClear(), 3000);     
   }
 }
 
@@ -1178,18 +1183,20 @@ function unlockDoor() {
     solidSprites = solidSprites.filter(item => item != doorOne);
     currentKey = 0
     setSolids(solidSprites);
-    characterInit()
   } else if (doorTwoFound && currentKey == 2) {
     solidSprites = solidSprites.filter(item => item != doorTwo);
     currentKey = 0
     setSolids(solidSprites);
-    characterInit()
   } else if (doorThreeFound && currentKey == 3) {
     solidSprites = solidSprites.filter(item => item != doorThree);
     currentKey = 0
     setSolids(solidSprites);
-    characterInit()
   }
+}
+
+function keyTextClear() {
+  clearText();
+  // clearTile(x,y)
 }
 
 function levelCheck() {

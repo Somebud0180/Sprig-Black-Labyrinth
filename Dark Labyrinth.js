@@ -24,6 +24,10 @@ const doorThree = "o";
 const lightPost = "q";
 const lightLantern = "e";
 const hangingLantern = "r";
+const box = "0";
+const boxKeyOne = "2";
+const boxKeyTwo = "3";
+const boxKeyThree = "4";
 
 
 // Main Menu Bitmaps
@@ -86,7 +90,7 @@ wwwwwww............w
 w.......wwwwwwwwwwww
 w.......w..........w
 w.......w.....w....w
-w.......w.....w...aw
+w.......w.....w...2w
 w.......w.....w....w
 ww.wwwwwwwwiwwwwwwww
 w...................
@@ -402,7 +406,7 @@ const playerSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const playerWithKeyOneSprite = bitmap`
+const playerWithkeyOneCoord = bitmap`
 ......1111......
 .....100001.....
 ....10022001....
@@ -419,7 +423,7 @@ const playerWithKeyOneSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const playerWithKeyTwoSprite = bitmap`
+const playerWithkeyTwoCoord = bitmap`
 ......1111......
 .....100001.....
 ....10022001....
@@ -436,7 +440,7 @@ const playerWithKeyTwoSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const playerWithKeyThreeSprite = bitmap`
+const playerWithkeyThreeCoord = bitmap`
 ......1111......
 .....100001.....
 ....10022001....
@@ -453,7 +457,7 @@ const playerWithKeyThreeSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const keyOneSprite = bitmap`
+const keyOneCoord = bitmap`
 ................
 ................
 ................
@@ -470,7 +474,7 @@ const keyOneSprite = bitmap`
 ................
 ................
 ................`;
-const keyTwoSprite = bitmap`
+const keyTwoCoord = bitmap`
 ................
 ................
 ................
@@ -487,7 +491,7 @@ const keyTwoSprite = bitmap`
 ................
 ................
 ................`;
-const keyThreeSprite = bitmap`
+const keyThreeCoord = bitmap`
 ................
 ................
 ................
@@ -605,6 +609,40 @@ const hangingLanternSprite = bitmap`
 ......6666......
 ................
 ................
+................`;
+const boxSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
+const conceptBoxSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLL222LLLLL1.
+.1CCC22222CCCC1.
+.1CCC22C22CCCC1.
+.1LLLLLL22LLLL1.
+.1CCCCC222CCCC1.
+.1CCCCC22CCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCC22CCCCC1.
+.1CCCCC22CCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
 ................`;
 
 // Sounds
@@ -769,8 +807,7 @@ onInput("l", () => {
   if (gameState == 0) {
     pointerContinue();
   } else if (gameState == 1) {
-    grabKey();
-    unlockDoor()
+    itemInteract()
   }
 });
 
@@ -1036,7 +1073,7 @@ function guideText() {
 // Setup the game
 function initializeGame() {
   characterInit();
-  solidSprites = [player, wall, doorOne, doorTwo, doorThree]
+  solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];
   setSolids(solidSprites);
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
@@ -1073,24 +1110,55 @@ function checkBorder(direction) {
   }
 }
 
-function grabKey() {
-  let playerSprite = getFirst(player);
-  let keyOneSprite = getFirst(keyOne);
-  let keyTwoSprite = getFirst(keyTwo);
-  let keyThreeSprite = getFirst(keyThree);
+function itemInteract() {
+  grabKey();
+  grabBox();
+  unlockDoor();
+}
 
-  if (keyOneSprite && playerSprite.x == keyOneSprite.x && playerSprite.y == keyOneSprite.y) {
+function grabKey() {
+  let playerCoord = getFirst(player);
+  let keyOneCoord = getFirst(keyOne);
+  let keyTwoCoord = getFirst(keyTwo);
+  let keyThreeCoord = getFirst(keyThree);
+
+  if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
     currentKey = 1
     characterInit();
-  } else if (keyTwoSprite && playerSprite.x == keyTwoSprite.x && playerSprite.y == keyTwoSprite.y) {
+  } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
     characterInit();
-  } else if (keyThreeSprite && playerSprite.x == keyThreeSprite.x && playerSprite.y == keyThreeSprite.y) {
+  } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
     characterInit();
+  }
+}
+
+function grabBox() {
+  console.log("Grabbing Box")
+  let playerCoord = getFirst(player);
+  let surroundingTiles = [
+    getTile(playerCoord.x, playerCoord.y + 1)[0], // Tile below player
+    getTile(playerCoord.x, playerCoord.y - 1)[0], // Tile above player
+    getTile(playerCoord.x + 1, playerCoord.y)[0], // Tile to the right of player
+    getTile(playerCoord.x - 1, playerCoord.y)[0], // Tile to the left of playerd
+  ];
+  let boxOneFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyOne))
+  let boxTwoFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyTwo))
+  let boxThreeFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyThree))
+  console.log(boxOneFound)
+  console.log(boxTwoFound)
+  console.log(boxThreeFound)
+
+  if (boxOneFound) {
+    currentKey = 1
+  } else if (boxTwoFound) {
+    currentKey = 2
+  } else if (boxThreeFound) {
+    currentKey = 3
   }
 }
 
@@ -1131,7 +1199,7 @@ function levelCheck() {
     console.log("Exists")
     if (leftWall.type == wall) {
       console.log("Locked")
-      solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+      solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];;
       setSolids(solidSprites);
     }
   }
@@ -1214,11 +1282,11 @@ function flickerLights() {
 
 function characterInit() {
   if (currentKey == 1) {
-    currentPlayer = playerWithKeyOneSprite;
+    currentPlayer = playerWithkeyOneCoord;
   } else if (currentKey == 2) {
-    currentPlayer = playerWithKeyTwoSprite;
+    currentPlayer = playerWithkeyTwoCoord;
   } else if (currentKey == 3) {
-    currentPlayer = playerWithKeyThreeSprite;
+    currentPlayer = playerWithkeyThreeCoord;
   } else {
     currentPlayer = playerSprite;
   }
@@ -1240,12 +1308,16 @@ function setSprites() {
         // Game Sprites (Just to make map making easier)
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneSprite],
-        [keyTwo, keyTwoSprite],
-        [keyThree, keyThreeSprite],
+        [keyOne, keyOneCoord],
+        [keyTwo, keyTwoCoord],
+        [keyThree, keyThreeCoord],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
+        [box, boxSprite],
+        [boxKeyOne, boxSprite],
+        [boxKeyTwo, boxSprite],
+        [boxKeyThree, boxSprite],
       );
     } else if (menuMode == 2) {
       setLegend(
@@ -1268,12 +1340,16 @@ function setSprites() {
       [wall, wallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneSprite],
-      [keyTwo, keyTwoSprite],
-      [keyThree, keyThreeSprite],
+      [keyOne, keyOneCoord],
+      [keyTwo, keyTwoCoord],
+      [keyThree, keyThreeCoord],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
       [doorThree, doorThreeSprite],
+      [box, boxSprite],
+      [boxKeyOne, boxSprite],
+      [boxKeyTwo, boxSprite],
+      [boxKeyThree, boxSprite],
     );
   }
 }

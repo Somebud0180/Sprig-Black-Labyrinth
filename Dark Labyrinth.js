@@ -8,6 +8,9 @@ https://sprig.hackclub.com/gallery/getting_started
 @addedOn: 2024-00-00
 */
 
+// Future Notes
+// Add sounds for door unlock, key pickup, footsteps?, new level
+
 // Game Bitmaps
 const background = "t";
 const wall = "w";
@@ -650,7 +653,7 @@ let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
 let currentLevelVal = 1; // Adjust last level to make sense for current level
 let currentPlayer = playerSprite;
-let currentKey; // Used to track which key the player is holding
+let currentKey = 2; // Used to track which key the player is holding
 
 // Loops
 let pointerChangeInterval;
@@ -1010,6 +1013,7 @@ function spawn() {
   characterInit();
   updateGameIntervals();
   setMap(levels[level]);
+  levelCheck()
   widthX = width() - 1 // Check map actual width
   addSprite(spawnX, spawnY, player)
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
@@ -1022,13 +1026,12 @@ function checkBorder(direction) {
     spawnX = 0
     spawnY = playerY
     level++
-    levelCheck()
     spawn()
   } else if (direction == "left") {
     spawnX = widthX
     spawnY = playerY
+    lastLevel = level
     level--
-    levelCheck()
     spawn()
   }
 }
@@ -1085,13 +1088,19 @@ function unlockDoor() {
 }
 
 function levelCheck() {
-  if (level == 4) {
-    solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+  let leftWall = getTile(0, 1)[0] 
+  console.log(leftWall)
+  if (leftWall && lastLevel < level) {
+    console.log("Exists")
+    if (leftWall.type == wall) {
+      console.log("Locked")
+      solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+      setSolids(solidSprites);
+    }
   }
 }
 
 function displaySpritesInRange() {
-  console.log(getFirst(player).x)
   // Filter out the player sprite and wallLantern from allSprites
   const otherSprites = allSprites.filter(sprite => sprite.type != player && sprite.type != hangingLantern);
 

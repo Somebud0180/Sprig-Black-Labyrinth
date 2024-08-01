@@ -24,6 +24,10 @@ const doorThree = "o";
 const lightPost = "q";
 const lightLantern = "e";
 const hangingLantern = "r";
+const box = "0";
+const boxKeyOne = "2";
+const boxKeyTwo = "3";
+const boxKeyThree = "4";
 
 
 // Main Menu Bitmaps
@@ -86,7 +90,7 @@ wwwwwww............w
 w.......wwwwwwwwwwww
 w.......w..........w
 w.......w.....w....w
-w.......w.....w...aw
+w.......w.....w...2w
 w.......w.....w....w
 ww.wwwwwwwwiwwwwwwww
 w...................
@@ -453,7 +457,7 @@ const playerWithKeyThreeSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const keyOneSprite = bitmap`
+const keyOneCoord = bitmap`
 ................
 ................
 ................
@@ -470,7 +474,7 @@ const keyOneSprite = bitmap`
 ................
 ................
 ................`;
-const keyTwoSprite = bitmap`
+const keyTwoCoord = bitmap`
 ................
 ................
 ................
@@ -487,7 +491,7 @@ const keyTwoSprite = bitmap`
 ................
 ................
 ................`;
-const keyThreeSprite = bitmap`
+const keyThreeCoord = bitmap`
 ................
 ................
 ................
@@ -606,6 +610,40 @@ const hangingLanternSprite = bitmap`
 ................
 ................
 ................`;
+const boxSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.1CCCCCCCCCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
+const conceptBoxSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLL222LLLLL1.
+.1CCC22222CCCC1.
+.1CCC22C22CCCC1.
+.1LLLLLL22LLLL1.
+.1CCCCC222CCCC1.
+.1CCCCC22CCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCC22CCCCC1.
+.1CCCCC22CCCCC1.
+.1LLLLLLLLLLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
 
 // Sounds
 const errorSFX = tune`
@@ -620,7 +658,7 @@ const menuSFX = tune`
 500: C4^500 + E4^500,
 15500`
 
-// Texts
+// Main Menu Text
 let currentLevelText;
 
 let mainMenuTitle = `
@@ -642,12 +680,12 @@ Back
 ----
 `;
 
-// Guide Texts
+// Guide Text
 let menuGuide = `Press   
 
 to activate`;
 
-// Controls
+// Controls Text
 let upLGuide = `Moves player 
 upward`;
 let leftLGuide = `Moves player to 
@@ -667,6 +705,16 @@ let rightRGuide = `Confirm menu
 selection, grabs 
 the key in-game`;
 
+// Game Text
+let keyFound = `
+You found a 
+       key
+`;
+let keyOneFound = `yellow`
+let keyTwoFound = `blue`
+let keyThreeFound = `orange`
+let boxEmpty = `There's nothing in the box`
+
 // Background Game States
 let widthX; // Used (during spawn) to get actual map width
 let gameState = 0; // 0 for Main Menu; 1 for In-game
@@ -681,6 +729,7 @@ let solidSprites; //  Used to track which blocks are solid
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
+let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -688,7 +737,7 @@ let spawnY = 1; // Default Y value used to spawn player on start, used to tell w
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
 let currentLevelVal = 1; // Adjust last level to make sense for current level
-let currentKey = 3; // Used to track which key the player is holding
+let currentKey = 2; // Used to track which key the player is holding
 let currentPlayer = playerSprite; // Used to track which player sprite to show (based on key)
 
 // Loops
@@ -769,8 +818,7 @@ onInput("l", () => {
   if (gameState == 0) {
     pointerContinue();
   } else if (gameState == 1) {
-    grabKey();
-    unlockDoor()
+    itemInteract()
   }
 });
 
@@ -1036,7 +1084,7 @@ function guideText() {
 // Setup the game
 function initializeGame() {
   characterInit();
-  solidSprites = [player, wall, doorOne, doorTwo, doorThree]
+  solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];
   setSolids(solidSprites);
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
@@ -1073,24 +1121,76 @@ function checkBorder(direction) {
   }
 }
 
-function grabKey() {
-  let playerSprite = getFirst(player);
-  let keyOneSprite = getFirst(keyOne);
-  let keyTwoSprite = getFirst(keyTwo);
-  let keyThreeSprite = getFirst(keyThree);
+function itemInteract() {
+  grabKey(); // Check if on a key and grab it
+  grabBox(); // Check if next to a box and if it has a key and grab it
+  unlockDoor(); // Check if next to a door and unlock it
+  characterInit(); // Refreshes character sprite for every interaction
+}
 
-  if (keyOneSprite && playerSprite.x == keyOneSprite.x && playerSprite.y == keyOneSprite.y) {
+function grabKey() {
+  let playerCoord = getFirst(player);
+  let keyOneCoord = getFirst(keyOne);
+  let keyTwoCoord = getFirst(keyTwo);
+  let keyThreeCoord = getFirst(keyThree);
+  let textHeight = height() - 3
+
+  if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
     currentKey = 1
-    characterInit();
-  } else if (keyTwoSprite && playerSprite.x == keyTwoSprite.x && playerSprite.y == keyTwoSprite.y) {
+    gameState = 2
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
+    setTimeout(keyTextClear, keyDelay);     
+  } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
-    characterInit();
-  } else if (keyThreeSprite && playerSprite.x == keyThreeSprite.x && playerSprite.y == keyThreeSprite.y) {
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
+    setTimeout(keyTextClear, keyDelay);     
+  } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
-    characterInit();
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
+    setTimeout(keyTextClear, keyDelay);     
+  }
+}
+
+function grabBox() {
+  console.log("Grabbing Box")
+  let playerCoord = getFirst(player);
+  let surroundingTiles = [
+    getTile(playerCoord.x, playerCoord.y + 1)[0], // Tile below player
+    getTile(playerCoord.x, playerCoord.y - 1)[0], // Tile above player
+    getTile(playerCoord.x + 1, playerCoord.y)[0], // Tile to the right of player
+    getTile(playerCoord.x - 1, playerCoord.y)[0], // Tile to the left of playerd
+  ];
+  let boxOneFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyOne))
+  let boxTwoFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyTwo))
+  let boxThreeFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyThree))
+  let textHeight = height() - 3
+
+  if (boxOneFound) {
+    currentKey = 1;
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
+    setTimeout(keyTextClear, keyDelay);  
+  } else if (boxTwoFound) {
+    currentKey = 2;
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
+    setTimeout(keyTextClear, keyDelay);  
+  } else if (boxThreeFound) {
+    currentKey = 3;
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
+    setTimeout(keyTextClear, keyDelay);     
   }
 }
 
@@ -1110,18 +1210,21 @@ function unlockDoor() {
     solidSprites = solidSprites.filter(item => item != doorOne);
     currentKey = 0
     setSolids(solidSprites);
-    characterInit()
   } else if (doorTwoFound && currentKey == 2) {
     solidSprites = solidSprites.filter(item => item != doorTwo);
     currentKey = 0
     setSolids(solidSprites);
-    characterInit()
   } else if (doorThreeFound && currentKey == 3) {
     solidSprites = solidSprites.filter(item => item != doorThree);
     currentKey = 0
     setSolids(solidSprites);
-    characterInit()
   }
+}
+
+function keyTextClear() {
+  clearText();
+  gameState = 1
+  characterInit();
 }
 
 function levelCheck() {
@@ -1131,7 +1234,7 @@ function levelCheck() {
     console.log("Exists")
     if (leftWall.type == wall) {
       console.log("Locked")
-      solidSprites = [player, wall, doorOne, doorTwo, doorThree];
+      solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];;
       setSolids(solidSprites);
     }
   }
@@ -1240,12 +1343,16 @@ function setSprites() {
         // Game Sprites (Just to make map making easier)
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneSprite],
-        [keyTwo, keyTwoSprite],
-        [keyThree, keyThreeSprite],
+        [keyOne, keyOneCoord],
+        [keyTwo, keyTwoCoord],
+        [keyThree, keyThreeCoord],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
+        [box, boxSprite],
+        [boxKeyOne, boxSprite],
+        [boxKeyTwo, boxSprite],
+        [boxKeyThree, boxSprite],
       );
     } else if (menuMode == 2) {
       setLegend(
@@ -1268,12 +1375,16 @@ function setSprites() {
       [wall, wallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneSprite],
-      [keyTwo, keyTwoSprite],
-      [keyThree, keyThreeSprite],
+      [keyOne, keyOneCoord],
+      [keyTwo, keyTwoCoord],
+      [keyThree, keyThreeCoord],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
       [doorThree, doorThreeSprite],
+      [box, boxSprite],
+      [boxKeyOne, boxSprite],
+      [boxKeyTwo, boxSprite],
+      [boxKeyThree, boxSprite],
     );
   }
 }

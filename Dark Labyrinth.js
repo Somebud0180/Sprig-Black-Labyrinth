@@ -706,7 +706,13 @@ selection, grabs
 the key in-game`;
 
 // Game Text
-let keyFound = `You found a key`
+let keyFound = `
+You found a 
+       key
+`;
+let keyOneFound = `yellow`
+let keyTwoFound = `blue`
+let keyThreeFound = `orange`
 let boxEmpty = `There's nothing in the box`
 
 // Background Game States
@@ -723,6 +729,7 @@ let solidSprites; //  Used to track which blocks are solid
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
+let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -730,7 +737,7 @@ let spawnY = 1; // Default Y value used to spawn player on start, used to tell w
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
 let currentLevelVal = 1; // Adjust last level to make sense for current level
-let currentKey = 1; // Used to track which key the player is holding
+let currentKey = 2; // Used to track which key the player is holding
 let currentPlayer = playerSprite; // Used to track which player sprite to show (based on key)
 
 // Loops
@@ -1126,16 +1133,29 @@ function grabKey() {
   let keyOneCoord = getFirst(keyOne);
   let keyTwoCoord = getFirst(keyTwo);
   let keyThreeCoord = getFirst(keyThree);
+  let textHeight = height() - 3
 
   if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
     currentKey = 1
+    gameState = 2
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
+    setTimeout(keyTextClear, keyDelay);     
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
+    setTimeout(keyTextClear, keyDelay);     
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
+    setTimeout(keyTextClear, keyDelay);     
   }
 }
 
@@ -1151,19 +1171,26 @@ function grabBox() {
   let boxOneFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyOne))
   let boxTwoFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyTwo))
   let boxThreeFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyThree))
+  let textHeight = height() - 3
 
   if (boxOneFound) {
-    currentKey = 1
-    addText(keyFound, {x: 1, y: height() - 1, color: color`2`})
-    setTimeout(keyTextClear(), 3000);  
+    currentKey = 1;
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
+    setTimeout(keyTextClear, keyDelay);  
   } else if (boxTwoFound) {
-    currentKey = 2
-    addText(keyFound, {x: 1, y: height() - 1, color: color`2`})
-    setTimeout(keyTextClear(), 3000);  
+    currentKey = 2;
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
+    setTimeout(keyTextClear, keyDelay);  
   } else if (boxThreeFound) {
-    currentKey = 3
-    addText(keyFound, {x: 1, y: height() - 1, color: color`2`})
-    setTimeout(keyTextClear(), 3000);     
+    currentKey = 3;
+    gameState = 2;
+    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
+    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
+    setTimeout(keyTextClear, keyDelay);     
   }
 }
 
@@ -1196,7 +1223,8 @@ function unlockDoor() {
 
 function keyTextClear() {
   clearText();
-  // clearTile(x,y)
+  gameState = 1
+  characterInit();
 }
 
 function levelCheck() {

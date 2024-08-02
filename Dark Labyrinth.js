@@ -774,16 +774,19 @@ the key in-game`;
 let keyFoundText = `
 You found a 
        key`;
-let keyOneFoundText = `yellow`
-let keyTwoFoundText = `blue`
-let keyThreeFoundText = `orange`
+let keyNeededText = `
+You need a 
+       key`;
+let keyOneText = `yellow`
+let keyTwoText = `blue`
+let keyThreeText = `orange`
 let boxEmptyText = `
 There's nothing in
 the box`
 
 // Background Game States
 let widthX; // Used (during spawn) to get actual map width
-let gameState = 0; // 0 for Main Menu; 1 for In-game
+let gameState; // menu for Main Menu; game for In-game; pause for etc; end for End Screen
 let menuMode = 1; // 1 for Main Menu; 2 for Guide
 let pointerOption = 0;
 let currentPointer; // Check pointer functions
@@ -793,11 +796,13 @@ let allSprites; // Used to track blocks inside a level
 let solidSprites; //  Used to track which blocks are solid
 let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
 let keyFound; // Used to track if a key was found. Used to feature key while gameState paused, for setSprites()
+let textHeight; // Used to set which height the toast texts appear
 
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
 let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
+let textHeightOffset = 3; // Used to set which height the toast texts appear
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -819,25 +824,25 @@ mainMenu();
 
 // Controls
 onInput("w", () => {
-  if (gameState == 0) {
+  if (gameState == "menu") {
     pointerUp();
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     getFirst(player).y--
   }
 });
 
 onInput("s", () => {
-  if (gameState == 0) {
+  if (gameState == "menu") {
     pointerDown();
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     getFirst(player).y++
   }
 });
 
 onInput("a", () => {
-  if (gameState == 0) {
+  if (gameState == "menu") {
     pointerUp();
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     if (getFirst(player).x == 0) {
       // Check if at border and move to lasd map
       checkBorder("left")
@@ -847,9 +852,9 @@ onInput("a", () => {
 });
 
 onInput("d", () => {
-  if (gameState == 0) {
+  if (gameState == "menu") {
     pointerDown();
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     if (getFirst(player).x == widthX) {
       // Check if at border and move to next map
       checkBorder("right")
@@ -859,23 +864,23 @@ onInput("d", () => {
 });
 
 onInput("i", () => {
-  if (gameState == 1) {
+  if (gameState == "game") {
     // Insert Character Movement code here
     // add nextLevel()
   }
 });
 
 onInput("k", () => {
-  if (gameState == 0) {
+  if (gameState == "menu") {
     pointerContinue("k");
     pointerBack();
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     // Insert Character Movement code here
   }
 });
 
 onInput("j", () => {
-  if (gameState == 1) {
+  if (gameState == "game") {
     // Check if in-game, then save level and allow to open main menu
     currentLevelVal = level - 1
     lastLevel = level; // Remember last level before mainMenu (if Applicable)
@@ -884,15 +889,15 @@ onInput("j", () => {
 });
 
 onInput("l", () => {
-  if (gameState == 0) {
+  if (gameState == "menu") {
     pointerContinue();
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     itemInteract()
   }
 });
 
 afterInput(() => {
-  if (gameState == 1) {
+  if (gameState == "game") {
     // Updates the visible and invisible blocks when moving
     stepPing();
     displaySpritesInRange();
@@ -906,7 +911,7 @@ afterInput(() => {
 function mainMenu() {
   pointerX = 3;
   pointerY = 8;
-  gameState = 0;
+  gameState = "menu";
   menuMode = 1;
   pointerOption = 0;
   updateGameIntervals();
@@ -944,7 +949,7 @@ function mainMenu() {
 
 // Sets up the guide
 function guideScreen() {
-  gameState = 0;
+  gameState = "menu";
   menuMode = 2;
   updateGameIntervals();
   clearText();
@@ -1164,7 +1169,7 @@ function initializeGame() {
 // Spawn Code
 function spawn() {
   clearText(); // Cleans stuff before it
-  gameState = 1;
+  gameState = "game";
   characterInit();
   updateGameIntervals();
   setMap(levels[level]);
@@ -1192,6 +1197,7 @@ function checkBorder(direction) {
 }
 
 function itemInteract() {
+  textHeight = height() - textHeightOffset
   grabKey(); // Check if on a key and grab it
   grabBox(); // Check if next to a box and if it has a key and grab it
   unlockDoor(); // Check if next to a door and unlock it
@@ -1203,34 +1209,33 @@ function grabKey() {
   let keyOneCoord = getFirst(keyOne);
   let keyTwoCoord = getFirst(keyTwo);
   let keyThreeCoord = getFirst(keyThree);
-  let textHeight = height() - 3
 
   if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
     currentKey = 1
     keyFound = true
-    gameState = 2
+    gameState = "pause"
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
-    addText(keyOneFoundText, { x: 1, y: textHeight + 2, color: color`6` });
+    addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
     setTimeout(toastTextClear, keyDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
     keyFound = true
-    gameState = 2;
+    gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyTwoFoundText, { x: 1, y: textHeight + 2, color: color`7` });
+    addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
     setTimeout(toastTextClear, keyDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
     keyFound = true
-    gameState = 2;
+    gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyThreeFoundText, { x: 1, y: textHeight + 2, color: color`9` });
+    addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
     setTimeout(toastTextClear, keyDelay);
   }
 }
@@ -1247,34 +1252,33 @@ function grabBox() {
   let boxTwoFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyTwo))
   let boxThreeFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyThree))
   let boxFound = surroundingTiles.some((tile) => tile && (tile.type == box))
-  let textHeight = height() - 3
 
   if (boxOneFound) {
     currentKey = 1;
     keyFound = true
-    gameState = 2;
+    gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyOneFoundText, { x: 1, y: textHeight + 2, color: color`6` });
+    addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
     setTimeout(toastTextClear, keyDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
     keyFound = true
-    gameState = 2;
+    gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyTwoFoundText, { x: 1, y: textHeight + 2, color: color`7` });
+    addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
     setTimeout(toastTextClear, keyDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
     keyFound = true
-    gameState = 2;
+    gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyThreeFoundText, { x: 1, y: textHeight + 2, color: color`9` });
+    addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
     setTimeout(toastTextClear, keyDelay);
   } else if (boxFound) {
-    gameState = 2;
+    gameState = "pause";
     playTune(keyFoundSFX);
     addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` })
     setTimeout(toastTextClear, keyDelay/2);
@@ -1293,27 +1297,51 @@ function unlockDoor() {
   let doorTwoFound = surroundingTiles.some((tile) => tile && (tile.type == doorTwo))
   let doorThreeFound = surroundingTiles.some((tile) => tile && (tile.type == doorThree))
 
-  if (doorOneFound && currentKey == 1) {
-    solidSprites = solidSprites.filter(item => item != doorOne);
-    currentKey = 0;
-    setSolids(solidSprites);
-    playTune(unlockSFX);
-  } else if (doorTwoFound && currentKey == 2) {
-    solidSprites = solidSprites.filter(item => item != doorTwo);
-    currentKey = 0;
-    setSolids(solidSprites);
-    playTune(unlockSFX);
-  } else if (doorThreeFound && currentKey == 3) {
-    solidSprites = solidSprites.filter(item => item != doorThree);
-    currentKey = 0;
-    setSolids(solidSprites);
-    playTune(unlockSFX);
+  if (doorOneFound) {
+    if (currentKey == 1) {
+      // Checks if player has key 1
+      solidSprites = solidSprites.filter(item => item != doorOne);
+      currentKey = 0;
+      setSolids(solidSprites);
+      playTune(unlockSFX);
+    } else if (solidSprites.includes(doorOne)) {
+      // Checks if the door is locked
+      addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
+      addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
+      setTimeout(toastTextClear, keyDelay);
+    }
+  } else if (doorTwoFound) {
+    if (currentKey == 2) {
+      // Checks if player has key 2
+      solidSprites = solidSprites.filter(item => item != doorTwo);
+      currentKey = 0;
+      setSolids(solidSprites);
+      playTune(unlockSFX);
+    } else if (solidSprites.includes(doorTwo)) {
+      // Checks if the door is locked
+      addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
+      addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
+      setTimeout(toastTextClear, keyDelay);
+    }
+  } else if (doorThreeFound) {
+    if (currentKey == 3) {
+      // Checks if player has key 3
+      solidSprites = solidSprites.filter(item => item != doorThree);
+      currentKey = 0;
+      setSolids(solidSprites);
+      playTune(unlockSFX);
+    } else if (solidSprites.includes(doorThree)) {
+      // Checks if the door is locked
+      addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
+      addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
+      setTimeout(toastTextClear, keyDelay);
+    }
   }
 }
 
 function toastTextClear() {
   clearText();
-  gameState = 1
+  gameState = "game"
   characterInit();
 }
 
@@ -1417,7 +1445,7 @@ function characterInit() {
 
 function setSprites() {
   // This function loads the required Sprites for each gameState and menuMode
-  if (gameState == 0) {
+  if (gameState == "menu") {
     // Main Menu or Guide check
     if (menuMode == 1) {
       setLegend(
@@ -1456,7 +1484,7 @@ function setSprites() {
         [buttonActive, buttonHighlightSprite],
       );
     }
-  } else if (gameState == 1) {
+  } else if (gameState == "game") {
     setLegend(
       [background, backgroundSprite],
       [wall, wallSprite],
@@ -1473,7 +1501,7 @@ function setSprites() {
       [boxKeyTwo, boxSprite],
       [boxKeyThree, boxSprite],
     );
-  } else if (gameState == 2) {
+  } else if (gameState == "pause") {
     if (keyFound) {
       setLegend(
         [background, backgroundSprite],
@@ -1529,13 +1557,13 @@ function stepPing() {
 
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 500); // Set interval for error sound being played
-  if (gameState == 1) {
+  if (gameState == "game") {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
     clearInterval(flickerLightsInterval);
 
     flickerLightsInterval = setInterval(flickerLights, 1000) // Set interval for light flickering
-  } else if (gameState == 0) {
+  } else if (gameState == "menu") {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
     clearInterval(flickerLightsInterval);

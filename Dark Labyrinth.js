@@ -706,9 +706,17 @@ const menuSFX = tune`
 15500`
 
 // Game Sounds
-const keyFoundSFX = tune``;
-const stepSFX = tune``;
-const unlockSFX = tune``;
+const keyFoundSFX = tune`
+50: F5^50,
+50: G5^50,
+50: G5^50,
+50: G5^50,
+1400`;
+const stepSFX = tune`
+100: C4~100 + D4^100,
+3100`;
+const unlockSFX = tune`
+16000`;
 const nextMapSFX = tune``; // Door Close sound?
 
 
@@ -779,6 +787,7 @@ let backButtonState = "2"; // 1 is Gray (unselected); 2 is White (selected)
 let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
 let solidSprites; //  Used to track which blocks are solid
+let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
 
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
@@ -798,6 +807,7 @@ let currentPlayer = playerSprite; // Used to track which player sprite to show (
 let pointerChangeInterval;
 let checkBorderInterval;
 let flickerLightsInterval;
+let stepPingInterval;
 
 // Start the main menu
 mainMenu();
@@ -827,7 +837,7 @@ onInput("a", () => {
       // Check if at border and move to lasd map
       checkBorder("left")
     }
-    getFirst(player).x--
+    getFirst(player).x--;
   }
 });
 
@@ -879,6 +889,7 @@ onInput("l", () => {
 afterInput(() => {
   if (gameState == 1) {
     // Updates the visible and invisible blocks when moving
+    stepPing();
     displaySpritesInRange();
     spawnX = getFirst(player).x
     spawnY = getFirst(player).y
@@ -1193,28 +1204,30 @@ function grabKey() {
     // Player and key are on the same tile
     currentKey = 1
     gameState = 2
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` });
+    addText(keyOneFound, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoFound, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeFound, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(keyTextClear, keyDelay);
   }
 }
 
 function grabBox() {
-  console.log("Grabbing Box")
   let playerCoord = getFirst(player);
   let surroundingTiles = [
     getTile(playerCoord.x, playerCoord.y + 1)[0], // Tile below player
@@ -1230,21 +1243,24 @@ function grabBox() {
   if (boxOneFound) {
     currentKey = 1;
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
-    setTimeout(keyTextClear, keyDelay);  
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyOneFound, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
-    setTimeout(keyTextClear, keyDelay);  
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoFound, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeFound, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(keyTextClear, keyDelay);
   }
 }
 
@@ -1283,11 +1299,8 @@ function keyTextClear() {
 
 function levelCheck() {
   let leftWall = getTile(0, 1)[0]
-  console.log(leftWall)
   if (leftWall && lastLevel < level) {
-    console.log("Exists")
     if (leftWall.type == wall) {
-      console.log("Locked")
       solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];;
       setSolids(solidSprites);
     }
@@ -1295,7 +1308,6 @@ function levelCheck() {
 }
 
 function displaySpritesInRange() {
-  console.log(getAll(hangingLantern).length)
   // Filter out the player sprite and wallLantern from allSprites
   const otherSprites = allSprites.filter(sprite => sprite.type != player && sprite.type != hangingLantern);
 
@@ -1465,6 +1477,13 @@ function errorPing() {
   if (pingError == true) {
     playTune(errorSFX);
     pingError = false;
+  }
+}
+
+function stepPing() {
+  currentPlayerCoord = getFirst(player)
+  if (currentPlayerCoord.dx != 0 || currentPlayerCoord.dy != 0) {
+    playTune(stepSFX);
   }
 }
 

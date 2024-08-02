@@ -8,9 +8,6 @@ https://sprig.hackclub.com/gallery/getting_started
 @addedOn: 2024-00-00
 */
 
-// Future Notes
-// Add sounds for door unlock, key pickup, footsteps?, new level
-
 // Game Bitmaps
 const background = "t";
 const wall = "w";
@@ -25,9 +22,9 @@ const lightPost = "q";
 const lightLantern = "e";
 const hangingLantern = "r";
 const box = "0";
-const boxKeyOne = "2";
-const boxKeyTwo = "3";
-const boxKeyThree = "4";
+const boxKeyOne = "1";
+const boxKeyTwo = "2";
+const boxKeyThree = "3";
 
 
 // Main Menu Bitmaps
@@ -89,9 +86,9 @@ w.....w..r.........w
 wwwwwww............w
 w.......wwwwwwwwwwww
 w.......w..........w
-w.......w.....w....w
-w.......w.....w...2w
-w.......w.....w....w
+w.......w.....w...0w
+w.......w.....w0..1w
+w.......w.....w00..w
 ww.wwwwwwwwiwwwwwwww
 w...................
 wwwwwwwwwwwwwwwwwwww`, // Level 2 || Map 1: Level 1
@@ -627,6 +624,57 @@ const boxSprite = bitmap`
 .1CCCCCCCCCCCC1.
 .11111111111111.
 ................`;
+const boxOneHighlightSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLL66LLLLL1.
+.1CCCC6CC6CCCC1.
+.1CCCC6CC6CCCC1.
+.1LLLLL66LLLLL1.
+.1CCCCC6CCCCCC1.
+.1CCCCC6CCCCCC1.
+.1LLLLL666LLLL1.
+.1CCCCC6CCCCCC1.
+.1CCCCC6CCCCCC1.
+.1LLLLLL66LLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
+const boxTwoHighlightSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLL77LLLLL1.
+.1CCCC7CC7CCCC1.
+.1CCCC7CC7CCCC1.
+.1LLLLL77LLLLL1.
+.1CCCCC7CCCCCC1.
+.1CCCCC7CCCCCC1.
+.1LLLLL777LLLL1.
+.1CCCCC7CCCCCC1.
+.1CCCCC7CCCCCC1.
+.1LLLLLL77LLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
+const boxThreeHighlightSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLL99LLLLL1.
+.1CCCC9CC9CCCC1.
+.1CCCC9CC9CCCC1.
+.1LLLLL99LLLLL1.
+.1CCCCC9CCCCCC1.
+.1CCCCC9CCCCCC1.
+.1LLLLL999LLLL1.
+.1CCCCC9CCCCCC1.
+.1CCCCC9CCCCCC1.
+.1LLLLLL99LLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
 const conceptBoxSprite = bitmap`
 ................
 .11111111111111.
@@ -645,7 +693,7 @@ const conceptBoxSprite = bitmap`
 .11111111111111.
 ................`;
 
-// Sounds
+// Menu Sounds
 const errorSFX = tune`
 60: C4-60,
 60: C4-60,
@@ -653,10 +701,16 @@ const errorSFX = tune`
 60: C4-60,
 60: C4-60,
 1620`;
-
 const menuSFX = tune`
 500: C4^500 + E4^500,
 15500`
+
+// Game Sounds
+const keyFoundSFX = tune``;
+const stepSFX = tune``;
+const unlockSFX = tune``;
+const nextMapSFX = tune``; // Door Close sound?
+
 
 // Main Menu Text
 let currentLevelText;
@@ -1385,6 +1439,23 @@ function setSprites() {
       [boxKeyOne, boxSprite],
       [boxKeyTwo, boxSprite],
       [boxKeyThree, boxSprite],
+    );
+  } else if (gameState == 2) {
+    setLegend(
+      [background, backgroundSprite],
+      [wall, wallSprite],
+      [hangingLantern, hangingLanternSprite],
+      [player, currentPlayer],
+      [keyOne, keyOneCoord],
+      [keyTwo, keyTwoCoord],
+      [keyThree, keyThreeCoord],
+      [doorOne, doorOneSprite],
+      [doorTwo, doorTwoSprite],
+      [doorThree, doorThreeSprite],
+      [box, boxSprite],
+      [boxKeyOne, boxOneHighlightSprite],
+      [boxKeyTwo, boxTwoHighlightSprite],
+      [boxKeyThree, boxThreeHighlightSprite],
     );
   }
 }

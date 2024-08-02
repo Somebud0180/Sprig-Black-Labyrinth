@@ -716,8 +716,14 @@ const stepSFX = tune`
 100: C4~100 + D4^100,
 3100`;
 const unlockSFX = tune`
-16000`;
-const nextMapSFX = tune``; // Door Close sound?
+100: D4-100,
+100: C4-100,
+3000`;
+const nextMapSFX = tune`
+100: B4~100 + A4^100,
+100: B4~100 + G4^100,
+100: B4~100 + A4^100,
+2900`; // Door Close sound?
 
 
 // Main Menu Text
@@ -726,21 +732,18 @@ let currentLevelText;
 let mainMenuTitle = `
   Dark
   
-Labyrinth
-`;
+Labyrinth`;
 
 let mainMenuOptions = `
   Start Game
   ----------
   
   Guide
-  -----
-`;
+  -----`;
 
 let backButton = `
 Back
-----
-`;
+----`;
 
 // Guide Text
 let menuGuide = `Press   
@@ -768,14 +771,15 @@ selection, grabs
 the key in-game`;
 
 // Game Text
-let keyFound = `
+let keyFoundText = `
 You found a 
-       key
-`;
-let keyOneFound = `yellow`
-let keyTwoFound = `blue`
-let keyThreeFound = `orange`
-let boxEmpty = `There's nothing in the box`
+       key`;
+let keyOneFoundText = `yellow`
+let keyTwoFoundText = `blue`
+let keyThreeFoundText = `orange`
+let boxEmptyText = `
+There's nothing in
+the box`
 
 // Background Game States
 let widthX; // Used (during spawn) to get actual map width
@@ -788,6 +792,7 @@ let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
 let solidSprites; //  Used to track which blocks are solid
 let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
+let keyFound; // Used to track if a key was found. Used to feature key while gameState paused, for setSprites()
 
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
@@ -1203,27 +1208,30 @@ function grabKey() {
   if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
     currentKey = 1
+    keyFound = true
     gameState = 2
     playTune(keyFoundSFX);
-    addText(keyFound, { x: 1, y: textHeight, color: color`2` });
-    addText(keyOneFound, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(keyTextClear, keyDelay);
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
+    addText(keyOneFoundText, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(toastTextClear, keyDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
+    keyFound = true
     gameState = 2;
     playTune(keyFoundSFX);
-    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
-    addText(keyTwoFound, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(keyTextClear, keyDelay);
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoFoundText, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(toastTextClear, keyDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
+    keyFound = true
     gameState = 2;
     playTune(keyFoundSFX);
-    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
-    addText(keyThreeFound, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(keyTextClear, keyDelay);
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeFoundText, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(toastTextClear, keyDelay);
   }
 }
 
@@ -1238,29 +1246,38 @@ function grabBox() {
   let boxOneFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyOne))
   let boxTwoFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyTwo))
   let boxThreeFound = surroundingTiles.some((tile) => tile && (tile.type == boxKeyThree))
+  let boxFound = surroundingTiles.some((tile) => tile && (tile.type == box))
   let textHeight = height() - 3
 
   if (boxOneFound) {
     currentKey = 1;
+    keyFound = true
     gameState = 2;
     playTune(keyFoundSFX);
-    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
-    addText(keyOneFound, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(keyTextClear, keyDelay);
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyOneFoundText, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(toastTextClear, keyDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
+    keyFound = true
     gameState = 2;
     playTune(keyFoundSFX);
-    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
-    addText(keyTwoFound, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(keyTextClear, keyDelay);
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoFoundText, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(toastTextClear, keyDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
+    keyFound = true
     gameState = 2;
     playTune(keyFoundSFX);
-    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
-    addText(keyThreeFound, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(keyTextClear, keyDelay);
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeFoundText, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(toastTextClear, keyDelay);
+  } else if (boxFound) {
+    gameState = 2;
+    playTune(keyFoundSFX);
+    addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` })
+    setTimeout(toastTextClear, keyDelay/2);
   }
 }
 
@@ -1278,20 +1295,23 @@ function unlockDoor() {
 
   if (doorOneFound && currentKey == 1) {
     solidSprites = solidSprites.filter(item => item != doorOne);
-    currentKey = 0
+    currentKey = 0;
     setSolids(solidSprites);
+    playTune(unlockSFX);
   } else if (doorTwoFound && currentKey == 2) {
     solidSprites = solidSprites.filter(item => item != doorTwo);
-    currentKey = 0
+    currentKey = 0;
     setSolids(solidSprites);
+    playTune(unlockSFX);
   } else if (doorThreeFound && currentKey == 3) {
     solidSprites = solidSprites.filter(item => item != doorThree);
-    currentKey = 0
+    currentKey = 0;
     setSolids(solidSprites);
+    playTune(unlockSFX);
   }
 }
 
-function keyTextClear() {
+function toastTextClear() {
   clearText();
   gameState = 1
   characterInit();
@@ -1303,6 +1323,7 @@ function levelCheck() {
     if (leftWall.type == wall) {
       solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];;
       setSolids(solidSprites);
+      playTune(nextMapSFX);
     }
   }
 }
@@ -1453,22 +1474,41 @@ function setSprites() {
       [boxKeyThree, boxSprite],
     );
   } else if (gameState == 2) {
-    setLegend(
-      [background, backgroundSprite],
-      [wall, wallSprite],
-      [hangingLantern, hangingLanternSprite],
-      [player, currentPlayer],
-      [keyOne, keyOneCoord],
-      [keyTwo, keyTwoCoord],
-      [keyThree, keyThreeCoord],
-      [doorOne, doorOneSprite],
-      [doorTwo, doorTwoSprite],
-      [doorThree, doorThreeSprite],
-      [box, boxSprite],
-      [boxKeyOne, boxOneHighlightSprite],
-      [boxKeyTwo, boxTwoHighlightSprite],
-      [boxKeyThree, boxThreeHighlightSprite],
-    );
+    if (keyFound) {
+      setLegend(
+        [background, backgroundSprite],
+        [wall, wallSprite],
+        [hangingLantern, hangingLanternSprite],
+        [player, currentPlayer],
+        [keyOne, keyOneCoord],
+        [keyTwo, keyTwoCoord],
+        [keyThree, keyThreeCoord],
+        [doorOne, doorOneSprite],
+        [doorTwo, doorTwoSprite],
+        [doorThree, doorThreeSprite],
+        [box, boxSprite],
+        [boxKeyOne, boxOneHighlightSprite],
+        [boxKeyTwo, boxTwoHighlightSprite],
+        [boxKeyThree, boxThreeHighlightSprite],
+      );
+    } else {
+      setLegend(
+        [background, backgroundSprite],
+        [wall, wallSprite],
+        [hangingLantern, hangingLanternSprite],
+        [player, currentPlayer],
+        [keyOne, keyOneCoord],
+        [keyTwo, keyTwoCoord],
+        [keyThree, keyThreeCoord],
+        [doorOne, doorOneSprite],
+        [doorTwo, doorTwoSprite],
+        [doorThree, doorThreeSprite],
+        [box, boxSprite],
+        [boxKeyOne, boxSprite],
+        [boxKeyTwo, boxSprite],
+        [boxKeyThree, boxSprite],
+      );
+    }
   }
 }
 
@@ -1488,7 +1528,7 @@ function stepPing() {
 }
 
 function updateGameIntervals() {
-  errorPingInterval = setInterval(errorPing, 1000); // Set interval for error sound being played
+  errorPingInterval = setInterval(errorPing, 500); // Set interval for error sound being played
   if (gameState == 1) {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);

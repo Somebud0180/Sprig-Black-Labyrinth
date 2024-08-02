@@ -8,9 +8,6 @@ https://sprig.hackclub.com/gallery/getting_started
 @addedOn: 2024-00-00
 */
 
-// Future Notes
-// Add sounds for door unlock, key pickup, footsteps?, new level
-
 // Game Bitmaps
 const background = "t";
 const wall = "w";
@@ -25,9 +22,9 @@ const lightPost = "q";
 const lightLantern = "e";
 const hangingLantern = "r";
 const box = "0";
-const boxKeyOne = "2";
-const boxKeyTwo = "3";
-const boxKeyThree = "4";
+const boxKeyOne = "1";
+const boxKeyTwo = "2";
+const boxKeyThree = "3";
 
 
 // Main Menu Bitmaps
@@ -89,9 +86,9 @@ w.....w..r.........w
 wwwwwww............w
 w.......wwwwwwwwwwww
 w.......w..........w
-w.......w.....w....w
-w.......w.....w...2w
-w.......w.....w....w
+w.......w.....w...0w
+w.......w.....w0..1w
+w.......w.....w00..w
 ww.wwwwwwwwiwwwwwwww
 w...................
 wwwwwwwwwwwwwwwwwwww`, // Level 2 || Map 1: Level 1
@@ -627,6 +624,57 @@ const boxSprite = bitmap`
 .1CCCCCCCCCCCC1.
 .11111111111111.
 ................`;
+const boxOneHighlightSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLL66LLLLL1.
+.1CCCC6CC6CCCC1.
+.1CCCC6CC6CCCC1.
+.1LLLLL66LLLLL1.
+.1CCCCC6CCCCCC1.
+.1CCCCC6CCCCCC1.
+.1LLLLL666LLLL1.
+.1CCCCC6CCCCCC1.
+.1CCCCC6CCCCCC1.
+.1LLLLLL66LLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
+const boxTwoHighlightSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLL77LLLLL1.
+.1CCCC7CC7CCCC1.
+.1CCCC7CC7CCCC1.
+.1LLLLL77LLLLL1.
+.1CCCCC7CCCCCC1.
+.1CCCCC7CCCCCC1.
+.1LLLLL777LLLL1.
+.1CCCCC7CCCCCC1.
+.1CCCCC7CCCCCC1.
+.1LLLLLL77LLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
+const boxThreeHighlightSprite = bitmap`
+................
+.11111111111111.
+.1CCCCCCCCCCCC1.
+.1LLLLL99LLLLL1.
+.1CCCC9CC9CCCC1.
+.1CCCC9CC9CCCC1.
+.1LLLLL99LLLLL1.
+.1CCCCC9CCCCCC1.
+.1CCCCC9CCCCCC1.
+.1LLLLL999LLLL1.
+.1CCCCC9CCCCCC1.
+.1CCCCC9CCCCCC1.
+.1LLLLLL99LLLL1.
+.1CCCCCCCCCCCC1.
+.11111111111111.
+................`;
 const conceptBoxSprite = bitmap`
 ................
 .11111111111111.
@@ -645,7 +693,7 @@ const conceptBoxSprite = bitmap`
 .11111111111111.
 ................`;
 
-// Sounds
+// Menu Sounds
 const errorSFX = tune`
 60: C4-60,
 60: C4-60,
@@ -653,10 +701,24 @@ const errorSFX = tune`
 60: C4-60,
 60: C4-60,
 1620`;
-
 const menuSFX = tune`
 500: C4^500 + E4^500,
 15500`
+
+// Game Sounds
+const keyFoundSFX = tune`
+50: F5^50,
+50: G5^50,
+50: G5^50,
+50: G5^50,
+1400`;
+const stepSFX = tune`
+100: C4~100 + D4^100,
+3100`;
+const unlockSFX = tune`
+16000`;
+const nextMapSFX = tune``; // Door Close sound?
+
 
 // Main Menu Text
 let currentLevelText;
@@ -725,6 +787,7 @@ let backButtonState = "2"; // 1 is Gray (unselected); 2 is White (selected)
 let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
 let solidSprites; //  Used to track which blocks are solid
+let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
 
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
@@ -744,6 +807,7 @@ let currentPlayer = playerSprite; // Used to track which player sprite to show (
 let pointerChangeInterval;
 let checkBorderInterval;
 let flickerLightsInterval;
+let stepPingInterval;
 
 // Start the main menu
 mainMenu();
@@ -773,7 +837,7 @@ onInput("a", () => {
       // Check if at border and move to lasd map
       checkBorder("left")
     }
-    getFirst(player).x--
+    getFirst(player).x--;
   }
 });
 
@@ -825,6 +889,7 @@ onInput("l", () => {
 afterInput(() => {
   if (gameState == 1) {
     // Updates the visible and invisible blocks when moving
+    stepPing();
     displaySpritesInRange();
     spawnX = getFirst(player).x
     spawnY = getFirst(player).y
@@ -1139,28 +1204,30 @@ function grabKey() {
     // Player and key are on the same tile
     currentKey = 1
     gameState = 2
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` });
+    addText(keyOneFound, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoFound, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeFound, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(keyTextClear, keyDelay);
   }
 }
 
 function grabBox() {
-  console.log("Grabbing Box")
   let playerCoord = getFirst(player);
   let surroundingTiles = [
     getTile(playerCoord.x, playerCoord.y + 1)[0], // Tile below player
@@ -1176,21 +1243,24 @@ function grabBox() {
   if (boxOneFound) {
     currentKey = 1;
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyOneFound, {x: 1, y: textHeight + 2, color: color`6`});
-    setTimeout(keyTextClear, keyDelay);  
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyOneFound, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyTwoFound, {x: 1, y: textHeight + 2, color: color`7`});
-    setTimeout(keyTextClear, keyDelay);  
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoFound, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(keyTextClear, keyDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
     gameState = 2;
-    addText(keyFound, {x: 1, y: textHeight, color: color`2`})
-    addText(keyThreeFound, {x: 1, y: textHeight + 2, color: color`9`});
-    setTimeout(keyTextClear, keyDelay);     
+    playTune(keyFoundSFX);
+    addText(keyFound, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeFound, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(keyTextClear, keyDelay);
   }
 }
 
@@ -1229,11 +1299,8 @@ function keyTextClear() {
 
 function levelCheck() {
   let leftWall = getTile(0, 1)[0]
-  console.log(leftWall)
   if (leftWall && lastLevel < level) {
-    console.log("Exists")
     if (leftWall.type == wall) {
-      console.log("Locked")
       solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];;
       setSolids(solidSprites);
     }
@@ -1241,7 +1308,6 @@ function levelCheck() {
 }
 
 function displaySpritesInRange() {
-  console.log(getAll(hangingLantern).length)
   // Filter out the player sprite and wallLantern from allSprites
   const otherSprites = allSprites.filter(sprite => sprite.type != player && sprite.type != hangingLantern);
 
@@ -1386,6 +1452,23 @@ function setSprites() {
       [boxKeyTwo, boxSprite],
       [boxKeyThree, boxSprite],
     );
+  } else if (gameState == 2) {
+    setLegend(
+      [background, backgroundSprite],
+      [wall, wallSprite],
+      [hangingLantern, hangingLanternSprite],
+      [player, currentPlayer],
+      [keyOne, keyOneCoord],
+      [keyTwo, keyTwoCoord],
+      [keyThree, keyThreeCoord],
+      [doorOne, doorOneSprite],
+      [doorTwo, doorTwoSprite],
+      [doorThree, doorThreeSprite],
+      [box, boxSprite],
+      [boxKeyOne, boxOneHighlightSprite],
+      [boxKeyTwo, boxTwoHighlightSprite],
+      [boxKeyThree, boxThreeHighlightSprite],
+    );
   }
 }
 
@@ -1394,6 +1477,13 @@ function errorPing() {
   if (pingError == true) {
     playTune(errorSFX);
     pingError = false;
+  }
+}
+
+function stepPing() {
+  currentPlayerCoord = getFirst(player)
+  if (currentPlayerCoord.dx != 0 || currentPlayerCoord.dy != 0) {
+    playTune(stepSFX);
   }
 }
 

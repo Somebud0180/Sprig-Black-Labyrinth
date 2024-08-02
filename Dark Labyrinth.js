@@ -403,6 +403,40 @@ const playerSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
+const playerBrightSprite = bitmap`
+......6666......
+.....600006.....
+....60022006....
+...6002222006...
+...6022222206...
+...6022222206...
+...6022222206...
+...6022222206...
+...6022222206...
+...6002222006...
+....60022006....
+.....600006.....
+.....606606.....
+....66066066....
+...6000660006...
+....666..666....`;
+const playerWeakBrightSprite = bitmap`
+......FFFF......
+.....F0000F.....
+....F002200F....
+...F00222200F...
+...F02222220F...
+...F02222220F...
+...F02222220F...
+...F02222220F...
+...F02222220F...
+...F00222200F...
+....F002200F....
+.....F0000F.....
+.....F0FF0F.....
+....FF0FF0FF....
+...F000FF000F...
+....FFF..FFF....`;
 const playerWithKeyOneSprite = bitmap`
 ......1111......
 .....100001.....
@@ -723,7 +757,13 @@ const nextMapSFX = tune`
 100: B4~100 + A4^100,
 100: B4~100 + G4^100,
 100: B4~100 + A4^100,
-2900`; // Door Close sound?
+2900`;
+const flashSFX = tune`
+37.5: B5^37.5,
+37.5: B5^37.5,
+37.5: B5^37.5,
+37.5: B5^37.5,
+1050`;
 
 
 // Main Menu Text
@@ -797,12 +837,14 @@ let solidSprites; //  Used to track which blocks are solid
 let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
 let keyFound; // Used to track if a key was found. Used to feature key while gameState paused, for setSprites()
 let textHeight; // Used to set which height the toast texts appear
+let flashingMap; // Used to track if the player pressed the map flash button, used to adjust player texture
 
 // Configurables
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
 let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
 let textHeightOffset = 3; // Used to set which height the toast texts appear
+let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -865,8 +907,7 @@ onInput("d", () => {
 
 onInput("i", () => {
   if (gameState == "game") {
-    // Insert Character Movement code here
-    // add nextLevel()
+    mapFlash();
   }
 });
 
@@ -1196,6 +1237,28 @@ function checkBorder(direction) {
   }
 }
 
+function mapFlash() {
+  playerRange = flashBrightness;
+  gameState = "pause"
+  flashingMap = 2;
+  displaySpritesInRange();
+  characterInit();
+  playTune(flashSFX)
+  setTimeout(() => {
+    playerRange = 4
+    flashingMap = 1;
+    characterInit();
+    displaySpritesInRange();
+  }, 1000);
+  setTimeout(() => {
+    playerRange = 3
+    gameState = "game"
+    flashingMap = 0;
+    characterInit();
+    displaySpritesInRange();
+  }, 3000);
+}
+
 function itemInteract() {
   textHeight = height() - textHeightOffset
   grabKey(); // Check if on a key and grab it
@@ -1431,7 +1494,11 @@ function flickerLights() {
 }
 
 function characterInit() {
-  if (currentKey == 1) {
+  if (flashingMap == 1) {
+    currentPlayer = playerWeakBrightSprite;
+  } else if (flashingMap == 2) {
+    currentPlayer = playerBrightSprite;
+  } else if (currentKey == 1) {
     currentPlayer = playerWithKeyOneSprite;
   } else if (currentKey == 2) {
     currentPlayer = playerWithKeyTwoSprite;
@@ -1536,7 +1603,7 @@ function setSprites() {
         [boxKeyTwo, boxSprite],
         [boxKeyThree, boxSprite],
       );
-    }
+    } 
   }
 }
 

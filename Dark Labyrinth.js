@@ -960,7 +960,8 @@ using assists :O`;
 let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // Used to keep track of the default solid blocks
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
-let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
+let toastDelay = 3000; // Used to set the delay for text that appears when a key is found or door is unlocked, and how long the player is paused
+let shortToastDelay = 1500; // Used to set the delay for text that appears when no key is found or door is locked, and how long the player is paused
 let textHeightOffset = 4; // Used to set which height the toast texts appear
 let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
 
@@ -1120,9 +1121,9 @@ function mainMenu() {
   setBackground(background);
   pointerChange(); // Trigger pointer spawning in advance (Rather than wait for interval)
 
-  addText(titleText, {x: 5, y: 1, color: color`2`});
-  addText(mainMenuOptions, {x: 3, y: 7, color: color`2`});
-  addText(currentLevelText, {x: 2, y: 15, color: color`1`});
+  addText(titleText, { x: 5, y: 1, color: color`2` });
+  addText(mainMenuOptions, { x: 3, y: 7, color: color`2` });
+  addText(currentLevelText, { x: 2, y: 15, color: color`1` });
 }
 
 // Sets up the guide
@@ -1326,42 +1327,42 @@ function updateSprite(activeOption) {
 function guideText() {
   if (pointerOption == 1) {
     addBack(); // Clears text and rewrites the back button
-    addText(upLGuide, { x: 1, y: 12, color: color`2`});
+    addText(upLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 2) {
     addBack();
-    addText(leftLGuide, { x: 1, y: 12, color: color`2`});
+    addText(leftLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 3) {
     addBack();
-    addText(downLGuide, { x: 1, y: 12, color: color`2`});
+    addText(downLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 4) {
     addBack();
-    addText(rightLGuide, { x: 1, y: 12, color: color`2`});
+    addText(rightLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 5) {
     addBack();
-    addText(upRGuide, { x: 1, y: 12, color: color`2`});
+    addText(upRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 6) {
     addBack();
-    addText(leftRGuide, { x: 1, y: 12, color: color`2`});
+    addText(leftRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 7) {
     addBack();
-    addText(downRGuide, { x: 1, y: 12, color: color`2`});
+    addText(downRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 8) {
     addBack();
-    addText(rightRGuide, { x: 1, y: 12, color: color`2`});
+    addText(rightRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 9) {
     addBack();
-    addText(tipOneGuide, { x: 1, y: 12, color: color`2`});
+    addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 10) {
     addBack();
     addSprite(9, 12, buttonI);
-    addText(tipTwoGuide, { x: 1, y: 11, color: color`2`});
+    addText(tipTwoGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 11) {
     addBack();
     addSprite(9, 12, buttonK);
-    addText(tipThreeGuide, { x: 1, y: 11, color: color`2`});
+    addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 12) {
     addBack();
-    addText(tipFourGuide, { x: 1, y: 12, color: color`2`});
+    addText(tipFourGuide, { x: 1, y: 12, color: color`2` });
   }
 }
 
@@ -1434,7 +1435,7 @@ function grabKey() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2;
@@ -1443,7 +1444,7 @@ function grabKey() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3;
@@ -1452,7 +1453,7 @@ function grabKey() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   }
 }
 
@@ -1476,7 +1477,7 @@ function grabBox() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
     keyFound = true
@@ -1484,7 +1485,7 @@ function grabBox() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
     keyFound = true
@@ -1492,12 +1493,12 @@ function grabBox() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (boxFound) {
     gameState = "pause";
     playTune(keyFoundSFX);
     addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` });
-    setTimeout(toastTextClear, keyDelay / 2);
+    setTimeout(toastTextClear, shortToastDelay);
   }
 }
 
@@ -1525,7 +1526,7 @@ function unlockDoor() {
       gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-      setTimeout(toastTextClear, keyDelay);
+      setTimeout(toastTextClear, shortToastDelay);
     }
   } else if (doorTwoFound) {
     if (currentKey == 2) {
@@ -1539,7 +1540,7 @@ function unlockDoor() {
       gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
       addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-      setTimeout(toastTextClear, keyDelay);
+      setTimeout(toastTextClear, shortToastDelay);
     }
   } else if (doorThreeFound) {
     if (currentKey == 3) {
@@ -1553,7 +1554,7 @@ function unlockDoor() {
       gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-      setTimeout(toastTextClear, keyDelay);
+      setTimeout(toastTextClear, shortToastDelay);
     }
   }
 }
@@ -1705,7 +1706,7 @@ function endScreen() {
   setMap(levels[level]);
   addSprite(0, 14, player);
   const playback = playTune(endSong, Infinity);
-  
+
   // Body
   setTimeout(moveRight, 500);
   setTimeout(moveRight, 1000);
@@ -1716,24 +1717,24 @@ function endScreen() {
   setTimeout(moveRight, 3500);
   setTimeout(moveRight, 4000);
 
-  addText(titleText, {x: 5, y: 0, color: color`2`});
+  addText(titleText, { x: 5, y: 0, color: color`2` });
 
   setTimeout(() => {
     clearText();
-    addText(titleText, {x: 5, y: 0, color: color`1`});
-    addText(farewellText, {x: 5, y: 6, color: color`2`});
+    addText(titleText, { x: 5, y: 0, color: color`1` });
+    addText(farewellText, { x: 5, y: 6, color: color`2` });
   }, 5000);
 
   if (usedAssist != true) {
     setTimeout(() => {
       clearText();
-      addText(titleText, {x: 5, y: 0, color: color`1`});
-      addText(farewellText, {x: 5, y: 4, color: color`1`});
-      addText(noAssistText, {x: 2, y: 7, color: color`6`});
+      addText(titleText, { x: 5, y: 0, color: color`1` });
+      addText(farewellText, { x: 5, y: 4, color: color`1` });
+      addText(noAssistText, { x: 2, y: 7, color: color`6` });
       playTune(dingSFX);
     }, 8000);
   }
-  
+
   // Exit
   setTimeout(() => {
     playback.end();

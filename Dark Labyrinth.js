@@ -44,6 +44,7 @@ const tipBoxOne = "9";
 const tipBoxTwo = "8";
 const tipBoxThree = "7";
 const tipBoxFour = "6";
+const tipBoxFive = "5";
 let tipBoxActive = "l"
 
 // Resources
@@ -58,8 +59,8 @@ const levels = [
 ...c.b........h.j...
 ....v..........m....
 ....................
-.......r....0.......
-...9...8....7...6...
+....................
+..9..08..7y..6a..5..
 ....................
 ....................
 ......j.............
@@ -168,6 +169,91 @@ w....w.w...w.w...w.w
 wwww.wwwww.wwwwwwwww
 ....r..........r...w
 wwwwwwwwwwwwwwwwwwww`, // Level 6 || Map 2: Level 3
+  map`
+wwwwwwwwwwwwwwwwwwww
+w...r..........r....
+wwwwww.wwwwww.wwwwww
+w.0w............w0.w
+w..u...r....r......w
+w3.w............w.0w
+wwwwwwwww..wwwwwwwww
+w..............r....
+w...r...............
+wwww.wwwwwwwwww.wwww
+w......w0000w....00w
+w0.....r....r.....0w
+w00....w....w......w
+www.wwwwwwwwwwww.www
+w...r..........r....
+wwwwwwwwwwwwwwwwwwww`, // Level 7 || Map 3: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+....r..........r...o
+wwwwwwwww..wwwwwwwww
+w.w0..0w....w0000w0w
+w.r....r....r....r.w
+w2w.0..w....w....w0w
+wwwwwwwww..wwwwwwwww
+...............r...w
+....r..............w
+wwwwwwwww..wwwwwwwww
+w.......w..w00...0aw
+w.r...r....i.0.0.0.w
+w.......w..w...0...w
+wwwwwwwww..wwwwwwwww
+....r..........r...w
+wwwwwwwwwwwwwwwwwwww`, // Level 8 || Map 3: Level 2
+  map`
+wwwwwwwwwwwwwwwwwwww
+w........r........sw
+wwwwwwwww.wwwwwwwwww
+w...w...w.u.......3w
+w.w.w.w.w.wwwwwwwwww
+w.w.w.w.w....0...1.w
+w.w.w.w.w..0...0...w
+w.w.w.w.wiwww.wwwwww
+w.w.w0w.....w....w.o
+w.w.wwwwwwwww.ww.w.w
+w.w.w.........w..w.w
+w.w.wwwwwwwwwww.ww.w
+w.w..............w.w
+w.wwwwwwwwwwwwwwww.w
+w..................w
+wwwwwwwwwwwwwwwwwwww`, // Level 9 || Map 4: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w00...00w..w00...00w
+w0.....0w..w0.....0w
+w..020..u......0...w
+w..000..w..w..0r0..w
+w0.....0w..w0.....0w
+w00...00w..w00...00w
+wwwwwwwww..wwwwwwwww
+w..r...r....r...r...
+wwwwwwwww..wwwwwwwww
+w0000000w..w.......w
+w...0...w..w.....r.w
+w.0.3.0.w..w.......w
+w.0...0.i....r.....w
+w0000000w..w.......w
+wwwwwwwwwwwwwwwwwwww`, // Level 10 || Map 5: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w...r..........r...w
+wwwwwww..wwwwwwww..w
+w...............w..w
+w.r.......r.....wr.w
+w.....r.......r.w..w
+w...............w..w
+wwwwwwwwwwwwwwwww..w
+...r...r....r...r..w
+wwwwwwwwwwwwwwwww..w
+w00..w....w.....w..w
+w0.............1wr.w
+w....w....w...00w..w
+wwwwwww..wwwwwwww..w
+w...r..........r...o
+wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
   map`
 ....................
 ....................
@@ -568,7 +654,7 @@ const playerWithKeyThreeSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const keyOneCoord = bitmap`
+const keyOneSprite = bitmap`
 ................
 ................
 ................
@@ -585,7 +671,7 @@ const keyOneCoord = bitmap`
 ................
 ................
 ................`;
-const keyTwoCoord = bitmap`
+const keyTwoSprite = bitmap`
 ................
 ................
 ................
@@ -602,7 +688,7 @@ const keyTwoCoord = bitmap`
 ................
 ................
 ................`;
-const keyThreeCoord = bitmap`
+const keyThreeSprite = bitmap`
 ................
 ................
 ................
@@ -918,17 +1004,21 @@ let tipOneGuide = `Look across levels
 to find the key
 for the doors`
 
-let tipTwoGuide = `Lost?
+let tipTwoGuide = `Checking a box
+scans left, right,
+up and down.`
+
+let tipThreeGuide = `Lost?
 Use the   button
 to see farther
 around the player`
 
-let tipThreeGuide = `Stuck?
+let tipFourGuide = `Stuck?
 Use the   button
 to cycle through
 the keys you need`
 
-let tipFourGuide = `Try to complete
+let tipFiveGuide = `Try to complete
 the game without
 these assists ;)`
 
@@ -1194,6 +1284,8 @@ function pointerUpdate() {
     updateSprite(tipBoxThree);
   } else if (pointerOption == 12) {
     updateSprite(tipBoxFour);
+  } else if (pointerOption == 13) {
+    updateSprite(tipBoxFive);
   } else {
     pointerOption = 0;
     updateSprite();
@@ -1221,7 +1313,7 @@ function pointerDown() {
       pingError = true;
     }
   } else if (menuMode == 2) {
-    if (pointerOption < 12) {
+    if (pointerOption < 13) {
       pointerOption++;
       pointerUpdate();
       playTune(menuSFX);
@@ -1317,7 +1409,7 @@ function updateSprite(activeOption) {
   } else if (pointerOption > 0 && pointerOption < 9) {
     tipBoxActive = "l"; // Reset tipBoxActive and activeOption when switching back
     buttonActive = activeOption;
-  } else if (pointerOption > 8 && pointerOption < 13) {
+  } else if (pointerOption > 8 && pointerOption < 14) {
     buttonActive = "g"; // Reset buttonActive and activeOption when switching back
     tipBoxActive = activeOption;
   }
@@ -1354,15 +1446,19 @@ function guideText() {
     addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 10) {
     addBack();
-    addSprite(9, 12, buttonI);
-    addText(tipTwoGuide, { x: 1, y: 11, color: color`2` });
+    addText(tipTwoGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 11) {
     addBack();
-    addSprite(9, 12, buttonK);
+    addSprite(9, 12, buttonI);
     addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 12) {
     addBack();
-    addText(tipFourGuide, { x: 1, y: 12, color: color`2` });
+    addSprite(9, 12, buttonK);
+    addText(tipFourGuide, { x: 1, y: 11, color: color`2` });
+  } else if (pointerOption == 13) {
+    addBack();
+    addSprite(9, 12, buttonI);
+    addText(tipFiveGuide, { x: 1, y: 12, color: color`2` });
   }
 }
 
@@ -1595,7 +1691,7 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-    if (leftWall && lastLevel < level) {
+    if (leftWall && lastLevel < level && move == "wall") {
       if (leftWall.type == wall) {
         currentKey = 0 // Make sure the player does not bring over a key
         solidSprites = defaultSolids;
@@ -1769,12 +1865,13 @@ function setSprites() {
         [tipBoxTwo, tipBoxSprite],
         [tipBoxThree, tipBoxSprite],
         [tipBoxFour, tipBoxSprite],
+        [tipBoxFive, tipBoxSprite],
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneCoord],
-        [keyTwo, keyTwoCoord],
-        [keyThree, keyThreeCoord],
+        [keyOne, keyOneSprite],
+        [keyTwo, keyTwoSprite],
+        [keyThree, keyThreeSprite],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
@@ -1800,8 +1897,10 @@ function setSprites() {
         [tipBoxTwo, tipBoxSprite],
         [tipBoxThree, tipBoxSprite],
         [tipBoxFour, tipBoxSprite],
+        [tipBoxFive, tipBoxSprite],
         [tipBoxActive, tipHighlightSprite],
-        [hangingLantern, hangingLanternSprite],
+        [player, currentPlayer],
+        [keyOne, keyOneSprite],
         [box, boxSprite],
       );
     }
@@ -1812,9 +1911,9 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneCoord],
-      [keyTwo, keyTwoCoord],
-      [keyThree, keyThreeCoord],
+      [keyOne, keyOneSprite],
+      [keyTwo, keyTwoSprite],
+      [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
       [doorThree, doorThreeSprite],
@@ -1831,9 +1930,9 @@ function setSprites() {
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneCoord],
-        [keyTwo, keyTwoCoord],
-        [keyThree, keyThreeCoord],
+        [keyOne, keyOneSprite],
+        [keyTwo, keyTwoSprite],
+        [keyThree, keyThreeSprite],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
@@ -1849,9 +1948,9 @@ function setSprites() {
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneCoord],
-        [keyTwo, keyTwoCoord],
-        [keyThree, keyThreeCoord],
+        [keyOne, keyOneSprite],
+        [keyTwo, keyTwoSprite],
+        [keyThree, keyThreeSprite],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
@@ -1870,9 +1969,9 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneCoord],
-      [keyTwo, keyTwoCoord],
-      [keyThree, keyThreeCoord],
+      [keyOne, keyOneSprite],
+      [keyTwo, keyTwoSprite],
+      [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
       [doorThree, doorThreeSprite],

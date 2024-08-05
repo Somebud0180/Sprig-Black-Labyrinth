@@ -408,6 +408,10 @@ const fenceWallSprite = bitmap`
 ................
 ................
 ................
+................
+................
+................
+................
 .LLLLLL..LLLLLL.
 .L1111L..L1111L.
 .L1111L..L1111L.
@@ -415,11 +419,7 @@ const fenceWallSprite = bitmap`
 LLLLLLLLLLLLLLLL
 111L11111111L111
 111L11111111L111
-111L11111111L111
-LLLLLLLLLLLLLLLL
-1111111L1111111L
-1111111L1111111L
-1111111L1111111L`;
+111L11111111L111`;
 const playerSprite = bitmap`
 ......1111......
 .....100001.....
@@ -786,8 +786,8 @@ const flashSFX = tune`
 // Main Menu Text
 let currentLevelText;
 
-let mainMenuTitle = `
-  Dark
+let titleText = `
+  Black
   
 Labyrinth`;
 
@@ -834,12 +834,29 @@ You found a
 let keyNeededText = `
 You need a 
        key`;
-let keyOneText = `yellow`
-let keyTwoText = `blue`
-let keyThreeText = `orange`
+let keyOneText = `yellow`;
+let keyTwoText = `blue`;
+let keyThreeText = `orange`;
 let boxEmptyText = `
 There's nothing in
-the box`
+the box`;
+
+// Credits
+let farewellText = `
+Thanks for
+ playing!`;
+
+let noAssistText = `
+  You finished the
+game without assists`;
+
+// Configurables
+let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // Used to keep track of the default solid blocks
+let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
+let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
+let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
+let textHeightOffset = 3; // Used to set which height the toast texts appear
+let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
 
 // Background Game States
 let widthX; // Used (during spawn) to get actual map width
@@ -850,18 +867,12 @@ let currentPointer; // Check pointer functions
 let backButtonState = "2"; // 1 is Gray (unselected); 2 is White (selected)
 let pingError; // Used to ping error soundl (reduce error spam)
 let allSprites; // Used to track blocks inside a level
-let solidSprites; //  Used to track which blocks are solid
+let solidSprites = defaultSolids; //  Used to track which blocks are solid
 let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
 let keyFound; // Used to track if a key was found. Used to feature key while gameState paused, for setSprites()
 let textHeight; // Used to set which height the toast texts appear
 let flashingMap; // Used to track if the player pressed the map flash button, used to adjust player texture
-
-// Configurables
-let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
-let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
-let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
-let textHeightOffset = 3; // Used to set which height the toast texts appear
-let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
+let usedAssist; // Used to track if the player ever used the assists (flash map and key magic)
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -874,9 +885,7 @@ let currentPlayer = playerSprite; // Used to track which player sprite to show (
 
 // Loops
 let pointerChangeInterval;
-let checkBorderInterval;
 let flickerLightsInterval;
-let stepPingInterval;
 
 // Start the main menu
 mainMenu();
@@ -937,7 +946,7 @@ onInput("k", () => {
     pointerContinue("k");
     pointerBack();
   } else if (gameState == "game") {
-    
+    // usedAssist = true
     if (currentKey == 1) {
       currentKey = 2
       characterInit();
@@ -957,7 +966,7 @@ onInput("k", () => {
 onInput("j", () => {
   if (gameState == "game") {
     // Check if in-game, then save level and allow to open main menu
-    currentLevelVal = level - 1
+    currentLevelVal = level - 1;
     lastLevel = level; // Remember last level before mainMenu (if Applicable)
     mainMenu();
   }
@@ -1005,21 +1014,9 @@ function mainMenu() {
   setBackground(background);
   pointerChange(); // Trigger pointer spawning in advance (Rather than wait for interval)
 
-  addText(mainMenuTitle, {
-    x: 5,
-    y: 1,
-    color: color`2`,
-  });
-  addText(mainMenuOptions, {
-    x: 3,
-    y: 7,
-    color: color`2`,
-  });
-  addText(currentLevelText, {
-    x: 2,
-    y: 15,
-    color: color`1`,
-  });
+  addText(titleText, {x: 5, y: 1, color: color`2`});
+  addText(mainMenuOptions, {x: 3, y: 7, color: color`2`});
+  addText(currentLevelText, {x: 2, y: 15, color: color`1`});
 }
 
 // Sets up the guide
@@ -1234,10 +1231,10 @@ function guideText() {
 // Setup the game
 function initializeGame() {
   characterInit();
-  solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];
   setSolids(solidSprites);
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
+  // level = 6
   spawn(); // Start Game
 }
 
@@ -1256,6 +1253,7 @@ function spawn() {
 }
 
 function mapFlash() {
+  usedAssist = true;
   playerRange = flashBrightness;
   gameState = "pause"
   flashingMap = 2;
@@ -1387,6 +1385,7 @@ function unlockDoor() {
       playTune(unlockSFX);
     } else if (solidSprites.includes(doorOne)) {
       // Checks if the door is locked
+      gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
       setTimeout(toastTextClear, keyDelay);
@@ -1400,6 +1399,7 @@ function unlockDoor() {
       playTune(unlockSFX);
     } else if (solidSprites.includes(doorTwo)) {
       // Checks if the door is locked
+      gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
       addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
       setTimeout(toastTextClear, keyDelay);
@@ -1413,6 +1413,7 @@ function unlockDoor() {
       playTune(unlockSFX);
     } else if (solidSprites.includes(doorThree)) {
       // Checks if the door is locked
+      gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
       setTimeout(toastTextClear, keyDelay);
@@ -1431,6 +1432,13 @@ function levelCheck(move) {
     if (move == "up") {
       level++;
       endScreen();
+    } else if (move == "down") {
+      playerY = getFirst(player).y
+      spawnX = widthX;
+      spawnY = playerY;
+      lastLevel = level;
+      level--;
+      spawn();
     }
   } else if (level < levels.length - 1) {
     let leftWall = getTile(0, 1)[0]
@@ -1450,7 +1458,9 @@ function levelCheck(move) {
     }
     if (leftWall && lastLevel < level) {
       if (leftWall.type == wall) {
-        solidSprites = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree];
+        currentKey = 0 // Make sure the player does not bring over a key
+        solidSprites = defaultSolids;
+        characterInit();
         setSolids(solidSprites);
         playTune(nextMapSFX);
       }
@@ -1550,11 +1560,55 @@ function characterInit() {
 }
 
 function endScreen() {
+  // Initialize
   gameState = "end";
   updateGameIntervals();
   setSprites();
   setMap(levels[level]);
-  addSprite(0, 14, player); // Not working?
+  addSprite(0, 13, player);
+  
+  // Body
+  setTimeout(moveRight, 500);
+  setTimeout(moveRight, 1000);
+  setTimeout(moveRight, 1500);
+  setTimeout(moveRight, 2000);
+  setTimeout(moveRight, 2500);
+  setTimeout(moveRight, 3000);
+  setTimeout(moveRight, 3500);
+  setTimeout(moveRight, 4000);
+
+  addText(titleText, {x: 5, y: 0, color: color`2`});
+
+  setTimeout(() => {
+    clearText();
+    addText(titleText, {x: 5, y: 0, color: color`1`});
+    addText(farewellText, {x: 5, y: 6, color: color`2`});
+  }, 5000);
+
+  if (usedAssist != true) {
+    console.log("No Assists!");
+    setTimeout(() => {
+      clearText();
+      addText(titleText, {x: 5, y: 0, color: color`1`});
+      addText(farewellText, {x: 5, y: 4, color: color`1`});
+      addText(noAssistText, {x: 0, y: 7, color: color`6`});
+    }, 8000);
+  }
+  
+  // Exit
+  setTimeout(() => {
+    level = 1
+    currentLevelVal = 1
+    spawnX = 1
+    spawnY = 1
+    solidSprites = defaultSolids
+    mainMenu();
+  }, 12000);
+}
+
+function moveRight() {
+  getFirst(player).x++;
+  playTune(stepSFX);
 }
 
 function setSprites() {

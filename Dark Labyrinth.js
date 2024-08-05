@@ -11,6 +11,7 @@ https://sprig.hackclub.com/gallery/getting_started
 // Game Bitmaps
 const background = "t";
 const wall = "w";
+const fenceWall = "p";
 const player = "y";
 const keyOne = "a";
 const keyTwo = "s";
@@ -156,6 +157,22 @@ w....w.....w.w....ww
 wwww.wwwww.wwwwwwwww
 ....r..........r...w
 wwwwwwwwwwwwwwwwwwww`, // Level 6 || Map 2: Level 3
+  map`
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+...e...e....e...e...
+...q...q....q...q...
+pppqpppqppppqpppqppp
+wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
 ]
 
 // Active Sprites
@@ -386,6 +403,23 @@ LLLLLLLLLLLLLLLL
 1111111L111111L1
 1111111L111111L1
 1111111L111111L1`;
+const fenceWallSprite = bitmap`
+................
+................
+................
+................
+.LLLLLL..LLLLLL.
+.L1111L..L1111L.
+.L1111L..L1111L.
+.L1111L..L1111L.
+LLLLLLLLLLLLLLLL
+111L11111111L111
+111L11111111L111
+111L11111111L111
+LLLLLLLLLLLLLLLL
+1111111L1111111L
+1111111L1111111L
+1111111L1111111L`;
 const playerSprite = bitmap`
 ......1111......
 .....100001.....
@@ -709,23 +743,6 @@ const boxThreeHighlightSprite = bitmap`
 .1CCCCCCCCCCCC1.
 .11111111111111.
 ................`;
-const conceptBoxSprite = bitmap`
-................
-.11111111111111.
-.1CCCCCCCCCCCC1.
-.1LLLL222LLLLL1.
-.1CCC22222CCCC1.
-.1CCC22C22CCCC1.
-.1LLLLLL22LLLL1.
-.1CCCCC222CCCC1.
-.1CCCCC22CCCCC1.
-.1LLLLLLLLLLLL1.
-.1CCCCC22CCCCC1.
-.1CCCCC22CCCCC1.
-.1LLLLLLLLLLLL1.
-.1CCCCCCCCCCCC1.
-.11111111111111.
-................`;
 
 // Menu Sounds
 const errorSFX = tune`
@@ -889,7 +906,9 @@ onInput("a", () => {
       // Check if at border and move to lasd map
       checkBorder("left")
     }
-    getFirst(player).x--;
+    if (player) {
+      getFirst(player).x--;
+    }
   }
 });
 
@@ -901,7 +920,9 @@ onInput("d", () => {
       // Check if at border and move to next map
       checkBorder("right")
     }
-    getFirst(player).x++
+    if (player) {
+      getFirst(player).x++
+    }
   }
 });
 
@@ -916,6 +937,7 @@ onInput("k", () => {
     pointerContinue("k");
     pointerBack();
   } else if (gameState == "game") {
+    
     if (currentKey == 1) {
       currentKey = 2
       characterInit();
@@ -1420,7 +1442,10 @@ function toastTextClear() {
 
 function levelCheck(move) {
   let leftWall = getTile(0, 1)[0]
-  if (level < levels.length - 2) {
+  console.log(level)
+  console.log(levels.length)
+  if (level < levels.length - 1) {
+    console.log("gamed")
     if (move == "up") {
       level++;
       spawn();
@@ -1436,6 +1461,7 @@ function levelCheck(move) {
       }
     }
   } else if (level == levels.length - 2) {
+    console.log("end")
     level++;
     endScreen();
   }
@@ -1533,7 +1559,12 @@ function characterInit() {
 }
 
 function endScreen() {
-  
+  console.log("end");
+  gameState = "end";
+  updateGameIntervals();
+  setSprites();
+  addSprite(0, 14, player);
+  setMap(level);
 }
 
 function setSprites() {
@@ -1549,6 +1580,7 @@ function setSprites() {
         [arrow, arrowSprite],
         [buttonL, buttonLGlyph],
         // Game Sprites (Just to make map making easier)
+        [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
         [keyOne, keyOneCoord],
@@ -1581,6 +1613,7 @@ function setSprites() {
     setLegend(
       [background, backgroundSprite],
       [wall, wallSprite],
+      [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
       [keyOne, keyOneCoord],
@@ -1599,6 +1632,7 @@ function setSprites() {
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
+        [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
         [keyOne, keyOneCoord],
@@ -1616,6 +1650,7 @@ function setSprites() {
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
+        [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
         [keyOne, keyOneCoord],
@@ -1630,6 +1665,26 @@ function setSprites() {
         [boxKeyThree, boxSprite],
       );
     }
+  } else if (gameState == "end") {
+    setLegend(
+      [lightPost, lightPostSprite],
+      [lightLantern, lightLanternSprite],
+      [background, backgroundSprite],
+      [wall, wallSprite],
+      [fenceWall, fenceWallSprite],
+      [hangingLantern, hangingLanternSprite],
+      [player, currentPlayer],
+      [keyOne, keyOneCoord],
+      [keyTwo, keyTwoCoord],
+      [keyThree, keyThreeCoord],
+      [doorOne, doorOneSprite],
+      [doorTwo, doorTwoSprite],
+      [doorThree, doorThreeSprite],
+      [box, boxSprite],
+      [boxKeyOne, boxSprite],
+      [boxKeyTwo, boxSprite],
+      [boxKeyThree, boxSprite],
+    );
   }
 }
 
@@ -1650,7 +1705,7 @@ function stepPing() {
 
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 500); // Set interval for error sound being played
-  if (gameState == "game") {
+  if (gameState == "game" || gameState == "pause") {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
     clearInterval(flickerLightsInterval);

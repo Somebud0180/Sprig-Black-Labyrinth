@@ -904,9 +904,9 @@ onInput("a", () => {
   } else if (gameState == "game") {
     if (getFirst(player).x == 0) {
       // Check if at border and move to lasd map
-      checkBorder("left")
+      levelCheck("down");
     }
-    if (player) {
+    if (getFirst(player)) {
       getFirst(player).x--;
     }
   }
@@ -918,9 +918,9 @@ onInput("d", () => {
   } else if (gameState == "game") {
     if (getFirst(player).x == widthX) {
       // Check if at border and move to next map
-      checkBorder("right")
+      levelCheck("up");
     }
-    if (player) {
+    if (getFirst(player)) {
       getFirst(player).x++
     }
   }
@@ -1255,20 +1255,6 @@ function spawn() {
   displaySpritesInRange(); // Make sure the player is in the map when this is runned
 }
 
-function checkBorder(direction) {
-  let playerY = getFirst(player).y;
-  if (direction == "right") {
-    spawnX = 0;
-    spawnY = playerY;
-    levelCheck("up");
-  } else if (direction == "left") {
-    spawnX = widthX;
-    spawnY = playerY;
-    lastLevel = level;
-    levelCheck("down");
-  }
-}
-
 function mapFlash() {
   playerRange = flashBrightness;
   gameState = "pause"
@@ -1441,15 +1427,24 @@ function toastTextClear() {
 }
 
 function levelCheck(move) {
-  let leftWall = getTile(0, 1)[0]
-  console.log(level)
-  console.log(levels.length)
-  if (level < levels.length - 1) {
-    console.log("gamed")
+  if (level == levels.length - 2) {
     if (move == "up") {
+      level++;
+      endScreen();
+    }
+  } else if (level < levels.length - 1) {
+    let leftWall = getTile(0, 1)[0]
+    if (move == "up") {
+      playerY = getFirst(player).y
+      spawnX = 0;
+      spawnY = playerY;
       level++;
       spawn();
     } else if (move == "down") {
+      playerY = getFirst(player).y
+      spawnX = widthX;
+      spawnY = playerY;
+      lastLevel = level;
       level--;
       spawn();
     }
@@ -1460,10 +1455,6 @@ function levelCheck(move) {
         playTune(nextMapSFX);
       }
     }
-  } else if (level == levels.length - 2) {
-    console.log("end")
-    level++;
-    endScreen();
   }
 }
 
@@ -1559,12 +1550,11 @@ function characterInit() {
 }
 
 function endScreen() {
-  console.log("end");
   gameState = "end";
   updateGameIntervals();
   setSprites();
-  addSprite(0, 14, player);
-  setMap(level);
+  setMap(levels[level]);
+  addSprite(0, 14, player); // Not working?
 }
 
 function setSprites() {

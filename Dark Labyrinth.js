@@ -26,10 +26,7 @@ const box = "0";
 const boxKeyOne = "1";
 const boxKeyTwo = "2";
 const boxKeyThree = "3";
-const tipBoxOne = "9";
-const tipBoxTwo = "8";
-const tipBoxThree = "7";
-const tipBoxFour = "6";
+
 
 
 // Main Menu Bitmaps
@@ -43,6 +40,10 @@ const buttonK = "m";
 const buttonJ = "h";
 const buttonL = "j";
 let buttonActive = "k";
+const tipBoxOne = "9";
+const tipBoxTwo = "8";
+const tipBoxThree = "7";
+const tipBoxFour = "6";
 let tipBoxActive = "l"
 
 // Resources
@@ -187,7 +188,7 @@ wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
 ]
 
 // Active Sprites
-const buttonLGlyph = bitmap`
+const buttonLSprite = bitmap`
 ................
 ................
 ................
@@ -206,7 +207,7 @@ const buttonLGlyph = bitmap`
 ................`;
 
 // Inactive Sprites
-const buttonWInactiveGlyph = bitmap`
+const buttonWInactiveSprite = bitmap`
 ................
 .......11.......
 ......1111......
@@ -223,7 +224,7 @@ const buttonWInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonAInactiveGlyph = bitmap`
+const buttonAInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -240,7 +241,7 @@ const buttonAInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonSInactiveGlyph = bitmap`
+const buttonSInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -257,7 +258,7 @@ const buttonSInactiveGlyph = bitmap`
 ......1111......
 .......11.......
 ................`;
-const buttonDInactiveGlyph = bitmap`
+const buttonDInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -274,7 +275,7 @@ const buttonDInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonIInactiveGlyph = bitmap`
+const buttonIInactiveSprite = bitmap`
 ................
 .......11.......
 ......1111......
@@ -291,7 +292,7 @@ const buttonIInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonJInactiveGlyph = bitmap`
+const buttonJInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -308,7 +309,7 @@ const buttonJInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonKInactiveGlyph = bitmap`
+const buttonKInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -325,7 +326,7 @@ const buttonKInactiveGlyph = bitmap`
 ......1111......
 .......11.......
 ................`;
-const buttonLInactiveGlyph = bitmap`
+const buttonLInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -791,15 +792,18 @@ const boxThreeHighlightSprite = bitmap`
 
 // Menu Sounds
 const errorSFX = tune`
-60: C4-60,
-60: C4-60,
+60: C4^60,
+60: C4~60,
 60,
-60: C4-60,
-60: C4-60,
+60: C4^60,
+60: C4~60,
 1620`;
 const menuSFX = tune`
-500: C4^500 + E4^500,
-15500`;
+333.3333333333333: C4~333.3333333333333,
+10333.333333333332`;
+const clickSFX = tune`
+60: C4~60 + D4~60,
+1860`;
 
 // Game Sounds
 const keyFoundSFX = tune`
@@ -957,7 +961,7 @@ let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, 
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
 let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
-let textHeightOffset = 3; // Used to set which height the toast texts appear
+let textHeightOffset = 4; // Used to set which height the toast texts appear
 let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
 
 // Background Game States
@@ -1161,37 +1165,37 @@ function pointerChange() {
 
 // Handles pointer selection in guide on-demand
 function pointerUpdate() {
-  clearTile(9, 12); // Resets the button glyph spawned by tip guide 2 & 3
+  clearTile(9, 12); // Resets the button Sprite spawned by tip guide 2 & 3
   if (pointerOption == 1) {
     if (getTile(6, 12) !== undefined) {
       clearTile(6, 12);
     }
-    updateGlyph(buttonW);
+    updateSprite(buttonW);
   } else if (pointerOption == 2) {
-    updateGlyph(buttonA);
+    updateSprite(buttonA);
   } else if (pointerOption == 3) {
-    updateGlyph(buttonS);
+    updateSprite(buttonS);
   } else if (pointerOption == 4) {
-    updateGlyph(buttonD);
+    updateSprite(buttonD);
   } else if (pointerOption == 5) {
-    updateGlyph(buttonI);
+    updateSprite(buttonI);
   } else if (pointerOption == 6) {
-    updateGlyph(buttonJ);
+    updateSprite(buttonJ);
   } else if (pointerOption == 7) {
-    updateGlyph(buttonK);
+    updateSprite(buttonK);
   } else if (pointerOption == 8) {
-    updateGlyph(buttonL);
+    updateSprite(buttonL);
   } else if (pointerOption == 9) {
-    updateGlyph(tipBoxOne);
+    updateSprite(tipBoxOne);
   } else if (pointerOption == 10) {
-    updateGlyph(tipBoxTwo);
+    updateSprite(tipBoxTwo);
   } else if (pointerOption == 11) {
-    updateGlyph(tipBoxThree);
+    updateSprite(tipBoxThree);
   } else if (pointerOption == 12) {
-    updateGlyph(tipBoxFour);
+    updateSprite(tipBoxFour);
   } else {
     pointerOption = 0;
-    updateGlyph();
+    updateSprite();
   }
   // Change back button color
   if (pointerOption == 0) {
@@ -1257,8 +1261,6 @@ function pointerBack() {
       pointerY -= 3;
       pointerOption = 0;
       pointerChange();
-    } else {
-      pingError = true;
     }
   } else if (menuMode == 2) {
     if (pointerOption > 0) {
@@ -1279,9 +1281,11 @@ function pointerContinue(triggered) {
       }
     } else if (pointerOption == 0) {
       // Start the Game
+      playTune(clickSFX);
       initializeGame();
     } else if (pointerOption == 1) {
       // Go to Guide
+      playTune(clickSFX);
       pointerOption = 0; // Return to first option
       guideScreen();
     }
@@ -1290,19 +1294,22 @@ function pointerContinue(triggered) {
     if (triggered == "k") {
       // Check if triggered by back button
       if (pointerOption == 0) {
+        playTune(clickSFX);
         mainMenu();
       }
     } else if (pointerOption == 0) {
+      playTune(clickSFX);
       pointerOption = 0; // Return to first option
       mainMenu();
     } else if (pointerOption > 0) {
+      playTune(clickSFX);
       guideText();
     }
   }
 }
 
 // Update current selected item Sprite to highlight in the guid
-function updateGlyph(activeOption) {
+function updateSprite(activeOption) {
   if (pointerOption == 0) {
     buttonActive = "g"; // Reset buttonActive and activeOption when switching back
     tipBoxActive = "l"; // Reset tipBoxActive and activeOption when switching back
@@ -1755,7 +1762,7 @@ function setSprites() {
         [lightPost, lightPostSprite],
         [lightLantern, lightLanternSprite],
         [arrow, arrowSprite],
-        [buttonL, buttonLGlyph],
+        [buttonL, buttonLSprite],
         // Game Sprites (Just to make map making easier)
         [tipBoxOne, tipBoxSprite],
         [tipBoxTwo, tipBoxSprite],
@@ -1779,20 +1786,20 @@ function setSprites() {
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
-        [buttonW, buttonWInactiveGlyph],
-        [buttonA, buttonAInactiveGlyph],
-        [buttonS, buttonSInactiveGlyph],
-        [buttonD, buttonDInactiveGlyph],
-        [buttonI, buttonIInactiveGlyph],
-        [buttonJ, buttonJInactiveGlyph],
-        [buttonK, buttonKInactiveGlyph],
-        [buttonL, buttonLInactiveGlyph],
+        [buttonW, buttonWInactiveSprite],
+        [buttonA, buttonAInactiveSprite],
+        [buttonS, buttonSInactiveSprite],
+        [buttonD, buttonDInactiveSprite],
+        [buttonI, buttonIInactiveSprite],
+        [buttonJ, buttonJInactiveSprite],
+        [buttonK, buttonKInactiveSprite],
+        [buttonL, buttonLInactiveSprite],
+        [buttonActive, buttonHighlightSprite],
         [tipBoxOne, tipBoxSprite],
         [tipBoxTwo, tipBoxSprite],
         [tipBoxThree, tipBoxSprite],
         [tipBoxFour, tipBoxSprite],
         [tipBoxActive, tipHighlightSprite],
-        [buttonActive, buttonHighlightSprite],
         [hangingLantern, hangingLanternSprite],
         [box, boxSprite],
       );

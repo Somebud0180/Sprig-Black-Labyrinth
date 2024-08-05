@@ -26,10 +26,7 @@ const box = "0";
 const boxKeyOne = "1";
 const boxKeyTwo = "2";
 const boxKeyThree = "3";
-const tipBoxOne = "9";
-const tipBoxTwo = "8";
-const tipBoxThree = "7";
-const tipBoxFour = "6";
+
 
 
 // Main Menu Bitmaps
@@ -43,6 +40,11 @@ const buttonK = "m";
 const buttonJ = "h";
 const buttonL = "j";
 let buttonActive = "k";
+const tipBoxOne = "9";
+const tipBoxTwo = "8";
+const tipBoxThree = "7";
+const tipBoxFour = "6";
+const tipBoxFive = "5";
 let tipBoxActive = "l"
 
 // Resources
@@ -57,8 +59,8 @@ const levels = [
 ...c.b........h.j...
 ....v..........m....
 ....................
-.......r....0.......
-...9...8....7...6...
+....................
+..9..08..7y..6a..5..
 ....................
 ....................
 ......j.............
@@ -168,6 +170,91 @@ wwww.wwwww.wwwwwwwww
 ....r..........r...w
 wwwwwwwwwwwwwwwwwwww`, // Level 6 || Map 2: Level 3
   map`
+wwwwwwwwwwwwwwwwwwww
+w...r..........r....
+wwwwww.wwwwww.wwwwww
+w.0w............w0.w
+w..u...r....r......w
+w3.w............w.0w
+wwwwwwwww..wwwwwwwww
+w..............r....
+w...r...............
+wwww.wwwwwwwwww.wwww
+w......w0000w....00w
+w0.....r....r.....0w
+w00....w....w......w
+www.wwwwwwwwwwww.www
+w...r..........r....
+wwwwwwwwwwwwwwwwwwww`, // Level 7 || Map 3: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+....r..........r...o
+wwwwwwwww..wwwwwwwww
+w.w0..0w....w0000w0w
+w.r....r....r....r.w
+w2w.0..w....w....w0w
+wwwwwwwww..wwwwwwwww
+...............r...w
+....r..............w
+wwwwwwwww..wwwwwwwww
+w.......w..w00...0aw
+w.r...r....i.0.0.0.w
+w.......w..w...0...w
+wwwwwwwww..wwwwwwwww
+....r..........r...w
+wwwwwwwwwwwwwwwwwwww`, // Level 8 || Map 3: Level 2
+  map`
+wwwwwwwwwwwwwwwwwwww
+w........r........sw
+wwwwwwwww.wwwwwwwwww
+w...w...w.u.......3w
+w.w.w.w.w.wwwwwwwwww
+w.w.w.w.w....0...1.w
+w.w.w.w.w..0...0...w
+w.w.w.w.wiwww.wwwwww
+w.w.w0w.....w....w.o
+w.w.wwwwwwwww.ww.w.w
+w.w.w.........w..w.w
+w.w.wwwwwwwwwww.ww.w
+w.w..............w.w
+w.wwwwwwwwwwwwwwww.w
+w..................w
+wwwwwwwwwwwwwwwwwwww`, // Level 9 || Map 4: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w00...00w..w00...00w
+w0.....0w..w0.....0w
+w..020..u......0...w
+w..000..w..w..0r0..w
+w0.....0w..w0.....0w
+w00...00w..w00...00w
+wwwwwwwww..wwwwwwwww
+w..r...r....r...r...
+wwwwwwwww..wwwwwwwww
+w0000000w..w.......w
+w...0...w..w.....r.w
+w.0.3.0.w..w.......w
+w.0...0.i....r.....w
+w0000000w..w.......w
+wwwwwwwwwwwwwwwwwwww`, // Level 10 || Map 5: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w...r..........r...w
+wwwwwww..wwwwwwww..w
+w...............w..w
+w.r.......r.....wr.w
+w.....r.......r.w..w
+w...............w..w
+wwwwwwwwwwwwwwwww..w
+...r...r....r...r..w
+wwwwwwwwwwwwwwwww..w
+w00..w....w.....w..w
+w0.............1wr.w
+w....w....w...00w..w
+wwwwwww..wwwwwwww..w
+w...r..........r...o
+wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
+  map`
 ....................
 ....................
 ....................
@@ -187,7 +274,7 @@ wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
 ]
 
 // Active Sprites
-const buttonLGlyph = bitmap`
+const buttonLSprite = bitmap`
 ................
 ................
 ................
@@ -206,7 +293,7 @@ const buttonLGlyph = bitmap`
 ................`;
 
 // Inactive Sprites
-const buttonWInactiveGlyph = bitmap`
+const buttonWInactiveSprite = bitmap`
 ................
 .......11.......
 ......1111......
@@ -223,7 +310,7 @@ const buttonWInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonAInactiveGlyph = bitmap`
+const buttonAInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -240,7 +327,7 @@ const buttonAInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonSInactiveGlyph = bitmap`
+const buttonSInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -257,7 +344,7 @@ const buttonSInactiveGlyph = bitmap`
 ......1111......
 .......11.......
 ................`;
-const buttonDInactiveGlyph = bitmap`
+const buttonDInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -274,7 +361,7 @@ const buttonDInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonIInactiveGlyph = bitmap`
+const buttonIInactiveSprite = bitmap`
 ................
 .......11.......
 ......1111......
@@ -291,7 +378,7 @@ const buttonIInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonJInactiveGlyph = bitmap`
+const buttonJInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -308,7 +395,7 @@ const buttonJInactiveGlyph = bitmap`
 ................
 ................
 ................`;
-const buttonKInactiveGlyph = bitmap`
+const buttonKInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -325,7 +412,7 @@ const buttonKInactiveGlyph = bitmap`
 ......1111......
 .......11.......
 ................`;
-const buttonLInactiveGlyph = bitmap`
+const buttonLInactiveSprite = bitmap`
 ................
 ................
 ................
@@ -567,7 +654,7 @@ const playerWithKeyThreeSprite = bitmap`
 ....11011011....
 ...1000110001...
 ....111..111....`;
-const keyOneCoord = bitmap`
+const keyOneSprite = bitmap`
 ................
 ................
 ................
@@ -584,7 +671,7 @@ const keyOneCoord = bitmap`
 ................
 ................
 ................`;
-const keyTwoCoord = bitmap`
+const keyTwoSprite = bitmap`
 ................
 ................
 ................
@@ -601,7 +688,7 @@ const keyTwoCoord = bitmap`
 ................
 ................
 ................`;
-const keyThreeCoord = bitmap`
+const keyThreeSprite = bitmap`
 ................
 ................
 ................
@@ -791,15 +878,18 @@ const boxThreeHighlightSprite = bitmap`
 
 // Menu Sounds
 const errorSFX = tune`
-60: C4-60,
-60: C4-60,
+60: C4^60,
+60: C4~60,
 60,
-60: C4-60,
-60: C4-60,
+60: C4^60,
+60: C4~60,
 1620`;
 const menuSFX = tune`
-500: C4^500 + E4^500,
-15500`;
+333.3333333333333: C4~333.3333333333333,
+10333.333333333332`;
+const clickSFX = tune`
+60: C4~60 + D4~60,
+1860`;
 
 // Game Sounds
 const keyFoundSFX = tune`
@@ -914,17 +1004,21 @@ let tipOneGuide = `Look across levels
 to find the key
 for the doors`
 
-let tipTwoGuide = `Lost?
+let tipTwoGuide = `Checking a box
+scans left, right,
+up and down.`
+
+let tipThreeGuide = `Lost?
 Use the   button
 to see farther
 around the player`
 
-let tipThreeGuide = `Stuck?
+let tipFourGuide = `Stuck?
 Use the   button
 to cycle through
 the keys you need`
 
-let tipFourGuide = `Try to complete
+let tipFiveGuide = `Try to complete
 the game without
 these assists ;)`
 
@@ -956,8 +1050,9 @@ using assists :O`;
 let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // Used to keep track of the default solid blocks
 let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
 let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
-let keyDelay = 3000; // Used to set the delay in key found text staying on screen and character freeze
-let textHeightOffset = 3; // Used to set which height the toast texts appear
+let toastDelay = 3000; // Used to set the delay for text that appears when a key is found or door is unlocked, and how long the player is paused
+let shortToastDelay = 1500; // Used to set the delay for text that appears when no key is found or door is locked, and how long the player is paused
+let textHeightOffset = 4; // Used to set which height the toast texts appear
 let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
 
 // Background Game States
@@ -1116,9 +1211,9 @@ function mainMenu() {
   setBackground(background);
   pointerChange(); // Trigger pointer spawning in advance (Rather than wait for interval)
 
-  addText(titleText, {x: 5, y: 1, color: color`2`});
-  addText(mainMenuOptions, {x: 3, y: 7, color: color`2`});
-  addText(currentLevelText, {x: 2, y: 15, color: color`1`});
+  addText(titleText, { x: 5, y: 1, color: color`2` });
+  addText(mainMenuOptions, { x: 3, y: 7, color: color`2` });
+  addText(currentLevelText, { x: 2, y: 15, color: color`1` });
 }
 
 // Sets up the guide
@@ -1161,37 +1256,39 @@ function pointerChange() {
 
 // Handles pointer selection in guide on-demand
 function pointerUpdate() {
-  clearTile(9, 12); // Resets the button glyph spawned by tip guide 2 & 3
+  clearTile(9, 12); // Resets the button Sprite spawned by tip guide 2 & 3
   if (pointerOption == 1) {
     if (getTile(6, 12) !== undefined) {
       clearTile(6, 12);
     }
-    updateGlyph(buttonW);
+    updateSprite(buttonW);
   } else if (pointerOption == 2) {
-    updateGlyph(buttonA);
+    updateSprite(buttonA);
   } else if (pointerOption == 3) {
-    updateGlyph(buttonS);
+    updateSprite(buttonS);
   } else if (pointerOption == 4) {
-    updateGlyph(buttonD);
+    updateSprite(buttonD);
   } else if (pointerOption == 5) {
-    updateGlyph(buttonI);
+    updateSprite(buttonI);
   } else if (pointerOption == 6) {
-    updateGlyph(buttonJ);
+    updateSprite(buttonJ);
   } else if (pointerOption == 7) {
-    updateGlyph(buttonK);
+    updateSprite(buttonK);
   } else if (pointerOption == 8) {
-    updateGlyph(buttonL);
+    updateSprite(buttonL);
   } else if (pointerOption == 9) {
-    updateGlyph(tipBoxOne);
+    updateSprite(tipBoxOne);
   } else if (pointerOption == 10) {
-    updateGlyph(tipBoxTwo);
+    updateSprite(tipBoxTwo);
   } else if (pointerOption == 11) {
-    updateGlyph(tipBoxThree);
+    updateSprite(tipBoxThree);
   } else if (pointerOption == 12) {
-    updateGlyph(tipBoxFour);
+    updateSprite(tipBoxFour);
+  } else if (pointerOption == 13) {
+    updateSprite(tipBoxFive);
   } else {
     pointerOption = 0;
-    updateGlyph();
+    updateSprite();
   }
   // Change back button color
   if (pointerOption == 0) {
@@ -1216,7 +1313,7 @@ function pointerDown() {
       pingError = true;
     }
   } else if (menuMode == 2) {
-    if (pointerOption < 12) {
+    if (pointerOption < 13) {
       pointerOption++;
       pointerUpdate();
       playTune(menuSFX);
@@ -1257,8 +1354,6 @@ function pointerBack() {
       pointerY -= 3;
       pointerOption = 0;
       pointerChange();
-    } else {
-      pingError = true;
     }
   } else if (menuMode == 2) {
     if (pointerOption > 0) {
@@ -1279,9 +1374,11 @@ function pointerContinue(triggered) {
       }
     } else if (pointerOption == 0) {
       // Start the Game
+      playTune(clickSFX);
       initializeGame();
     } else if (pointerOption == 1) {
       // Go to Guide
+      playTune(clickSFX);
       pointerOption = 0; // Return to first option
       guideScreen();
     }
@@ -1290,26 +1387,29 @@ function pointerContinue(triggered) {
     if (triggered == "k") {
       // Check if triggered by back button
       if (pointerOption == 0) {
+        playTune(clickSFX);
         mainMenu();
       }
     } else if (pointerOption == 0) {
+      playTune(clickSFX);
       pointerOption = 0; // Return to first option
       mainMenu();
     } else if (pointerOption > 0) {
+      playTune(clickSFX);
       guideText();
     }
   }
 }
 
 // Update current selected item Sprite to highlight in the guid
-function updateGlyph(activeOption) {
+function updateSprite(activeOption) {
   if (pointerOption == 0) {
     buttonActive = "g"; // Reset buttonActive and activeOption when switching back
     tipBoxActive = "l"; // Reset tipBoxActive and activeOption when switching back
   } else if (pointerOption > 0 && pointerOption < 9) {
     tipBoxActive = "l"; // Reset tipBoxActive and activeOption when switching back
     buttonActive = activeOption;
-  } else if (pointerOption > 8 && pointerOption < 13) {
+  } else if (pointerOption > 8 && pointerOption < 14) {
     buttonActive = "g"; // Reset buttonActive and activeOption when switching back
     tipBoxActive = activeOption;
   }
@@ -1319,42 +1419,46 @@ function updateGlyph(activeOption) {
 function guideText() {
   if (pointerOption == 1) {
     addBack(); // Clears text and rewrites the back button
-    addText(upLGuide, { x: 1, y: 12, color: color`2`});
+    addText(upLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 2) {
     addBack();
-    addText(leftLGuide, { x: 1, y: 12, color: color`2`});
+    addText(leftLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 3) {
     addBack();
-    addText(downLGuide, { x: 1, y: 12, color: color`2`});
+    addText(downLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 4) {
     addBack();
-    addText(rightLGuide, { x: 1, y: 12, color: color`2`});
+    addText(rightLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 5) {
     addBack();
-    addText(upRGuide, { x: 1, y: 12, color: color`2`});
+    addText(upRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 6) {
     addBack();
-    addText(leftRGuide, { x: 1, y: 12, color: color`2`});
+    addText(leftRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 7) {
     addBack();
-    addText(downRGuide, { x: 1, y: 12, color: color`2`});
+    addText(downRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 8) {
     addBack();
-    addText(rightRGuide, { x: 1, y: 12, color: color`2`});
+    addText(rightRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 9) {
     addBack();
-    addText(tipOneGuide, { x: 1, y: 12, color: color`2`});
+    addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 10) {
     addBack();
-    addSprite(9, 12, buttonI);
-    addText(tipTwoGuide, { x: 1, y: 11, color: color`2`});
+    addText(tipTwoGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 11) {
     addBack();
-    addSprite(9, 12, buttonK);
-    addText(tipThreeGuide, { x: 1, y: 11, color: color`2`});
+    addSprite(9, 12, buttonI);
+    addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 12) {
     addBack();
-    addText(tipFourGuide, { x: 1, y: 12, color: color`2`});
+    addSprite(9, 12, buttonK);
+    addText(tipFourGuide, { x: 1, y: 11, color: color`2` });
+  } else if (pointerOption == 13) {
+    addBack();
+    addSprite(9, 12, buttonI);
+    addText(tipFiveGuide, { x: 1, y: 12, color: color`2` });
   }
 }
 
@@ -1427,7 +1531,7 @@ function grabKey() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2;
@@ -1436,7 +1540,7 @@ function grabKey() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3;
@@ -1445,7 +1549,7 @@ function grabKey() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   }
 }
 
@@ -1469,7 +1573,7 @@ function grabBox() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
     keyFound = true
@@ -1477,7 +1581,7 @@ function grabBox() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
     keyFound = true
@@ -1485,12 +1589,12 @@ function grabBox() {
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, keyDelay);
+    setTimeout(toastTextClear, toastDelay);
   } else if (boxFound) {
     gameState = "pause";
     playTune(keyFoundSFX);
     addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` });
-    setTimeout(toastTextClear, keyDelay / 2);
+    setTimeout(toastTextClear, shortToastDelay);
   }
 }
 
@@ -1518,7 +1622,7 @@ function unlockDoor() {
       gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-      setTimeout(toastTextClear, keyDelay);
+      setTimeout(toastTextClear, shortToastDelay);
     }
   } else if (doorTwoFound) {
     if (currentKey == 2) {
@@ -1532,7 +1636,7 @@ function unlockDoor() {
       gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
       addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-      setTimeout(toastTextClear, keyDelay);
+      setTimeout(toastTextClear, shortToastDelay);
     }
   } else if (doorThreeFound) {
     if (currentKey == 3) {
@@ -1546,7 +1650,7 @@ function unlockDoor() {
       gameState = "pause";
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-      setTimeout(toastTextClear, keyDelay);
+      setTimeout(toastTextClear, shortToastDelay);
     }
   }
 }
@@ -1587,7 +1691,7 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-    if (leftWall && lastLevel < level) {
+    if (leftWall && lastLevel < level && move == "wall") {
       if (leftWall.type == wall) {
         currentKey = 0 // Make sure the player does not bring over a key
         solidSprites = defaultSolids;
@@ -1698,7 +1802,7 @@ function endScreen() {
   setMap(levels[level]);
   addSprite(0, 14, player);
   const playback = playTune(endSong, Infinity);
-  
+
   // Body
   setTimeout(moveRight, 500);
   setTimeout(moveRight, 1000);
@@ -1709,24 +1813,24 @@ function endScreen() {
   setTimeout(moveRight, 3500);
   setTimeout(moveRight, 4000);
 
-  addText(titleText, {x: 5, y: 0, color: color`2`});
+  addText(titleText, { x: 5, y: 0, color: color`2` });
 
   setTimeout(() => {
     clearText();
-    addText(titleText, {x: 5, y: 0, color: color`1`});
-    addText(farewellText, {x: 5, y: 6, color: color`2`});
+    addText(titleText, { x: 5, y: 0, color: color`1` });
+    addText(farewellText, { x: 5, y: 6, color: color`2` });
   }, 5000);
 
   if (usedAssist != true) {
     setTimeout(() => {
       clearText();
-      addText(titleText, {x: 5, y: 0, color: color`1`});
-      addText(farewellText, {x: 5, y: 4, color: color`1`});
-      addText(noAssistText, {x: 2, y: 7, color: color`6`});
+      addText(titleText, { x: 5, y: 0, color: color`1` });
+      addText(farewellText, { x: 5, y: 4, color: color`1` });
+      addText(noAssistText, { x: 2, y: 7, color: color`6` });
       playTune(dingSFX);
     }, 8000);
   }
-  
+
   // Exit
   setTimeout(() => {
     playback.end();
@@ -1755,18 +1859,19 @@ function setSprites() {
         [lightPost, lightPostSprite],
         [lightLantern, lightLanternSprite],
         [arrow, arrowSprite],
-        [buttonL, buttonLGlyph],
+        [buttonL, buttonLSprite],
         // Game Sprites (Just to make map making easier)
         [tipBoxOne, tipBoxSprite],
         [tipBoxTwo, tipBoxSprite],
         [tipBoxThree, tipBoxSprite],
         [tipBoxFour, tipBoxSprite],
+        [tipBoxFive, tipBoxSprite],
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneCoord],
-        [keyTwo, keyTwoCoord],
-        [keyThree, keyThreeCoord],
+        [keyOne, keyOneSprite],
+        [keyTwo, keyTwoSprite],
+        [keyThree, keyThreeSprite],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
@@ -1779,21 +1884,23 @@ function setSprites() {
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
-        [buttonW, buttonWInactiveGlyph],
-        [buttonA, buttonAInactiveGlyph],
-        [buttonS, buttonSInactiveGlyph],
-        [buttonD, buttonDInactiveGlyph],
-        [buttonI, buttonIInactiveGlyph],
-        [buttonJ, buttonJInactiveGlyph],
-        [buttonK, buttonKInactiveGlyph],
-        [buttonL, buttonLInactiveGlyph],
+        [buttonW, buttonWInactiveSprite],
+        [buttonA, buttonAInactiveSprite],
+        [buttonS, buttonSInactiveSprite],
+        [buttonD, buttonDInactiveSprite],
+        [buttonI, buttonIInactiveSprite],
+        [buttonJ, buttonJInactiveSprite],
+        [buttonK, buttonKInactiveSprite],
+        [buttonL, buttonLInactiveSprite],
+        [buttonActive, buttonHighlightSprite],
         [tipBoxOne, tipBoxSprite],
         [tipBoxTwo, tipBoxSprite],
         [tipBoxThree, tipBoxSprite],
         [tipBoxFour, tipBoxSprite],
+        [tipBoxFive, tipBoxSprite],
         [tipBoxActive, tipHighlightSprite],
-        [buttonActive, buttonHighlightSprite],
-        [hangingLantern, hangingLanternSprite],
+        [player, currentPlayer],
+        [keyOne, keyOneSprite],
         [box, boxSprite],
       );
     }
@@ -1804,9 +1911,9 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneCoord],
-      [keyTwo, keyTwoCoord],
-      [keyThree, keyThreeCoord],
+      [keyOne, keyOneSprite],
+      [keyTwo, keyTwoSprite],
+      [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
       [doorThree, doorThreeSprite],
@@ -1823,9 +1930,9 @@ function setSprites() {
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneCoord],
-        [keyTwo, keyTwoCoord],
-        [keyThree, keyThreeCoord],
+        [keyOne, keyOneSprite],
+        [keyTwo, keyTwoSprite],
+        [keyThree, keyThreeSprite],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
@@ -1841,9 +1948,9 @@ function setSprites() {
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
-        [keyOne, keyOneCoord],
-        [keyTwo, keyTwoCoord],
-        [keyThree, keyThreeCoord],
+        [keyOne, keyOneSprite],
+        [keyTwo, keyTwoSprite],
+        [keyThree, keyThreeSprite],
         [doorOne, doorOneSprite],
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
@@ -1862,9 +1969,9 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneCoord],
-      [keyTwo, keyTwoCoord],
-      [keyThree, keyThreeCoord],
+      [keyOne, keyOneSprite],
+      [keyTwo, keyTwoSprite],
+      [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
       [doorThree, doorThreeSprite],

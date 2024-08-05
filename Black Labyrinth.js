@@ -255,6 +255,24 @@ wwwwwww..wwwwwwww..w
 w...r..........r...o
 wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
   map`
+wwwwwwwwwwwwwwwwwwww
+w02000000ww00000000w
+w0r......ww......r0w
+w0.wwwwwuwwiwwwww.0w
+w0.w000..00..000w.0w
+w0.w0...0000...0w.3w
+w0.w00.00..00.00w.0w
+wwww0.....00...0wwww
+w..w0...0......0w..w
+w..w00.000.00.00w..w
+w..w0...0..0...0w..w
+w..w000......000w..w
+w..wwwwww..wwwwww..w
+w.r..............r.w
+w..................o
+wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 1
+  
+  map`
 ....................
 ....................
 ....................
@@ -899,7 +917,7 @@ const keyFoundSFX = tune`
 50: G5^50,
 1400`;
 const stepSFX = tune`
-100: C4~100 + D4^100,
+100: C4~100,
 3100`;
 const unlockSFX = tune`
 100: D4-100,
@@ -922,6 +940,94 @@ const dingSFX = tune`
 3000`;
 
 // Music
+const gameOneStem = tune`
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300,
+300: C4~300,
+300`;
+const gameTwoStem = tune`
+300,
+300: B4/300,
+300: F5^300,
+900,
+300: E4^300,
+600,
+300: B4/300,
+300: F5^300,
+300: F5^300,
+600,
+300: E4^300,
+600,
+300: B4/300,
+300: F5^300,
+900,
+300: E4^300,
+600,
+300: B4/300,
+300: F5^300,
+300: F5^300,
+600,
+300: E4^300,
+300`;
+const gameThreeStem = tune`
+600,
+300: B4~300,
+900,
+300: E4~300 + B4~300,
+900,
+300: B4~300,
+300: B4~300,
+600,
+300: E4~300 + B4~300,
+900,
+300: B4~300,
+900,
+300: E4~300 + B4~300,
+900,
+300: B4~300,
+300: B4~300,
+600,
+300: E4~300 + B4~300,
+300`;
+const gameFourStem = tune`
+300: E4^300,
+1500,
+300: D4^300,
+300: E4^300,
+2400,
+300: E4^300,
+1500,
+300: D4^300,
+300: E4^300,
+2400`;
 const endSong = tune`
 250: D5^250,
 250: D5^250,
@@ -1056,6 +1162,10 @@ let textHeightOffset = 4; // Used to set which height the toast texts appear
 let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
 
 // Background Game States
+let stemOne; // Used to control playback of game stem one (music)
+let stemTwo; // Used to control playback of game stem one (music)
+let stemThree; // Used to control playback of game stem one (music)
+let stemFour; // Used to control playback of game stem one (music)
 let widthX; // Used (during spawn) to get actual map width
 let gameState; // menu for Main Menu; game for In-game; pause for etc; end for End Screen
 let menuMode = 1; // 1 for Main Menu; 2 for Guide
@@ -1469,6 +1579,7 @@ function initializeGame() {
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
   // level = 6
+  playMusic("game");
   spawn(); // Start Game
 }
 
@@ -1980,6 +2091,31 @@ function setSprites() {
       [boxKeyTwo, boxSprite],
       [boxKeyThree, boxSprite],
     );
+  }
+}
+
+// Music Engine
+function playMusic(mode) {
+  if (mode == "game") {
+    stemOne = playTune(gameOneStem, Infinity)
+    setTimeout(() => {
+      stemTwo = playTune(gameTwoStem, Infinity)
+    }, 2400);
+    setTimeout(() => {
+      stemThree = playTune(gameThreeStem, Infinity)
+    }, 4800);
+    setTimeout(() => {
+      stemTwo.end()
+      stemThree.end()
+      stemThree = playTune(gameFourStem, Infinity)
+    }, 12000);
+    setTimeout(() => {
+      stemThree.end();
+      stemTwo = playTune(gameTwoStem, Infinity)
+    }, 26400);
+    setTimeout(() => {
+      stemThree = playTune(gameThreeStem, Infinity)
+    }, 28800);
   }
 }
 

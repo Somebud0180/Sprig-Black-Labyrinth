@@ -26,6 +26,10 @@ const box = "0";
 const boxKeyOne = "1";
 const boxKeyTwo = "2";
 const boxKeyThree = "3";
+const tipBoxOne = "9";
+const tipBoxTwo = "8";
+const tipBoxThree = "7";
+const tipBoxFour = "6";
 
 
 // Main Menu Bitmaps
@@ -36,9 +40,10 @@ const buttonS = "v";
 const buttonD = "b";
 const buttonI = "n";
 const buttonK = "m";
-const buttonJ = "j";
-const buttonL = "k";
-let buttonActive = "l";
+const buttonJ = "h";
+const buttonL = "j";
+let buttonActive = "k";
+let tipBoxActive = "l"
 
 // Resources
 // Map
@@ -49,14 +54,14 @@ const levels = [
 ....................
 ....................
 ....x..........n....
-...c.b........j.k...
+...c.b........h.j...
 ....v..........m....
 ....................
+.......r....0.......
+...9...8....7...6...
 ....................
 ....................
-....................
-....................
-......k.............
+......j.............
 ....................
 ....................
 ....................`, // Level 0 || Guide
@@ -82,8 +87,9 @@ wwwwwwwwwwwwwwwwwwww
 w...................
 www.wwwwwwww..wwwwww
 w.....w............w
-w.....w.........r..w
-w.....w..r.........w
+w.....w..r......r..w
+w.....w............w
+w.....w..r......r..w
 wwwwwww............w
 w.......wwwwwwwwwwww
 w.......w..........w
@@ -98,10 +104,11 @@ wwwwwwwwwwwwwwwwwwww
 ...................o
 wwwwwwww....wwwwwwww
 w...w..........w...w
-ww.ww.r......r.w.www
-w..............w...w
-ww.ww...r..r...w.www
-w...w..........w..dw
+ww.ww..........w.www
+w...w.r......r.w...w
+w..............w.www
+ww.ww...r..r...w..dw
+w...w..........w.www
 ww.ww...r..r...u...w
 ws..w..........w...w
 ww.ww.r......r.w.www
@@ -116,6 +123,7 @@ wwww..wwwwwwwwwwwwww
 w......w.....w.....w
 w......w.....w.....w
 w............w..d..w
+w......w.....w.....w
 w......w.....w.....w
 w......wwwwwwwwwww.w
 w.wwwwww........u..w
@@ -138,6 +146,7 @@ www.wwwwwwwww.wwwwww
 w..................w
 w..................w
 w..................w
+w..................w
 wwwwwwwww.wwwwwwwwww
 ....r..........r....
 wwwwwwwwwwwwwwwwwwww`, // Level 5 || Map 2: Level 2
@@ -153,11 +162,13 @@ w..w.....wwwww.www.w
 ww.w.wwwww.........w
 w..w.......wwwwwww.w
 w.wwww.wwwww...w...w
-w....w.....w.w....ww
+w.w..w...w.w.w.w.w.w
+w....w.w...w.w...w.w
 wwww.wwwww.wwwwwwwww
 ....r..........r...w
 wwwwwwwwwwwwwwwwwwww`, // Level 6 || Map 2: Level 3
   map`
+....................
 ....................
 ....................
 ....................
@@ -331,6 +342,23 @@ const buttonLInactiveGlyph = bitmap`
 ................
 ................
 ................`;
+const tipBoxSprite = bitmap`
+..LLLLLLLLLLLL..
+.LLLLLLLLLLLLLL.
+LLLLL111111LLLLL
+LLLL11111111LLLL
+LLLL111LL111LLLL
+LLLLL11LL111LLLL
+LLLLLLLLL111LLLL
+LLLLLLLL111LLLLL
+LLLLLLL1111LLLLL
+LLLLLLL111LLLLLL
+LLLLLLLLLLLLLLLL
+LLLLLLL111LLLLLL
+LLLLLLL111LLLLLL
+LLLLLLL111LLLLLL
+.LLLLLLLLLLLLLL.
+..LLLLLLLLLLLL..`;
 
 // Highlight Sprites
 const buttonHighlightSprite = bitmap`
@@ -350,6 +378,23 @@ const buttonHighlightSprite = bitmap`
 ................
 ................
 ................`;
+const tipHighlightSprite = bitmap`
+..222222222222..
+.22111111111122.
+2211122222211122
+2111222222221112
+2111222112221112
+2111122112221112
+2111111112221112
+2111111122211112
+2111111222211112
+2111111222111112
+2111111111111112
+2111111222111112
+2111111222111112
+2211111222111122
+.22111111111122.
+..222222222222..`;
 const arrowSprite = bitmap`
 ........22......
 ........222.....
@@ -781,7 +826,43 @@ const flashSFX = tune`
 37.5: B5^37.5,
 37.5: B5^37.5,
 1050`;
+const dingSFX = tune`
+100: B5/100 + A5/100,
+100: A5/100,
+3000`;
 
+// Music
+const endSong = tune`
+250: D5^250,
+250: D5^250,
+250,
+250: B4^250,
+250: C4~250,
+250: B4^250,
+250: C4~250,
+250: B4^250,
+250,
+250: D5^250,
+250: D5^250,
+250,
+250: B4^250,
+250,
+250: B4^250,
+250,
+250: B4^250,
+250,
+250: B4~250,
+250: C5~250,
+250: B4~250,
+250: C5~250,
+250,
+250: D5~250,
+250: D5~250,
+250: D5~250,
+250: G4~250,
+250: G4~250,
+250: G4~250,
+750`;
 
 // Main Menu Text
 let currentLevelText;
@@ -816,16 +897,36 @@ let downLGuide = `Moves player
 downward`;
 let rightLGuide = `Moves player to 
 the right`;
-let upRGuide = `Skips the level
+let upRGuide = `Flashes the map
 in-game`;
 let leftRGuide = `Returns to menu
-(Level and key
+(Progress
 is saved)`;
 let downRGuide = `Back button in
-the menu`;
+the menu, lazy key
+picker in game`;
 let rightRGuide = `Confirm menu
 selection, grabs 
 the key in-game`;
+
+// Tip Text
+let tipOneGuide = `Look across levels
+to find the key
+for the doors`
+
+let tipTwoGuide = `Lost?
+Use the   button
+to see farther
+around the player`
+
+let tipThreeGuide = `Stuck?
+Use the   button
+to cycle through
+the keys you need`
+
+let tipFourGuide = `Try to complete
+the game without
+these assists ;)`
 
 // Game Text
 let keyFoundText = `
@@ -847,8 +948,9 @@ Thanks for
  playing!`;
 
 let noAssistText = `
-  You finished the
-game without assists`;
+You finished the
+  game without
+using assists :O`;
 
 // Configurables
 let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // Used to keep track of the default solid blocks
@@ -912,7 +1014,7 @@ onInput("a", () => {
     pointerUp();
   } else if (gameState == "game") {
     if (getFirst(player).x == 0) {
-      // Check if at border and move to lasd map
+      // Check if at border and move to last map
       levelCheck("down");
     }
     if (getFirst(player)) {
@@ -1059,6 +1161,7 @@ function pointerChange() {
 
 // Handles pointer selection in guide on-demand
 function pointerUpdate() {
+  clearTile(9, 12); // Resets the button glyph spawned by tip guide 2 & 3
   if (pointerOption == 1) {
     if (getTile(6, 12) !== undefined) {
       clearTile(6, 12);
@@ -1078,6 +1181,14 @@ function pointerUpdate() {
     updateGlyph(buttonK);
   } else if (pointerOption == 8) {
     updateGlyph(buttonL);
+  } else if (pointerOption == 9) {
+    updateGlyph(tipBoxOne);
+  } else if (pointerOption == 10) {
+    updateGlyph(tipBoxTwo);
+  } else if (pointerOption == 11) {
+    updateGlyph(tipBoxThree);
+  } else if (pointerOption == 12) {
+    updateGlyph(tipBoxFour);
   } else {
     pointerOption = 0;
     updateGlyph();
@@ -1105,7 +1216,7 @@ function pointerDown() {
       pingError = true;
     }
   } else if (menuMode == 2) {
-    if (pointerOption < 8) {
+    if (pointerOption < 12) {
       pointerOption++;
       pointerUpdate();
       playTune(menuSFX);
@@ -1193,9 +1304,14 @@ function pointerContinue(triggered) {
 // Update current selected item Sprite to highlight in the guid
 function updateGlyph(activeOption) {
   if (pointerOption == 0) {
-    buttonActive = "g"; // Reset buttonActive and activeOption when switching from buttons to back
+    buttonActive = "g"; // Reset buttonActive and activeOption when switching back
+    tipBoxActive = "l"; // Reset tipBoxActive and activeOption when switching back
   } else if (pointerOption > 0 && pointerOption < 9) {
+    tipBoxActive = "l"; // Reset tipBoxActive and activeOption when switching back
     buttonActive = activeOption;
+  } else if (pointerOption > 8 && pointerOption < 13) {
+    buttonActive = "g"; // Reset buttonActive and activeOption when switching back
+    tipBoxActive = activeOption;
   }
   setSprites();
 }
@@ -1203,28 +1319,42 @@ function updateGlyph(activeOption) {
 function guideText() {
   if (pointerOption == 1) {
     addBack(); // Clears text and rewrites the back button
-    addText(upLGuide, { x: 1, y: 12, color: color`2` });
+    addText(upLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 2) {
     addBack();
-    addText(leftLGuide, { x: 1, y: 12, color: color`2` });
+    addText(leftLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 3) {
     addBack();
-    addText(downLGuide, { x: 1, y: 12, color: color`2` });
+    addText(downLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 4) {
     addBack();
-    addText(rightLGuide, { x: 1, y: 12, color: color`2` });
+    addText(rightLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 5) {
     addBack();
-    addText(upRGuide, { x: 1, y: 12, color: color`2` });
+    addText(upRGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 6) {
     addBack();
-    addText(leftRGuide, { x: 1, y: 12, color: color`2` });
+    addText(leftRGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 7) {
     addBack();
-    addText(downRGuide, { x: 1, y: 12, color: color`2` });
+    addText(downRGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 8) {
     addBack();
-    addText(rightRGuide, { x: 1, y: 12, color: color`2` });
+    addText(rightRGuide, { x: 1, y: 12, color: color`2`});
+  } else if (pointerOption == 9) {
+    addBack();
+    addText(tipOneGuide, { x: 1, y: 12, color: color`2`});
+  } else if (pointerOption == 10) {
+    addBack();
+    addSprite(9, 12, buttonI);
+    addText(tipTwoGuide, { x: 1, y: 11, color: color`2`});
+  } else if (pointerOption == 11) {
+    addBack();
+    addSprite(9, 12, buttonK);
+    addText(tipThreeGuide, { x: 1, y: 11, color: color`2`});
+  } else if (pointerOption == 12) {
+    addBack();
+    addText(tipFourGuide, { x: 1, y: 12, color: color`2`});
   }
 }
 
@@ -1291,8 +1421,8 @@ function grabKey() {
 
   if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
     // Player and key are on the same tile
-    currentKey = 1
-    keyFound = true
+    currentKey = 1;
+    keyFound = true;
     gameState = "pause"
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
@@ -1300,8 +1430,8 @@ function grabKey() {
     setTimeout(toastTextClear, keyDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
-    currentKey = 2
-    keyFound = true
+    currentKey = 2;
+    keyFound = true;
     gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
@@ -1309,8 +1439,8 @@ function grabKey() {
     setTimeout(toastTextClear, keyDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
-    currentKey = 3
-    keyFound = true
+    currentKey = 3;
+    keyFound = true;
     gameState = "pause";
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
@@ -1423,6 +1553,7 @@ function unlockDoor() {
 
 function toastTextClear() {
   clearText();
+  keyFound = false;
   gameState = "game"
   characterInit();
 }
@@ -1565,7 +1696,8 @@ function endScreen() {
   updateGameIntervals();
   setSprites();
   setMap(levels[level]);
-  addSprite(0, 13, player);
+  addSprite(0, 14, player);
+  const playback = playTune(endSong, Infinity);
   
   // Body
   setTimeout(moveRight, 500);
@@ -1586,24 +1718,25 @@ function endScreen() {
   }, 5000);
 
   if (usedAssist != true) {
-    console.log("No Assists!");
     setTimeout(() => {
       clearText();
       addText(titleText, {x: 5, y: 0, color: color`1`});
       addText(farewellText, {x: 5, y: 4, color: color`1`});
-      addText(noAssistText, {x: 0, y: 7, color: color`6`});
+      addText(noAssistText, {x: 2, y: 7, color: color`6`});
+      playTune(dingSFX);
     }, 8000);
   }
   
   // Exit
   setTimeout(() => {
-    level = 1
-    currentLevelVal = 1
-    spawnX = 1
-    spawnY = 1
-    solidSprites = defaultSolids
+    playback.end();
+    level = 1;
+    currentLevelVal = 1;
+    spawnX = 1;
+    spawnY = 1;
+    solidSprites = defaultSolids;
     mainMenu();
-  }, 12000);
+  }, 15000);
 }
 
 function moveRight() {
@@ -1624,6 +1757,10 @@ function setSprites() {
         [arrow, arrowSprite],
         [buttonL, buttonLGlyph],
         // Game Sprites (Just to make map making easier)
+        [tipBoxOne, tipBoxSprite],
+        [tipBoxTwo, tipBoxSprite],
+        [tipBoxThree, tipBoxSprite],
+        [tipBoxFour, tipBoxSprite],
         [fenceWall, fenceWallSprite],
         [hangingLantern, hangingLanternSprite],
         [player, currentPlayer],
@@ -1650,7 +1787,14 @@ function setSprites() {
         [buttonJ, buttonJInactiveGlyph],
         [buttonK, buttonKInactiveGlyph],
         [buttonL, buttonLInactiveGlyph],
+        [tipBoxOne, tipBoxSprite],
+        [tipBoxTwo, tipBoxSprite],
+        [tipBoxThree, tipBoxSprite],
+        [tipBoxFour, tipBoxSprite],
+        [tipBoxActive, tipHighlightSprite],
         [buttonActive, buttonHighlightSprite],
+        [hangingLantern, hangingLanternSprite],
+        [box, boxSprite],
       );
     }
   } else if (gameState == "game") {

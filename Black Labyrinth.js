@@ -956,19 +956,6 @@ const gameOneStem = tune`
 250: C4~250,
 250: D4~250`;
 const gameTwoStem = tune`
-1000: C4^1000,
-1000: D4^1000,
-2000,
-1000: D4^1000,
-1000: C4^1000,
-18000,
-1000: C4^1000,
-1000: D4^1000,
-2000,
-1000: D4^1000,
-1000: C4^1000,
-2000`;
-const gameThreeStem = tune`
 500: B4~500,
 500: B4~500,
 500: A4~500,
@@ -999,6 +986,37 @@ const gameThreeStem = tune`
 500: B4~500,
 500: B4~500,
 1000`;
+const gameThreeStem = tune`
+500: B4^500,
+500: B4^500,
+1000,
+500: B4^500,
+500: B4^500,
+1000,
+500: B4^500,
+500: B4^500,
+500: A4^500,
+500: C5^500,
+500: G4^500,
+500: D5^500,
+500: F4^500,
+500,
+500: B4^500,
+500: B4^500,
+500: A4^500,
+500: C5^500,
+500: G4^500,
+500: D5^500,
+500: F4^500,
+500,
+500: B4^500,
+500: B4^500,
+500: A4^500,
+500: C5^500,
+500: G4^500,
+500: D5^500,
+500: F4^500,
+500`;
 const gameFourStem = tune`
 250: E4^250,
 250,
@@ -1153,33 +1171,37 @@ You finished the
 using assists :O`;
 
 // Configurables
-let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // Used to keep track of the default solid blocks
-let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
-let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
-let toastDelay = 3000; // Used to set the delay for text that appears when a key is found or door is unlocked, and how long the player is paused
-let shortToastDelay = 1500; // Used to set the delay for text that appears when no key is found or door is locked, and how long the player is paused
-let textHeightOffset = 4; // Used to set which height the toast texts appear
-let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
+let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // List of solid blocks
+let lightRange = 3; // The default distance a light can reach, for displaySpritesInRange()
+let playerRange = 3; // The default distance the player can see, for displaySpritesInRange()
+let flashBrightness = 10; // How far the player can see when using mapFlash()
+let toastDelay = 3000; // How long a toast lasts (Used when a key is found or door is unlocked)
+let shortToastDelay = 1500; // How long a short toast lasts (Used when the player cant unlock a door or finds an empty box)
+let textHeightOffset = 4; // How high toast texts should appear
+
+// Music
+let stemOne; // Used to set playback of stem one
+let stemTwo; // Used to set playback of stem two
+let stemThree; // Used to set playback of stem three
+let stemFour; // Used to set playback of stem four
+let musicTimeouts = [0, 1, 2, 3, 4, 5, 6]; // Used to set the timeout of each phase
+
 
 // Background Game States
-let stemOne; // Used to control playback of game stem one (music)
-let stemTwo; // Used to control playback of game stem one (music)
-let stemThree; // Used to control playback of game stem one (music)
-let stemFour; // Used to control playback of game stem one (music)
-let widthX; // Used (during spawn) to get actual map width
-let gameState; // menu for Main Menu; game for In-game; pause for etc; end for End Screen
-let menuMode = 1; // 1 for Main Menu; 2 for Guide
-let pointerOption = 0;
-let currentPointer; // Check pointer functions
-let backButtonState = "2"; // 1 is Gray (unselected); 2 is White (selected)
-let pingError; // Used to ping error soundl (reduce error spam)
-let allSprites; // Used to track blocks inside a level
-let solidSprites = defaultSolids; //  Used to track which blocks are solid
-let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
-let keyFound; // Used to track if a key was found. Used to feature key while gameState paused, for setSprites()
-let textHeight; // Used to set which height the toast texts appear
-let flashingMap; // Used to track if the player pressed the map flash button, used to adjust player texture
-let usedAssist; // Used to track if the player ever used the assists (flash map and key magic)
+let widthX; // Stores actual map width (Stored on spawn)
+let gameState; // Stores the current game state (menu, game, pause, end) used for certain functions, such as updateGameIntervals()
+let menuMode = 1; // Stores the current screen (1: Main Menu, 2: Guide) used for certain functions, such as updateGameIntervals()
+let pointerOption = 0; // Stores which option is currently selected
+let currentPointer; // Stores which texture the pointer is using
+let backButtonState = "2"; // Stores the state of the back button in the guide (1: Inactive, 2: Active)
+let pingError; // Notifies errorPing() if an error occured (reduces error spam)
+let allSprites; // Stores all blocks inside a level
+let solidSprites = defaultSolids; //  Stores which blocks are currently solid
+let currentPlayerCoord; // Stores player's last position. Used in stepPing()
+let keyFound; // Stores if a key was found. Used to feature key while gameState paused, for setSprites()
+let textHeight; // Stores which height toast texts appear
+let flashingMap; // Stores if the player pressed the map flash button, used to adjust player texture
+let usedAssist; // Stores if the player ever used the assists (flash map and key magic)
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -1306,6 +1328,7 @@ function mainMenu() {
   menuMode = 1;
   pointerOption = 0;
   updateGameIntervals();
+  playMusic("menu");
 
   // Check for current level
   if (level != 0 && level < 2) {
@@ -1579,7 +1602,7 @@ function initializeGame() {
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
   // level = 6
-  playMusic("game");
+  playMusic("stop");
   spawn(); // Start Game
 }
 
@@ -2080,7 +2103,7 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneSprite],
+      [keyOne, keyOneSprite],l
       [keyTwo, keyTwoSprite],
       [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
@@ -2096,19 +2119,56 @@ function setSprites() {
 
 // Music Engine
 function playMusic(mode) {
-  if (mode == "game") {
-    stemOne = playTune(gameOneStem, Infinity)
-    setTimeout(() => {
-      // stemTwo = playTune(gameTwoStem, Infinity)
-    }, 8000);
-    setTimeout(() => {
-      stemThree = playTune(gameThreeStem, Infinity)
-    }, 16000);
-    setTimeout(() => {
-      // stemTwo.end();
-      stemThree.end();
-      stemFour = playTune(gameFourStem, Infinity)
-    }, 48000);
+  if (mode == "menu") {
+    if (stemOne == undefined || stemOne.isPlaying() == false) {
+      stemOne = playTune(gameOneStem, Infinity)
+      musicTimeouts[0] = setTimeout(() => {
+        stemTwo = playTune(gameTwoStem, Infinity)
+      }, 16000);
+      musicTimeouts[1] = setTimeout(() => {
+        stemThree = playTune(gameThreeStem, Infinity)
+      }, 28000);
+      musicTimeouts[2] = setTimeout(() => {
+        stemTwo.end();
+      }, 32000);
+      musicTimeouts[3] = setTimeout(() => {
+        stemOne.end();
+        stemFour = playTune(gameFourStem, Infinity)
+      }, 48000);
+      musicTimeouts[4] = setTimeout(() => {
+        stemThree.end();
+        stemFour.end();
+        stemOne = playTune(gameOneStem, Infinity)
+        stemTwo = playTune(gameTwoStem, Infinity)
+      }, 64000);
+      musicTimeouts[5] = setTimeout(() => {
+        stemTwo.end();
+      }, 80000);
+      musicTimeouts[6] = setTimeout(() => {
+        stemOne.end();
+      }, 88000);
+    }
+  } else if (mode == "stop") {
+    if (stemOne != undefined) {
+      stemOne.end();
+      // delete stemOne;
+    }
+    if (stemTwo != undefined) {
+      stemTwo.end()
+    }
+    if (stemThree != undefined) {
+      stemThree.end()
+    }
+    if (stemFour != undefined) {
+      stemFour.end()
+    }
+    for (let i = 0; i < musicTimeouts.length; i++) {
+      // Check if the timeout ID exists
+      if (musicTimeouts[i]) {
+        // Clear the timeout
+        clearTimeout(musicTimeouts[i]);
+      }
+    }
   }
 }
 

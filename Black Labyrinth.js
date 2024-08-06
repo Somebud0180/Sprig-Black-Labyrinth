@@ -2120,7 +2120,8 @@ function setSprites() {
 // Music Engine
 function playMusic(mode) {
   if (mode == "menu") {
-    if (stemOne == undefined || stemOne.isPlaying() == false) {
+    let isPlaying;
+    if (stemOne == undefined || stemOne.isPlaying == false && stemFour.isPlaying == false) {
       stemOne = playTune(gameOneStem, Infinity)
       musicTimeouts[0] = setTimeout(() => {
         stemTwo = playTune(gameTwoStem, Infinity)

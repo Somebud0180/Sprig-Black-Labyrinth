@@ -2,7 +2,7 @@
 First time? Check out the tutorial game:
 https://sprig.hackclub.com/gallery/getting_started
 
-@title: Dark Labyrinth
+@title: Black Labyrinth
 @author: 
 @tags: []
 @addedOn: 2024-00-00
@@ -26,8 +26,7 @@ const box = "0";
 const boxKeyOne = "1";
 const boxKeyTwo = "2";
 const boxKeyThree = "3";
-
-
+const muteIcon = "g"
 
 // Main Menu Bitmaps
 const arrow = "z";
@@ -69,7 +68,7 @@ const levels = [
 ....................`, // Level 0 || Guide
   map`
 ...wwwwwwwwwwwwww...
-...w............w...
+...w............w.g.
 ...w..........e.w...
 ...w..........q.w...
 ...w..........q.w...
@@ -289,6 +288,74 @@ w.wwwwwwwwwwwwwwwwww
 .....r.........r...w
 wwwwwwwwwwwwwwwwwwww`, // Level 13 || Map 6: Level 2
   map`
+wwwwwwwwwwwwwwwwwwww
+w..................w
+wwwwwwwww.wwwwwwwwww
+w0000000w.w..w...w.w
+w0......i.w.sw.w...w
+w0000000w.w....w.w.w
+wwwwwwwww.wwwwwwww.w
+w..................w
+wwwwwwuww.wwwwwwww.w
+w.......w.w...w....w
+w.00000.w.w.wa..w..w
+w...0...w.wwwwwwww.w
+w.00000.w.w........w
+w...0...w.wwwwwwwwww
+w0030000w..........o
+wwwwwwwwwwwwwwwwwwww`, // Level 14 || Map 7: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w.....w...w........u
+w.wwwww.w.wwwwww.w.w
+w.......w......w.www
+w.wwwwwwwwwwww.w...w
+w.......w....w.www.w
+wwwwwww.w.ww.w.w...w
+w.....w...w..w.w.www
+w.w.w.w.www.ww.w...w
+www.www.w.a..w.www.w
+w.......w....w.w...w
+w.wwwww.wwwwww.w.www
+w.....w............w
+wwwwwwwwwwwwwwwwww.w
+w..................w
+wwwwwwwwwwwwwwwwwwww`, // Level 15 || Map 8: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+.........w.....w..sw
+wwww.www...www.ww..w
+w....w.wwwww.w..ww.w
+w.wwww...w...w...w.w
+w.w....w.w.w.....w.w
+w.www.ww.w.www..ww.w
+w......w.w...wwww..w
+www.ww.w.w.w......ww
+w...w....w.wwwwwwwww
+w.w....w.w.w.......w
+w.ww.w.w.w...wwwww.w
+w..w.w.w.w.w.....w.w
+ww.www.wwwwwwwwwww.w
+w....w...........w.i
+wwwwwwwwwwwwwwwwwwww`, // Level 16 || Map 8: Level 2
+  map`
+wwwwwwwwwwwwwwwwwwww
+w...w.w............w
+w.w...w.wwwwww.www.w
+w.wwwww.w....w.w.w.w
+w...w...w..w.w.w.w.w
+www.ww.ww..w.w...w.w
+w...w...w..w.w.w.w.w
+w.www.www..w.w.w.w.w
+w...w..dw..w.wwwww.w
+ww.www.ww..w.......w
+w.......w..wwwwwwwww
+wwww.wwww..........w
+w.......w..........w
+ww.wwwwwwwwwwwwwww.w
+.................w.o
+wwwwwwwwwwwwwwwwwwww`, // Level 17 || Map 8: Level 3
+  map`
 ....................
 ....................
 ....................
@@ -313,10 +380,13 @@ const mapNames = [
   "The Labyrinth", // Map 2
   "Boxes Here", // Map 3
   "Going In Circles", // Map 4
-  "Storage Room" // Map 5
+  "Storage Room", // Map 5
+  "Logistics", // Map 6
+  "Dark Rooms", // Map 7
+  "Massive Maze", // Map 8
 ]
 
-// Active Sprites
+// Menu Sprites
 const buttonLSprite = bitmap`
 ................
 ................
@@ -334,8 +404,43 @@ const buttonLSprite = bitmap`
 ................
 ................
 ................`;
+const unmutedSprite = bitmap`
+................
+................
+.........22.....
+.........222....
+.........2......
+....22...2......
+...222.222......
+..2222.222......
+..2222..........
+...222....2222..
+....22....2..2..
+..........2..2..
+.........22.22..
+.........22.22..
+................
+................`;
+const mutedSprite = bitmap`
+................
+..............3.
+.........22..3..
+.........2223...
+.........203....
+....22...23.....
+...222.223......
+..2222.232......
+..2222.3........
+...2223...2222..
+....23....2..2..
+....3.....2..2..
+...3.....22.22..
+..3......22.22..
+.3..............
+................`;
 
-// Inactive Sprites
+
+// Guide Sprites
 const buttonWInactiveSprite = bitmap`
 ................
 .......11.......
@@ -1218,7 +1323,7 @@ using assists :O`;
 
 // Configurables
 let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // List of solid blocks
-let mapLevels = [2, 4, 7, 9, 10, 12]; // List of levels that are the beginning of a map
+let mapLevels = [2, 4, 7, 9, 10, 12, 14, 15]; // List of levels that are the beginning of a map
 let lightRange = 3; // The default distance a light can reach, for displaySpritesInRange()
 let playerRange = 3; // The default distance the player can see, for displaySpritesInRange()
 let flashBrightness = 10; // How far the player can see when using mapFlash()
@@ -1226,7 +1331,7 @@ let toastDelay = 3000; // How long a toast lasts (Used when a key is found or do
 let shortToastDelay = 1500; // How long a short toast lasts (Used when the player cant unlock a door or finds an empty box)
 let textHeightOffset = 4; // How high toast texts should appear
 let mapHeightOffset = 1; // How high map name toast texts should appear
-let musicMuted = false;
+let isMusicMuted = false;
 
 // Music
 let stemOne; // Used to set playback of stem one
@@ -1242,6 +1347,7 @@ let gameState; // Stores the current game state (menu, game, pause, end) used fo
 let menuMode = 1; // Stores the current screen (1: Main Menu, 2: Guide) used for certain functions, such as updateGameIntervals()
 let pointerOption = 0; // Stores which option is currently selected
 let currentPointer; // Stores which texture the pointer is using
+let currentMuteIcon = unmutedSprite; // Stores which texture the mute icon is using
 let backButtonState = "2"; // Stores the state of the back button in the guide (1: Inactive, 2: Active)
 let pingError; // Notifies errorPing() if an error occured (reduces error spam)
 let allSprites; // Stores all blocks inside a level
@@ -1346,12 +1452,14 @@ onInput("k", () => {
 
 onInput("j", () => {
   if (gameState == "menu") {
-    if (musicMuted) {
-      musicMuted = false;
+    if (isMusicMuted) {
+      isMusicMuted = false;
       musicPlayer("menu");
-    } else if (!musicMuted) {
-      musicMuted = true;
+      muteIconChange();
+    } else if (!isMusicMuted) {
+      isMusicMuted = true;
       musicPlayer("stop");
+      muteIconChange();
     }
   } else if (gameState == "game") {
     // Check if in-game, then save level and allow to open main menu
@@ -1444,6 +1552,17 @@ function pointerChange() {
       addSprite(pointerX, pointerY, arrow);
     }
     currentPointer = getTile(pointerX, pointerY)[0].type;
+  }
+}
+
+function muteIconChange() {
+  // Mute icon check
+  if (isMusicMuted) {
+    currentMuteIcon = mutedSprite;
+    setSprites();
+  } else if (!isMusicMuted) {
+    currentMuteIcon = unmutedSprite;
+    setSprites();
   }
 }
 
@@ -1876,7 +1995,7 @@ function nextMapCheck() {
   if (mapLevels.includes(level) && lastDisplayed != level) {
     gameState = "toast";
     updateGameIntervals()
-    addText(nextMapText(), {y: textHeight, color: color`2` });
+    addText(nextMapText(), { y: textHeight, color: color`2` });
     setTimeout(toastTextClear, toastDelay);
   }
 }
@@ -1885,11 +2004,11 @@ function nextMapText() {
   if (mapIndex < mapNames.length && level != lastDisplayed) {
     lastDisplayed = level
     return mapNames[mapIndex++];
-    
-    } else {
-      mapIndex = 0;
-      return mapNames[mapIndex++];
-    }
+
+  } else {
+    mapIndex = 0;
+    return mapNames[mapIndex++];
+  }
 }
 
 function levelCheck(move) {
@@ -1949,11 +2068,6 @@ function displaySpritesInRange() {
     addSprite(spriteX, spriteY, allSprite.type);
   }
 
-  // Define the range around the player
-  let i = 0
-
-  // Fix hanging lantern amount counter (stuck at 1)
-
   for (let allSprite of otherSprites) {
     let spriteX = allSprite.x;
     let spriteY = allSprite.y;
@@ -1975,7 +2089,7 @@ function displaySpritesInRange() {
     }
     if (getFirst(hangingLantern)) {
       let lanternAmount = getAll(hangingLantern).length
-      for (i = 0; i < lanternAmount; i++) {
+      for (let i = 0; i < lanternAmount; i++) {
         let lanternCoord = getAll(hangingLantern)[i];
         let lanternX = lanternCoord.x;
         let lanternY = lanternCoord.y;
@@ -2090,6 +2204,7 @@ function setSprites() {
         [lightLantern, lightLanternSprite],
         [arrow, arrowSprite],
         [buttonL, buttonLSprite],
+        [muteIcon, currentMuteIcon],
         // Game Sprites (Just to make map making easier)
         [tipBoxOne, tipBoxSprite],
         [tipBoxTwo, tipBoxSprite],
@@ -2214,7 +2329,7 @@ function setSprites() {
 
 // Music Engine
 function musicPlayer(mode) {
-  console.log(musicMuted)
+  console.log(isMusicMuted)
   if (mode == "startup") {
     // Initialize Stem and stop thes
     stemOne = playTune(stemDefault);
@@ -2225,7 +2340,7 @@ function musicPlayer(mode) {
     stemTwo.end();
     stemThree.end();
     stemFour.end();
-  } else if (mode == "menu" && !musicMuted) {
+  } else if (mode == "menu" && !isMusicMuted) {
     let isPlaying;
     if (!stemOne.isPlaying() && !stemFour.isPlaying()) {
       stemOne = playTune(menuOneStem, Infinity)

@@ -875,7 +875,7 @@ const boxThreeHighlightSprite = bitmap`
 .1CCCCCCCCCCCC1.
 .11111111111111.
 ................`;
- 
+
 // Menu Sounds
 const errorSFX = tune`
 60: C4^60,
@@ -922,7 +922,9 @@ const dingSFX = tune`
 3000`;
 
 // Music
-const gameOneStem = tune`
+const stemDefault = tune`
+16000`;
+const menuOneStem = tune`
 250: D4~250,
 250: E4~250,
 250: D4~250,
@@ -955,7 +957,7 @@ const gameOneStem = tune`
 250: D4~250,
 250: C4~250,
 250: D4~250`;
-const gameTwoStem = tune`
+const menuTwoStem = tune`
 500: B4~500,
 500: B4~500,
 500: A4~500,
@@ -986,7 +988,7 @@ const gameTwoStem = tune`
 500: B4~500,
 500: B4~500,
 1000`;
-const gameThreeStem = tune`
+const menuThreeStem = tune`
 500: B4^500,
 500: B4^500,
 1000,
@@ -1017,7 +1019,7 @@ const gameThreeStem = tune`
 500: D5^500,
 500: F4^500,
 500`;
-const gameFourStem = tune`
+const menuFourStem = tune`
 250: E4^250,
 250,
 250: D4^250,
@@ -1217,6 +1219,7 @@ let pointerChangeInterval;
 let flickerLightsInterval;
 
 // Start the main menu
+playMusic("startup")
 mainMenu();
 
 // Controls
@@ -2103,8 +2106,7 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneSprite],l
-      [keyTwo, keyTwoSprite],
+      [keyOne, keyOneSprite], l[keyTwo, keyTwoSprite],
       [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
@@ -2119,28 +2121,38 @@ function setSprites() {
 
 // Music Engine
 function playMusic(mode) {
-  if (mode == "menu") {
+  if (mode == "startup") {
+    // Initialize Stem and stop thes
+    stemOne = playTune(stemDefault);
+    stemTwo = playTune(stemDefault);
+    stemThree = playTune(stemDefault);
+    stemFour = playTune(stemDefault);
+    stemOne.end();
+    stemTwo.end();
+    stemThree.end();
+    stemFour.end();
+  } else if (mode == "menu") {
     let isPlaying;
-    if (stemOne == undefined || stemOne.isPlaying == false && stemFour.isPlaying == false) {
-      stemOne = playTune(gameOneStem, Infinity)
+    if (!stemOne.isPlaying() && !stemFour.isPlaying()) {
+      stemOne = playTune(menuOneStem, Infinity)
       musicTimeouts[0] = setTimeout(() => {
-        stemTwo = playTune(gameTwoStem, Infinity)
+        stemTwo = playTune(menuTwoStem, Infinity)
       }, 16000);
       musicTimeouts[1] = setTimeout(() => {
-        stemThree = playTune(gameThreeStem, Infinity)
+        stemThree = playTune(menuThreeStem, Infinity)
       }, 28000);
       musicTimeouts[2] = setTimeout(() => {
         stemTwo.end();
       }, 32000);
       musicTimeouts[3] = setTimeout(() => {
         stemOne.end();
-        stemFour = playTune(gameFourStem, Infinity)
+        stemFour = playTune(menuFourStem, Infinity)
       }, 48000);
       musicTimeouts[4] = setTimeout(() => {
         stemThree.end();
         stemFour.end();
-        stemOne = playTune(gameOneStem, Infinity)
-        stemTwo = playTune(gameTwoStem, Infinity)
+        stemOne = playTune(menuOneStem, Infinity)
+        stemTwo = playTune(menuTwoStem, Infinity)
       }, 64000);
       musicTimeouts[5] = setTimeout(() => {
         stemTwo.end();
@@ -2150,6 +2162,7 @@ function playMusic(mode) {
       }, 88000);
     }
   } else if (mode == "stop") {
+    console.log(stemOne.isPlaying())
     if (stemOne != undefined) {
       stemOne.end();
       // delete stemOne;

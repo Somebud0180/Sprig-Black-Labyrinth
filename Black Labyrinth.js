@@ -26,10 +26,10 @@ const box = "0";
 const boxKeyOne = "1";
 const boxKeyTwo = "2";
 const boxKeyThree = "3";
-const muteIcon = "g"
 
 // Main Menu Bitmaps
 const arrow = "z";
+const muteIcon = "g"
 const buttonW = "x";
 const buttonA = "c";
 const buttonS = "v";
@@ -356,6 +356,40 @@ ww.wwwwwwwwwwwwwww.w
 .................w.o
 wwwwwwwwwwwwwwwwwwww`, // Level 17 || Map 8: Level 3
   map`
+wwwwwwwwwwwwwwwwwwww
+w.....w...aw.......w
+w.ww.ww.wwww.wwwww.w
+w.w.....w..w.w.wsw.w
+w.wwwwwww..w.w.w.www
+w.w.....ww.w.w.w.w.w
+w.w.www..w.w.w.w.w.w
+w.w.w.wwww.w.w.w.w.w
+w.w.w.w....w.w.wuw.w
+w.w.w.w.wwww.w.w.w.w
+w.w.w.w.w..w.w.w.w.w
+w.w.w.w.w..w.w.w.w.w
+w..................w
+www..............www
+w..r...r....r...r..i
+wwwwwwwwwwwwwwwwwwww`, // Level 18 || Map 9: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w...w..w...........o
+w.w.ww.w.wwwwwwwwwww
+w.www..w...w...w...w
+w...w.www..ww.wwww.w
+www.w.w.w...w..w.d.w
+w.w.w...www.ww.w.www
+w.w.www.w...w..w...w
+w.w.w.w.w..w..wwww.w
+w.w.w.w.w..w.w...w.w
+w.w.w.w.w..w.w.www.w
+w.w.w.w.w..w.w.w.w.w
+w.w.w.w.w..w.w.w.w.w
+w.w.w.w.w..w.w.w.w.w
+...................w
+wwwwwwwwwwwwwwwwwwww`, // Level 19 || Map 9: Level 2
+  map`
 ....................
 ....................
 ....................
@@ -438,7 +472,6 @@ const mutedSprite = bitmap`
 ..3......22.22..
 .3..............
 ................`;
-
 
 // Guide Sprites
 const buttonWInactiveSprite = bitmap`
@@ -701,6 +734,23 @@ LLLLLLLLLLLLLLLL
 111L11111111L111
 111L11111111L111`;
 const playerSprite = bitmap`
+................
+................
+................
+.....111111.....
+....10000001....
+...1002222001...
+...1022222201...
+...1022222201...
+...1022222201...
+...1022222201...
+...1002222001...
+....10000001....
+.....111111.....
+................
+................
+................`;
+const playerSideSprite = bitmap`
 ......1111......
 .....100001.....
 ....10022001....
@@ -718,90 +768,90 @@ const playerSprite = bitmap`
 ...1000110001...
 ....111..111....`;
 const playerBrightSprite = bitmap`
-......6666......
-.....600006.....
-....60022006....
+................
+................
+................
+.....666666.....
+....60000006....
 ...6002222006...
 ...6022222206...
 ...6022222206...
 ...6022222206...
 ...6022222206...
-...6022222206...
 ...6002222006...
-....60022006....
-.....600006.....
-.....606606.....
-....66066066....
-...6000660006...
-....666..666....`;
+....60000006....
+.....666666.....
+................
+................
+................`;
 const playerWeakBrightSprite = bitmap`
-......FFFF......
-.....F0000F.....
-....F002200F....
+................
+................
+................
+.....FFFFFF.....
+....F000000F....
 ...F00222200F...
 ...F02222220F...
 ...F02222220F...
 ...F02222220F...
 ...F02222220F...
-...F02222220F...
 ...F00222200F...
-....F002200F....
-.....F0000F.....
-.....F0FF0F.....
-....FF0FF0FF....
-...F000FF000F...
-....FFF..FFF....`;
+....F000000F....
+.....FFFFFF.....
+................
+................
+................`;
 const playerWithKeyOneSprite = bitmap`
-......1111......
-.....100001.....
-....10022001....
-...1002222001...
-...1022222201...
-...10222222016..
-...1022222206.6.
-...10222222016..
-...102222220166.
-...10022220016..
-....10022001.66.
-.....100001.....
-.....101101.....
-....11011011....
-...1000110001...
-....111..111....`;
+................
+................
+................
+.....111111.....
+....10000001....
+...1002222001.6.
+...10222222016.6
+...1022222201.6.
+...1022222201.66
+...1022222201.6.
+...1002222001.66
+....10000001....
+.....111111.....
+................
+................
+................`;
 const playerWithKeyTwoSprite = bitmap`
-......1111......
-.....100001.....
-....10022001....
-...1002222001...
-...1022222201...
-...10222222017..
-...1022222207.7.
-...10222222017..
-...102222220177.
-...10022220017..
-....10022001.77.
-.....100001.....
-.....101101.....
-....11011011....
-...1000110001...
-....111..111....`;
+................
+................
+................
+.....111111.....
+....10000001....
+...1002222001.7.
+...10222222017.7
+...1022222201.7.
+...1022222201.77
+...1022222201.7.
+...1002222001.77
+....10000001....
+.....111111.....
+................
+................
+................`;
 const playerWithKeyThreeSprite = bitmap`
-......1111......
-.....100001.....
-....10022001....
-...1002222001...
-...1022222201...
-...10222222019..
-...1022222209.9.
-...10222222019..
-...102222220199.
-...10022220019..
-....10022001.99.
-.....100001.....
-.....101101.....
-....11011011....
-...1000110001...
-....111..111....`;
+................
+................
+................
+.....111111.....
+....10000001....
+...1002222001.9.
+...10222222019.9
+...1022222201.9.
+...1022222201.99
+...1022222201.9.
+...1002222001.99
+....10000001....
+.....111111.....
+................
+................
+................`;
 const keyOneSprite = bitmap`
 ................
 ................
@@ -1230,30 +1280,25 @@ const endSong = tune`
 
 // Main Menu Text
 let currentLevelText;
-
 let titleText = `
   Black
   
 Labyrinth`;
-
 let mainMenuOptions = `
   Start Game
   ----------
   
   Guide
   -----`;
-
 let backButton = `
 Back
 ----`;
-
 // Guide Text
 let menuGuide = `Press   
-
 to activate`;
 
 // Controls Text
-let upLGuide = `Moves player 
+let upLGuide = `Moves player
 upward`;
 let leftLGuide = `Moves player to 
 the left`;
@@ -1331,7 +1376,7 @@ let toastDelay = 3000; // How long a toast lasts (Used when a key is found or do
 let shortToastDelay = 1500; // How long a short toast lasts (Used when the player cant unlock a door or finds an empty box)
 let textHeightOffset = 4; // How high toast texts should appear
 let mapHeightOffset = 1; // How high map name toast texts should appear
-let isMusicMuted = false;
+let isMusicMuted = false; // The default option wether to play main menu music or not
 
 // Music
 let stemOne; // Used to set playback of stem one
@@ -1339,7 +1384,6 @@ let stemTwo; // Used to set playback of stem two
 let stemThree; // Used to set playback of stem three
 let stemFour; // Used to set playback of stem four
 let musicTimeouts = [0, 1, 2, 3, 4, 5, 6]; // Used to set the timeout of each phase
-
 
 // Background Game States
 let widthX; // Stores actual map width (Stored on spawn)
@@ -1365,15 +1409,14 @@ let spawnX = 1; // Default X value used to spawn player on start, used to tell w
 let spawnY = 1; // Default Y value used to spawn player on start, used to tell where player to spawn in checkBorder()
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
-let currentLevelVal = 1; // Adjust last level to make sense for current level
 let currentKey; // Used to track which key the player is holding
 let currentPlayer = playerSprite; // Used to track which player sprite to show (based on key)
 
 // Loops
-let pointerChangeInterval;
-let flickerLightsInterval;
+let pointerChangeInterval; // Loop used to change the pointer icon in the main menu
+let flickerLightsInterval; // Loop used to dynamically change the lantern range
 
-// Start the main menu
+// Initialize the music player and start the main menu
 musicPlayer("startup")
 mainMenu();
 
@@ -1399,7 +1442,7 @@ onInput("a", () => {
     pointerUp();
   } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == 0) {
-      // Check if at border and move to last map
+      // Check if at left border and move to last map
       levelCheck("down");
     }
     if (getFirst(player)) {
@@ -1413,7 +1456,7 @@ onInput("d", () => {
     pointerDown();
   } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == widthX) {
-      // Check if at border and move to next map
+      // Check if at right border and move to next map
       levelCheck("up");
     }
     if (getFirst(player)) {
@@ -1433,7 +1476,7 @@ onInput("k", () => {
     pointerContinue("k");
     pointerBack();
   } else if (gameState == "game" || gameState == "toast") {
-    // usedAssist = true
+    usedAssist = true
     if (currentKey == 1) {
       currentKey = 2
       characterInit();
@@ -1462,9 +1505,7 @@ onInput("j", () => {
       muteIconChange();
     }
   } else if (gameState == "game") {
-    // Check if in-game, then save level and allow to open main menu
-    currentLevelVal = level - 1;
-    lastLevel = level; // Remember last level before mainMenu (if Applicable)
+    lastLevel = level; // Remember the level before opening the main menu
     mainMenu();
   }
 });
@@ -1479,11 +1520,10 @@ onInput("l", () => {
 
 afterInput(() => {
   if (gameState == "game" || gameState == "toast") {
-    // Updates the visible and invisible blocks when moving
-    stepPing();
-    displaySpritesInRange();
-    spawnX = getFirst(player).x
-    spawnY = getFirst(player).y
+    stepPing(); // Check if player coordinates moved
+    displaySpritesInRange(); // Updates the visible blocks when moving
+    spawnX = getFirst(player).x // Save player coordinates
+    spawnY = getFirst(player).y // Save player coordinates
   }
 });
 
@@ -1503,8 +1543,8 @@ function mainMenu() {
     // Check if game hasn't started yet and is not from the guide then set default level
     lastLevel = 2;
   }
-
-  currentLevelText = `Current level: ${currentLevelVal}`; // Grab level and add to text
+  
+  currentLevelText = `Current level: ${lastLevel - 1}`;
   clearText();
   setSprites();
   level = 1;
@@ -1522,8 +1562,8 @@ function guideScreen() {
   gameState = "menu";
   menuMode = 2;
   updateGameIntervals();
-  clearText();
   setSprites();
+  clearText();
   level = 0;
   setMap(levels[level]);
   setBackground(background);
@@ -1531,6 +1571,7 @@ function guideScreen() {
   addText(menuGuide, { x: 1, y: 12, color: color`1` });
 }
 
+// Clears text and adds the back button
 function addBack() {
   clearText();
   addText(backButton, {
@@ -1555,6 +1596,7 @@ function pointerChange() {
   }
 }
 
+// Handles mute icon
 function muteIconChange() {
   // Mute icon check
   if (isMusicMuted) {
@@ -1728,47 +1770,36 @@ function updateSprite(activeOption) {
   setSprites();
 }
 
+// Handles displaying guide text
 function guideText() {
+  addBack();
   if (pointerOption == 1) {
-    addBack(); // Clears text and rewrites the back button
     addText(upLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 2) {
-    addBack();
     addText(leftLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 3) {
-    addBack();
     addText(downLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 4) {
-    addBack();
     addText(rightLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 5) {
-    addBack();
     addText(upRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 6) {
-    addBack();
     addText(leftRGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 7) {
-    addBack();
     addText(downRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 8) {
-    addBack();
     addText(rightRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 9) {
-    addBack();
     addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 10) {
-    addBack();
     addText(tipTwoGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 11) {
-    addBack();
     addSprite(9, 12, buttonI);
     addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 12) {
-    addBack();
     addSprite(9, 12, buttonK);
     addText(tipFourGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 13) {
-    addBack();
     addSprite(9, 12, buttonI);
     addText(tipFiveGuide, { x: 1, y: 12, color: color`2` });
   }
@@ -1776,30 +1807,34 @@ function guideText() {
 
 // Setup the game
 function initializeGame() {
-  characterInit();
-  setSolids(solidSprites);
-  setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
-  // level = 6
+  // level = 19
+  setBackground(background);
   musicPlayer("stop");
   spawn(); // Start Game
 }
 
 // Spawn Code
 function spawn() {
-  clearText(); // Cleans stuff before it
+  gameState = "pause";
+  characterInit();
+  updateGameIntervals();
+  clearText(); // Cleans text before spawn
+  setSolids(solidSprites);
+  setMap(levels[level]);
+  nextMapCheck();
+  widthX = width() - 1 // Check map actual width
+  textHeight = height() - textHeightOffset; // Sets toast text height
+  addSprite(spawnX, spawnY, player)
+  levelCheck("next")
   gameState = "game";
   characterInit();
   updateGameIntervals();
-  setMap(levels[level]);
-  nextMapCheck();
-  levelCheck("next")
-  widthX = width() - 1 // Check map actual width
-  addSprite(spawnX, spawnY, player)
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
   displaySpritesInRange(); // Make sure the player is in the map when this is runned
 }
 
+// Extends the players range of sight temporarily
 function mapFlash() {
   usedAssist = true;
   playerRange = flashBrightness;
@@ -1810,12 +1845,14 @@ function mapFlash() {
   characterInit();
   playTune(flashSFX)
   setTimeout(() => {
+    // Reduce range after a period of time
     playerRange = 4
     flashingMap = 1;
     characterInit();
     displaySpritesInRange();
   }, 1000);
   setTimeout(() => {
+    // Normalize range after a period of time
     playerRange = 3
     gameState = "game"
     flashingMap = 0;
@@ -1825,14 +1862,15 @@ function mapFlash() {
   }, 3000);
 }
 
+// Allows player to interact with all items at once
 function itemInteract() {
-  textHeight = height() - textHeightOffset
   grabKey(); // Check if on a key and grab it
   grabBox(); // Check if next to a box and if it has a key and grab it
   unlockDoor(); // Check if next to a door and unlock it
   characterInit(); // Refreshes character sprite for every interaction
 }
 
+// Checks around the player for a key
 function grabKey() {
   let playerCoord = getFirst(player);
   let keyOneCoord = getFirst(keyOne);
@@ -1872,6 +1910,7 @@ function grabKey() {
   }
 }
 
+// Checks the boxes around the player for a key
 function grabBox() {
   let playerCoord = getFirst(player);
   let surroundingTiles = [
@@ -1921,6 +1960,7 @@ function grabBox() {
   }
 }
 
+// Checks around the player for a door and if the player can open it
 function unlockDoor() {
   let playerCoord = getFirst(player);
   let surroundingTiles = [
@@ -1981,6 +2021,7 @@ function unlockDoor() {
   }
 }
 
+// Clears toast text
 function toastTextClear() {
   clearText();
   keyFound = false;
@@ -1989,10 +2030,11 @@ function toastTextClear() {
   characterInit();
 }
 
+// Checks if the current level is a different map
 function nextMapCheck() {
-  let leftWall = getTile(0, 1)[0]
   textHeight = height() - mapHeightOffset
   if (mapLevels.includes(level) && lastDisplayed != level) {
+    // Check if the current level is the beginning of a map and if the current level hasn't been displayed yet
     gameState = "toast";
     updateGameIntervals()
     addText(nextMapText(), { y: textHeight, color: color`2` });
@@ -2000,19 +2042,24 @@ function nextMapCheck() {
   }
 }
 
+// Returns the map name
 function nextMapText() {
   if (mapIndex < mapNames.length && level != lastDisplayed) {
+    // Check if mapIndex is at the end and if the current level hasn't been displayed yet
     lastDisplayed = level
     return mapNames[mapIndex++];
-
   } else {
+    // Reset mapIndex
     mapIndex = 0;
     return mapNames[mapIndex++];
   }
 }
 
 function levelCheck(move) {
+  gameState = "pause"
+  playerY = getFirst(player).y
   if (level == levels.length - 2) {
+    // If current level is the level right before the end
     if (move == "up") {
       level++;
       endScreen();
@@ -2024,8 +2071,8 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-  } else if (level < levels.length - 1) {
-    let leftWall = getTile(0, 1)[0]
+  } else if (level < levels.length - 2) {
+    // If current level is not the level right before the end
     if (move == "up") {
       playerY = getFirst(player).y
       spawnX = 0;
@@ -2040,14 +2087,12 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-    if (leftWall && lastLevel < level && move == "next") {
-      if (leftWall.type == wall) {
-        currentKey = 0 // Make sure the player does not bring over a key
-        solidSprites = defaultSolids;
-        characterInit();
-        setSolids(solidSprites);
-        playTune(nextMapSFX);
-      }
+    if (mapLevels.includes(level) && level > lastLevel && move == "next") {
+      currentKey = 0 // Make sure the player does not bring over a key
+      solidSprites = defaultSolids;
+      characterInit();
+      setSolids(solidSprites);
+      playTune(nextMapSFX);
     }
   }
 }
@@ -2179,7 +2224,6 @@ function endScreen() {
   setTimeout(() => {
     playback.end();
     level = 1;
-    currentLevelVal = 1;
     spawnX = 1;
     spawnY = 1;
     solidSprites = defaultSolids;
@@ -2313,8 +2357,9 @@ function setSprites() {
       [wall, wallSprite],
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
-      [player, currentPlayer],
-      [keyOne, keyOneSprite], l[keyTwo, keyTwoSprite],
+      [player, playerSideSprite],
+      [keyOne, keyOneSprite],
+      [keyTwo, keyTwoSprite],
       [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
@@ -2329,7 +2374,6 @@ function setSprites() {
 
 // Music Engine
 function musicPlayer(mode) {
-  console.log(isMusicMuted)
   if (mode == "startup") {
     // Initialize Stem and stop thes
     stemOne = playTune(stemDefault);

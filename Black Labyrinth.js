@@ -257,10 +257,10 @@ wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
 wwwwwwwwwwwwwwwwwwww
 w...................
 wwwwwwwwwwwwwww..www
-w000000000w........w
+w00.000.00w........w
 w0...0...0w........w
 w2.0...0..u..r..r..w
-w000000000w........w
+w0000.0000w........w
 wwwwwwwwwww........w
 w.........wwwwwwwwww
 w.00.00000w...0..0.w
@@ -272,20 +272,20 @@ w...................
 wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
-....r..........r...o
+...................o
 ww.wwwwwwwwwwwwwwwww
-w0.w0000ww000ww1111w
-w..w0...w2...2w...1w
-w.ww0.r.ww.r.ww.r.1w
-w..w0...2w...w2...1w
-w0.w11.1000.1001.11w
+w0.w0000ww000ww0000w
+w..w0...w0...2w...0w
+wrww0...ww...ww...0w
+w..w0...2w...w0...0w
+w0.w00.0000.0000.02w
 w0.................w
-w0.w11.1111.1111.00w
-ww.w0.............0w
+w0.w00.0000.0010.00w
+wwrw0.............0w
 w..w0...ww...ww...0w
-w.0w0000ww000ww1000w
+w.0w0000ww010ww1000w
 w.wwwwwwwwwwwwwwwwww
-.....r.........r...w
+...................w
 wwwwwwwwwwwwwwwwwwww`, // Level 13 || Map 6: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
@@ -404,7 +404,7 @@ w00.ww.00w.w..w....w
 w........w.w.ww.wwww
 w00000000w.w.......w
 wwwwwwwwww.wwwwwwwww
-w..................w
+wa.................w
 wwwwwwwwwwwwwwwwwwww`, // Level 20 || Map 10: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
@@ -490,7 +490,7 @@ w...0...w..w.r.w...w
 w.0.3.0.w..w...w...w
 w.0...0.i....r.w...w
 w0000000w..w...w...o
-wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 4
+wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 5
   map`
 ....................
 ....................
@@ -519,7 +519,10 @@ const mapNames = [
   "Storage Room", // Map 5
   "Logistics", // Map 6
   "Dark Rooms", // Map 7
-  "Massive Maze", // Map 8
+  "Massive Mazes", // Map 8
+  "Flowing Mazes", // Map 9
+  "Half and Half", // Map 10
+  "Familiarity", // Map 11
 ]
 
 // Menu Sprites
@@ -1418,8 +1421,8 @@ let downRGuide = `Back button in
 the menu, lazy key
 picker in game`;
 let rightRGuide = `Confirm menu
-selection, grabs 
-the key in-game`;
+selection, used to
+interact in-game`;
 
 // Tip Text
 let tipOneGuide = `Look across levels
@@ -1470,7 +1473,7 @@ using assists :O`;
 
 // Configurables
 let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // List of solid blocks
-let mapLevels = [2, 4, 7, 9, 10, 12, 14, 15]; // List of levels that are the beginning of a map
+let mapLevels = [2, 4, 7, 9, 10, 12, 14, 15, 18, 20, 21]; // List of levels that are the beginning of a map
 let lightRange = 3; // The default distance a light can reach, for displaySpritesInRange()
 let playerRange = 3; // The default distance the player can see, for displaySpritesInRange()
 let flashBrightness = 10; // How far the player can see when using mapFlash()
@@ -1966,50 +1969,10 @@ function mapFlash() {
 
 // Allows player to interact with all items at once
 function itemInteract() {
-  grabKey(); // Check if on a key and grab it
   grabBox(); // Check if next to a box and if it has a key and grab it
+  grabKey(); // Check if on a key and grab it
   unlockDoor(); // Check if next to a door and unlock it
   playerInit(); // Refreshes player sprite for every interaction
-}
-
-// Checks around the player for a key
-function grabKey() {
-  let playerCoord = getFirst(player);
-  let keyOneCoord = getFirst(keyOne);
-  let keyTwoCoord = getFirst(keyTwo);
-  let keyThreeCoord = getFirst(keyThree);
-
-  if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
-    // Player and key are on the same tile
-    currentKey = 1;
-    keyFound = true;
-    gameState = "pause"
-    updateGameIntervals()
-    playTune(keyFoundSFX);
-    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
-    addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, toastDelay);
-  } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
-    // Player and key are on the same tile
-    currentKey = 2;
-    keyFound = true;
-    gameState = "pause";
-    updateGameIntervals()
-    playTune(keyFoundSFX);
-    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, toastDelay);
-  } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
-    // Player and key are on the same tile
-    currentKey = 3;
-    keyFound = true;
-    gameState = "pause";
-    updateGameIntervals()
-    playTune(keyFoundSFX);
-    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
-    addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, toastDelay);
-  }
 }
 
 // Checks the boxes around the player for a key
@@ -2032,6 +1995,7 @@ function grabBox() {
     gameState = "pause";
     updateGameIntervals()
     playTune(keyFoundSFX);
+    clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
     setTimeout(toastTextClear, toastDelay);
@@ -2041,6 +2005,7 @@ function grabBox() {
     gameState = "pause";
     updateGameIntervals()
     playTune(keyFoundSFX);
+    clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
     setTimeout(toastTextClear, toastDelay);
@@ -2050,6 +2015,7 @@ function grabBox() {
     gameState = "pause";
     updateGameIntervals()
     playTune(keyFoundSFX);
+    clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
     setTimeout(toastTextClear, toastDelay);
@@ -2057,8 +2023,52 @@ function grabBox() {
     gameState = "pause";
     updateGameIntervals()
     playTune(keyFoundSFX);
+    clearText();
     addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` });
     setTimeout(toastTextClear, shortToastDelay);
+  }
+}
+
+// Checks around the player for a key
+function grabKey() {
+  let playerCoord = getFirst(player);
+  let keyOneCoord = getFirst(keyOne);
+  let keyTwoCoord = getFirst(keyTwo);
+  let keyThreeCoord = getFirst(keyThree);
+
+  if (keyOneCoord && playerCoord.x == keyOneCoord.x && playerCoord.y == keyOneCoord.y) {
+    // Player and key are on the same tile
+    currentKey = 1;
+    keyFound = true;
+    gameState = "pause"
+    updateGameIntervals()
+    playTune(keyFoundSFX);
+    clearText();
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
+    addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(toastTextClear, toastDelay);
+  } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
+    // Player and key are on the same tile
+    currentKey = 2;
+    keyFound = true;
+    gameState = "pause";
+    updateGameIntervals()
+    playTune(keyFoundSFX);
+    clearText();
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(toastTextClear, toastDelay);
+  } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
+    // Player and key are on the same tile
+    currentKey = 3;
+    keyFound = true;
+    gameState = "pause";
+    updateGameIntervals()
+    playTune(keyFoundSFX);
+    clearText();
+    addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(toastTextClear, toastDelay);
   }
 }
 
@@ -2183,6 +2193,7 @@ function levelCheck(move) {
       playerY = getFirst(player).y
       spawnX = 0;
       spawnY = playerY;
+      lastLevel = level;
       level++;
       spawn();
     } else if (move == "down") {

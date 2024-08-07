@@ -255,6 +255,40 @@ wwwwwww..wwwwwwww..w
 w...r..........r...o
 wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
   map`
+wwwwwwwwwwwwwwwwwwww
+w...................
+wwwwwwwwwwwwwww..www
+w000000000w........w
+w0...0...0w........w
+w2.0...0..u..r..r..w
+w000000000w........w
+wwwwwwwwwww........w
+w.........wwwwwwwwww
+w.00.00000w...0..0.w
+wd.0....0...0r...0.w
+w0.000.00.w00000r0.w
+w..0......w........w
+wwwwiiwwwwwwwwwwwwww
+w...................
+wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+....r..........r...o
+ww.wwwwwwwwwwwwwwwww
+w0.w0000ww000ww1111w
+w..w0...w2...2w...1w
+w.ww0.r.ww.r.ww.r.1w
+w..w0...2w...w2...1w
+w0.w11.1000.1001.11w
+w0.................w
+w0.w11.1111.1111.00w
+ww.w0.............0w
+w..w0...ww...ww...0w
+w.0w0000ww000ww1000w
+w.wwwwwwwwwwwwwwwwww
+.....r.........r...w
+wwwwwwwwwwwwwwwwwwww`, // Level 13 || Map 6: Level 2
+  map`
 ....................
 ....................
 ....................
@@ -271,6 +305,15 @@ wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
 ...q...q....q...q...
 pppqpppqppppqpppqppp
 wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
+]
+
+// Map name
+const mapNames = [
+  "Starting Somwhere", // Map 1
+  "The Labyrinth", // Map 2
+  "Boxes Here", // Map 3
+  "Going In Circles", // Map 4
+  "Storage Room" // Map 5
 ]
 
 // Active Sprites
@@ -1204,6 +1247,7 @@ let keyFound; // Stores if a key was found. Used to feature key while gameState 
 let textHeight; // Stores which height toast texts appear
 let flashingMap; // Stores if the player pressed the map flash button, used to adjust player texture
 let usedAssist; // Stores if the player ever used the assists (flash map and key magic)
+let mapIndex = 0; // Stores the current map number
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -1616,7 +1660,8 @@ function spawn() {
   characterInit();
   updateGameIntervals();
   setMap(levels[level]);
-  levelCheck("wall")
+  nextMapCheck();
+  levelCheck("next")
   widthX = width() - 1 // Check map actual width
   addSprite(spawnX, spawnY, player)
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
@@ -1799,6 +1844,24 @@ function toastTextClear() {
   characterInit();
 }
 
+function nextMapCheck() {
+  let leftWall = getTile(0, 1)
+  console.log(leftWall)
+  if (leftWall && lastLevel < level) {
+    addText(nextMapName(), { x: 2, y: 0, color: color`2` });
+    setTimeout(() => {clearText()}, toastDelay);
+  }
+}
+
+function nextMapName() {
+  if (mapIndex < mapNames.length) {
+    return mapNames[mapIndex++];
+    } else {
+        mapIndex = 0;
+        return mapNames[mapIndex];
+    }
+}
+
 function levelCheck(move) {
   if (level == levels.length - 2) {
     if (move == "up") {
@@ -1828,7 +1891,7 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-    if (leftWall && lastLevel < level && move == "wall") {
+    if (leftWall && lastLevel < level && move == "next") {
       if (leftWall.type == wall) {
         currentKey = 0 // Make sure the player does not bring over a key
         solidSprites = defaultSolids;

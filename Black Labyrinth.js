@@ -1217,12 +1217,14 @@ using assists :O`;
 
 // Configurables
 let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // List of solid blocks
+let mapLevels = [2, 4, 7, 9, 10, 12]; // List of levels that are the beginning of a map
 let lightRange = 3; // The default distance a light can reach, for displaySpritesInRange()
 let playerRange = 3; // The default distance the player can see, for displaySpritesInRange()
 let flashBrightness = 10; // How far the player can see when using mapFlash()
 let toastDelay = 3000; // How long a toast lasts (Used when a key is found or door is unlocked)
 let shortToastDelay = 1500; // How long a short toast lasts (Used when the player cant unlock a door or finds an empty box)
 let textHeightOffset = 4; // How high toast texts should appear
+let mapHeightOffset = 2; // How high map name toast texts should appear
 
 // Music
 let stemOne; // Used to set playback of stem one
@@ -1248,6 +1250,7 @@ let textHeight; // Stores which height toast texts appear
 let flashingMap; // Stores if the player pressed the map flash button, used to adjust player texture
 let usedAssist; // Stores if the player ever used the assists (flash map and key magic)
 let mapIndex = 0; // Stores the current map number
+let lastDisplayed; // Stores the last displayed map name
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -1270,7 +1273,7 @@ mainMenu();
 onInput("w", () => {
   if (gameState == "menu") {
     pointerUp();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     getFirst(player).y--
   }
 });
@@ -1278,7 +1281,7 @@ onInput("w", () => {
 onInput("s", () => {
   if (gameState == "menu") {
     pointerDown();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     getFirst(player).y++
   }
 });
@@ -1286,7 +1289,7 @@ onInput("s", () => {
 onInput("a", () => {
   if (gameState == "menu") {
     pointerUp();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == 0) {
       // Check if at border and move to last map
       levelCheck("down");
@@ -1300,7 +1303,7 @@ onInput("a", () => {
 onInput("d", () => {
   if (gameState == "menu") {
     pointerDown();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == widthX) {
       // Check if at border and move to next map
       levelCheck("up");
@@ -1312,7 +1315,7 @@ onInput("d", () => {
 });
 
 onInput("i", () => {
-  if (gameState == "game") {
+  if (gameState == "game" || gameState == "toast") {
     mapFlash();
   }
 });
@@ -1321,7 +1324,7 @@ onInput("k", () => {
   if (gameState == "menu") {
     pointerContinue("k");
     pointerBack();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     // usedAssist = true
     if (currentKey == 1) {
       currentKey = 2
@@ -1845,20 +1848,22 @@ function toastTextClear() {
 }
 
 function nextMapCheck() {
-  let leftWall = getTile(0, 1)
-  console.log(leftWall)
-  if (leftWall && lastLevel < level) {
-    addText(nextMapName(), { x: 2, y: 0, color: color`2` });
-    setTimeout(() => {clearText()}, toastDelay);
+  let leftWall = getTile(0, 1)[0]
+  textHeight = height() - mapHeightOffset
+  if (mapLevels.includes(level)) {
+    gameState = "toast";
+    lastDisplayed = lastLevel;
+    addText(nextMapName(), {y: textHeight, color: color`2` });
+    setTimeout(toastTextClear, toastDelay);
   }
 }
 
 function nextMapName() {
-  if (mapIndex < mapNames.length) {
+  if (mapIndex < mapNames.length && lastLevel != lastDisplayed) {
     return mapNames[mapIndex++];
     } else {
-        mapIndex = 0;
-        return mapNames[mapIndex];
+      mapIndex = 0;
+      return mapNames[mapIndex];
     }
 }
 
@@ -2104,7 +2109,7 @@ function setSprites() {
         [box, boxSprite],
       );
     }
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     setLegend(
       [background, backgroundSprite],
       [wall, wallSprite],
@@ -2225,7 +2230,6 @@ function playMusic(mode) {
       }, 88000);
     }
   } else if (mode == "stop") {
-    console.log(stemOne.isPlaying())
     if (stemOne != undefined) {
       stemOne.end();
       // delete stemOne;
@@ -2266,7 +2270,7 @@ function stepPing() {
 
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 500); // Set interval for error sound being played
-  if (gameState == "game" || gameState == "pause") {
+  if (gameState == "game" || gameState == "pause" || gameState == "toast") {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
     clearInterval(flickerLightsInterval);

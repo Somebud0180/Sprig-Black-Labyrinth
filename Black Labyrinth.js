@@ -424,6 +424,74 @@ w.00000000.00000r00w
 w..................w
 wwwwwwwwwwwwwwwwwwww`, // Level 21 || Map 11: Level 1
   map`
+wwwwwwwwwwwwwwwwwwww
+w.................0w
+w.wwwwwwwwwwwwwww..w
+w.............w....w
+w.wwwwwwwwwwwww.ww.w
+w...............w..w
+www..wwwwwwwwwwww.ww
+........w...........
+........w...........
+wwww..wwwwwww.wwwwww
+w...........w......w
+w.wwwwwwwwwwwwwwww.w
+w..................w
+w.wwwwwwwwwwwwwwww.w
+w................wsw
+wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 2
+  map`
+wwwwwwwwwwwwwwwwwwww
+w..................w
+w.wwwwwww.wwwwwwww.w
+w.w.....w.wa.......w
+w.w.wwwww.wwwwwwwwww
+w..................w
+wwwiwwwwwwwwwwwwwwww
+....r...............
+...............r....
+wwwwwuwwww.wwwwwwwww
+w........w.........w
+wwww.w.w.w.w.w.w.w.w
+w.dw.w.w.w.w.w.w.w.w
+w..w.w...w...w.w...w
+w....w...w000w0w000w
+wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 3
+  map`
+wwwww.wwwwwwwww.wwww
+wwwww.wwwwwwwww.wwww
+w.....w.....w......w
+w.r...i.r...w....r.w
+w...r.w..ar.w.r....w
+w.....w.....w......w
+wwwwwwwwwwwwwwwwwwww
+....................
+....................
+wwwwwwwwwwwwwwwwwwww
+w.......w......r..0w
+w.r...r.w.r.r.w0..2w
+w.......w.....w00.rw
+ww.wwwwwwwwuwwwwwwww
+....................
+wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 4
+  map`
+wwwwwwwwwwwwwwwwwwww
+w...w.w..r..r...r..w
+w.w.r.w.wwwwww.www.w
+w.wwwww.w....w.w.wrw
+w.r.w.r.w.rw.w.w.w.w
+www.ww.ww..w.w.r.w.w
+wwwwwwwwwwwwwwwwwwww
+...................w
+...................w
+wwwwwwwwwwwwwwww...w
+w0000000w..w...w...w
+w...0...w..w.r.w...w
+w.0.3.0.w..w...w...w
+w.0...0.i....r.w...w
+w0000000w..w...w...o
+wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 4
+  map`
 ....................
 ....................
 ....................

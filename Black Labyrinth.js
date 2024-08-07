@@ -309,7 +309,7 @@ wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
 
 // Map name
 const mapNames = [
-  "Starting Somwhere", // Map 1
+  "Starting Somewhere", // Map 1
   "The Labyrinth", // Map 2
   "Boxes Here", // Map 3
   "Going In Circles", // Map 4
@@ -1158,8 +1158,9 @@ let rightLGuide = `Moves player to
 the right`;
 let upRGuide = `Flashes the map
 in-game`;
-let leftRGuide = `Returns to menu
-(Progress
+let leftRGuide = `Mutes menu music.
+Returns to menu
+in-game (Progress
 is saved)`;
 let downRGuide = `Back button in
 the menu, lazy key
@@ -1224,7 +1225,8 @@ let flashBrightness = 10; // How far the player can see when using mapFlash()
 let toastDelay = 3000; // How long a toast lasts (Used when a key is found or door is unlocked)
 let shortToastDelay = 1500; // How long a short toast lasts (Used when the player cant unlock a door or finds an empty box)
 let textHeightOffset = 4; // How high toast texts should appear
-let mapHeightOffset = 2; // How high map name toast texts should appear
+let mapHeightOffset = 1; // How high map name toast texts should appear
+let musicMuted = false;
 
 // Music
 let stemOne; // Used to set playback of stem one
@@ -1266,7 +1268,7 @@ let pointerChangeInterval;
 let flickerLightsInterval;
 
 // Start the main menu
-playMusic("startup")
+musicPlayer("startup")
 mainMenu();
 
 // Controls
@@ -1343,7 +1345,15 @@ onInput("k", () => {
 });
 
 onInput("j", () => {
-  if (gameState == "game") {
+  if (gameState == "menu") {
+    if (musicMuted) {
+      musicMuted = false;
+      musicPlayer("menu");
+    } else if (!musicMuted) {
+      musicMuted = true;
+      musicPlayer("stop");
+    }
+  } else if (gameState == "game") {
     // Check if in-game, then save level and allow to open main menu
     currentLevelVal = level - 1;
     lastLevel = level; // Remember last level before mainMenu (if Applicable)
@@ -1360,7 +1370,7 @@ onInput("l", () => {
 });
 
 afterInput(() => {
-  if (gameState == "game") {
+  if (gameState == "game" || gameState == "toast") {
     // Updates the visible and invisible blocks when moving
     stepPing();
     displaySpritesInRange();
@@ -1378,7 +1388,7 @@ function mainMenu() {
   menuMode = 1;
   pointerOption = 0;
   updateGameIntervals();
-  playMusic("menu");
+  musicPlayer("menu");
 
   // Check for current level
   if (level != 0 && level < 2) {
@@ -1617,7 +1627,7 @@ function guideText() {
     addText(upRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 6) {
     addBack();
-    addText(leftRGuide, { x: 1, y: 12, color: color`2` });
+    addText(leftRGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 7) {
     addBack();
     addText(downRGuide, { x: 1, y: 12, color: color`2` });
@@ -1652,7 +1662,7 @@ function initializeGame() {
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
   // level = 6
-  playMusic("stop");
+  musicPlayer("stop");
   spawn(); // Start Game
 }
 
@@ -1676,6 +1686,7 @@ function mapFlash() {
   playerRange = flashBrightness;
   gameState = "pause"
   flashingMap = 2;
+  updateGameIntervals()
   displaySpritesInRange();
   characterInit();
   playTune(flashSFX)
@@ -1689,6 +1700,7 @@ function mapFlash() {
     playerRange = 3
     gameState = "game"
     flashingMap = 0;
+    updateGameIntervals()
     characterInit();
     displaySpritesInRange();
   }, 3000);
@@ -1713,6 +1725,7 @@ function grabKey() {
     currentKey = 1;
     keyFound = true;
     gameState = "pause"
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
@@ -1722,6 +1735,7 @@ function grabKey() {
     currentKey = 2;
     keyFound = true;
     gameState = "pause";
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
@@ -1731,6 +1745,7 @@ function grabKey() {
     currentKey = 3;
     keyFound = true;
     gameState = "pause";
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
@@ -1755,6 +1770,7 @@ function grabBox() {
     currentKey = 1;
     keyFound = true
     gameState = "pause";
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
@@ -1763,6 +1779,7 @@ function grabBox() {
     currentKey = 2;
     keyFound = true
     gameState = "pause";
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
@@ -1771,12 +1788,14 @@ function grabBox() {
     currentKey = 3;
     keyFound = true
     gameState = "pause";
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
     setTimeout(toastTextClear, toastDelay);
   } else if (boxFound) {
     gameState = "pause";
+    updateGameIntervals()
     playTune(keyFoundSFX);
     addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` });
     setTimeout(toastTextClear, shortToastDelay);
@@ -1805,6 +1824,7 @@ function unlockDoor() {
     } else if (solidSprites.includes(doorOne)) {
       // Checks if the door is locked
       gameState = "pause";
+      updateGameIntervals()
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
       setTimeout(toastTextClear, shortToastDelay);
@@ -1819,6 +1839,7 @@ function unlockDoor() {
     } else if (solidSprites.includes(doorTwo)) {
       // Checks if the door is locked
       gameState = "pause";
+      updateGameIntervals()
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
       addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
       setTimeout(toastTextClear, shortToastDelay);
@@ -1833,6 +1854,7 @@ function unlockDoor() {
     } else if (solidSprites.includes(doorThree)) {
       // Checks if the door is locked
       gameState = "pause";
+      updateGameIntervals()
       addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
       addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
       setTimeout(toastTextClear, shortToastDelay);
@@ -1844,26 +1866,29 @@ function toastTextClear() {
   clearText();
   keyFound = false;
   gameState = "game"
+  updateGameIntervals()
   characterInit();
 }
 
 function nextMapCheck() {
   let leftWall = getTile(0, 1)[0]
   textHeight = height() - mapHeightOffset
-  if (mapLevels.includes(level)) {
+  if (mapLevels.includes(level) && lastDisplayed != level) {
     gameState = "toast";
-    lastDisplayed = lastLevel;
-    addText(nextMapName(), {y: textHeight, color: color`2` });
+    updateGameIntervals()
+    addText(nextMapText(), {y: textHeight, color: color`2` });
     setTimeout(toastTextClear, toastDelay);
   }
 }
 
-function nextMapName() {
-  if (mapIndex < mapNames.length && lastLevel != lastDisplayed) {
+function nextMapText() {
+  if (mapIndex < mapNames.length && level != lastDisplayed) {
+    lastDisplayed = level
     return mapNames[mapIndex++];
+    
     } else {
       mapIndex = 0;
-      return mapNames[mapIndex];
+      return mapNames[mapIndex++];
     }
 }
 
@@ -2188,7 +2213,8 @@ function setSprites() {
 }
 
 // Music Engine
-function playMusic(mode) {
+function musicPlayer(mode) {
+  console.log(musicMuted)
   if (mode == "startup") {
     // Initialize Stem and stop thes
     stemOne = playTune(stemDefault);
@@ -2199,7 +2225,7 @@ function playMusic(mode) {
     stemTwo.end();
     stemThree.end();
     stemFour.end();
-  } else if (mode == "menu") {
+  } else if (mode == "menu" && !musicMuted) {
     let isPlaying;
     if (!stemOne.isPlaying() && !stemFour.isPlaying()) {
       stemOne = playTune(menuOneStem, Infinity)

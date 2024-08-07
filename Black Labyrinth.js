@@ -1409,7 +1409,6 @@ let spawnX = 1; // Default X value used to spawn player on start, used to tell w
 let spawnY = 1; // Default Y value used to spawn player on start, used to tell where player to spawn in checkBorder()
 let level = 1; // 0 for Guide; 1 for Main Menu
 let lastLevel = 1; // Tracks level before mainMenu to allow accessing the main menu whilst in game
-let currentLevelVal = 1; // Adjust last level to make sense for current level
 let currentKey; // Used to track which key the player is holding
 let currentPlayer = playerSprite; // Used to track which player sprite to show (based on key)
 
@@ -1443,7 +1442,7 @@ onInput("a", () => {
     pointerUp();
   } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == 0) {
-      // Check if at border and move to last map
+      // Check if at left border and move to last map
       levelCheck("down");
     }
     if (getFirst(player)) {
@@ -1457,7 +1456,7 @@ onInput("d", () => {
     pointerDown();
   } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == widthX) {
-      // Check if at border and move to next map
+      // Check if at right border and move to next map
       levelCheck("up");
     }
     if (getFirst(player)) {
@@ -1477,7 +1476,7 @@ onInput("k", () => {
     pointerContinue("k");
     pointerBack();
   } else if (gameState == "game" || gameState == "toast") {
-    // usedAssist = true
+    usedAssist = true
     if (currentKey == 1) {
       currentKey = 2
       characterInit();
@@ -1506,9 +1505,7 @@ onInput("j", () => {
       muteIconChange();
     }
   } else if (gameState == "game") {
-    // Check if in-game, then save level and allow to open main menu
-    currentLevelVal = level - 1;
-    lastLevel = level; // Remember last level before mainMenu (if Applicable)
+    lastLevel = level; // Remember the level before opening the main menu
     mainMenu();
   }
 });
@@ -1523,11 +1520,10 @@ onInput("l", () => {
 
 afterInput(() => {
   if (gameState == "game" || gameState == "toast") {
-    // Updates the visible and invisible blocks when moving
-    stepPing();
-    displaySpritesInRange();
-    spawnX = getFirst(player).x
-    spawnY = getFirst(player).y
+    stepPing(); // Check if player coordinates moved
+    displaySpritesInRange(); // Updates the visible blocks when moving
+    spawnX = getFirst(player).x // Save player coordinates
+    spawnY = getFirst(player).y // Save player coordinates
   }
 });
 
@@ -1547,8 +1543,8 @@ function mainMenu() {
     // Check if game hasn't started yet and is not from the guide then set default level
     lastLevel = 2;
   }
-
-  currentLevelText = `Current level: ${currentLevelVal}`; // Grab level and add to text
+  
+  currentLevelText = `Current level: ${lastLevel - 1}`;
   clearText();
   setSprites();
   level = 1;
@@ -1566,8 +1562,8 @@ function guideScreen() {
   gameState = "menu";
   menuMode = 2;
   updateGameIntervals();
-  clearText();
   setSprites();
+  clearText();
   level = 0;
   setMap(levels[level]);
   setBackground(background);
@@ -1575,6 +1571,7 @@ function guideScreen() {
   addText(menuGuide, { x: 1, y: 12, color: color`1` });
 }
 
+// Clears text and adds the back button
 function addBack() {
   clearText();
   addText(backButton, {
@@ -1599,6 +1596,7 @@ function pointerChange() {
   }
 }
 
+// Handles mute icon
 function muteIconChange() {
   // Mute icon check
   if (isMusicMuted) {
@@ -1772,47 +1770,36 @@ function updateSprite(activeOption) {
   setSprites();
 }
 
+// Handles displaying guide text
 function guideText() {
+  addBack();
   if (pointerOption == 1) {
-    addBack(); // Clears text and rewrites the back button
     addText(upLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 2) {
-    addBack();
     addText(leftLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 3) {
-    addBack();
     addText(downLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 4) {
-    addBack();
     addText(rightLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 5) {
-    addBack();
     addText(upRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 6) {
-    addBack();
     addText(leftRGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 7) {
-    addBack();
     addText(downRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 8) {
-    addBack();
     addText(rightRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 9) {
-    addBack();
     addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 10) {
-    addBack();
     addText(tipTwoGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 11) {
-    addBack();
     addSprite(9, 12, buttonI);
     addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 12) {
-    addBack();
     addSprite(9, 12, buttonK);
     addText(tipFourGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 13) {
-    addBack();
     addSprite(9, 12, buttonI);
     addText(tipFiveGuide, { x: 1, y: 12, color: color`2` });
   }
@@ -1820,30 +1807,34 @@ function guideText() {
 
 // Setup the game
 function initializeGame() {
-  characterInit();
-  setSolids(solidSprites);
-  setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
-  // level = 17
+  // level = 19
+  setBackground(background);
   musicPlayer("stop");
   spawn(); // Start Game
 }
 
 // Spawn Code
 function spawn() {
-  clearText(); // Cleans stuff before it
-  gameState = "game";
+  gameState = "pause";
   characterInit();
   updateGameIntervals();
+  clearText(); // Cleans text before spawn
+  setSolids(solidSprites);
   setMap(levels[level]);
   nextMapCheck();
   widthX = width() - 1 // Check map actual width
+  textHeight = height() - textHeightOffset; // Sets toast text height
   addSprite(spawnX, spawnY, player)
-  levelCheck()
+  levelCheck("next")
+  gameState = "game";
+  characterInit();
+  updateGameIntervals();
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
   displaySpritesInRange(); // Make sure the player is in the map when this is runned
 }
 
+// Extends the players range of sight temporarily
 function mapFlash() {
   usedAssist = true;
   playerRange = flashBrightness;
@@ -1854,12 +1845,14 @@ function mapFlash() {
   characterInit();
   playTune(flashSFX)
   setTimeout(() => {
+    // Reduce range after a period of time
     playerRange = 4
     flashingMap = 1;
     characterInit();
     displaySpritesInRange();
   }, 1000);
   setTimeout(() => {
+    // Normalize range after a period of time
     playerRange = 3
     gameState = "game"
     flashingMap = 0;
@@ -1869,14 +1862,15 @@ function mapFlash() {
   }, 3000);
 }
 
+// Allows player to interact with all items at once
 function itemInteract() {
-  textHeight = height() - textHeightOffset
   grabKey(); // Check if on a key and grab it
   grabBox(); // Check if next to a box and if it has a key and grab it
   unlockDoor(); // Check if next to a door and unlock it
   characterInit(); // Refreshes character sprite for every interaction
 }
 
+// Checks around the player for a key
 function grabKey() {
   let playerCoord = getFirst(player);
   let keyOneCoord = getFirst(keyOne);
@@ -1916,6 +1910,7 @@ function grabKey() {
   }
 }
 
+// Checks the boxes around the player for a key
 function grabBox() {
   let playerCoord = getFirst(player);
   let surroundingTiles = [
@@ -1965,6 +1960,7 @@ function grabBox() {
   }
 }
 
+// Checks around the player for a door and if the player can open it
 function unlockDoor() {
   let playerCoord = getFirst(player);
   let surroundingTiles = [
@@ -2025,6 +2021,7 @@ function unlockDoor() {
   }
 }
 
+// Clears toast text
 function toastTextClear() {
   clearText();
   keyFound = false;
@@ -2033,9 +2030,11 @@ function toastTextClear() {
   characterInit();
 }
 
+// Checks if the current level is a different map
 function nextMapCheck() {
   textHeight = height() - mapHeightOffset
   if (mapLevels.includes(level) && lastDisplayed != level) {
+    // Check if the current level is the beginning of a map and if the current level hasn't been displayed yet
     gameState = "toast";
     updateGameIntervals()
     addText(nextMapText(), { y: textHeight, color: color`2` });
@@ -2043,19 +2042,24 @@ function nextMapCheck() {
   }
 }
 
+// Returns the map name
 function nextMapText() {
   if (mapIndex < mapNames.length && level != lastDisplayed) {
+    // Check if mapIndex is at the end and if the current level hasn't been displayed yet
     lastDisplayed = level
     return mapNames[mapIndex++];
   } else {
+    // Reset mapIndex
     mapIndex = 0;
     return mapNames[mapIndex++];
   }
 }
 
 function levelCheck(move) {
+  gameState = "pause"
   playerY = getFirst(player).y
   if (level == levels.length - 2) {
+    // If current level is the level right before the end
     if (move == "up") {
       level++;
       endScreen();
@@ -2067,7 +2071,8 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-  } else if (level < levels.length - 1) {
+  } else if (level < levels.length - 2) {
+    // If current level is not the level right before the end
     if (move == "up") {
       playerY = getFirst(player).y
       spawnX = 0;
@@ -2082,7 +2087,7 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-    if (mapLevels.includes(level) && level > lastLevel) {
+    if (mapLevels.includes(level) && level > lastLevel && move == "next") {
       currentKey = 0 // Make sure the player does not bring over a key
       solidSprites = defaultSolids;
       characterInit();
@@ -2219,7 +2224,6 @@ function endScreen() {
   setTimeout(() => {
     playback.end();
     level = 1;
-    currentLevelVal = 1;
     spawnX = 1;
     spawnY = 1;
     solidSprites = defaultSolids;
@@ -2370,7 +2374,6 @@ function setSprites() {
 
 // Music Engine
 function musicPlayer(mode) {
-  console.log(isMusicMuted)
   if (mode == "startup") {
     // Initialize Stem and stop thes
     stemOne = playTune(stemDefault);

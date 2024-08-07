@@ -256,22 +256,38 @@ w...r..........r...o
 wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
-w02000000ww00000000w
-w0r......ww......r0w
-w0.wwwwwuwwiwwwww.0w
-w0.w000..00..000w.0w
-w0.w0...0000...0w.3w
-w0.w00.00..00.00w.0w
-wwww0.....00...0wwww
-w..w0...0......0w..w
-w..w00.000.00.00w..w
-w..w0...0..0...0w..w
-w..w000......000w..w
-w..wwwwww..wwwwww..w
-w.r..............r.w
-w..................o
+w...................
+wwwwwwwwwwwwwww..www
+w000000000w........w
+w0...0...0w........w
+w2.0...0..u..r..r..w
+w000000000w........w
+wwwwwwwwwww........w
+w.........wwwwwwwwww
+w.00.00000w...0..0.w
+wd.0....0...0r...0.w
+w0.000.00.w00000r0.w
+w..0......w........w
+wwwwiiwwwwwwwwwwwwww
+w...................
 wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 1
-  
+  map`
+wwwwwwwwwwwwwwwwwwww
+....r..........r...o
+ww.wwwwwwwwwwwwwwwww
+w0.w0000ww000ww1111w
+w..w0...w2...2w...1w
+w.ww0.r.ww.r.ww.r.1w
+w..w0...2w...w2...1w
+w0.w11.1000.1001.11w
+w0.................w
+w0.w11.1111.1111.00w
+ww.w0.............0w
+w..w0...ww...ww...0w
+w.0w0000ww000ww1000w
+w.wwwwwwwwwwwwwwwwww
+.....r.........r...w
+wwwwwwwwwwwwwwwwwwww`, // Level 13 || Map 6: Level 2
   map`
 ....................
 ....................
@@ -289,6 +305,15 @@ wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 1
 ...q...q....q...q...
 pppqpppqppppqpppqppp
 wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
+]
+
+// Map name
+const mapNames = [
+  "Starting Somwhere", // Map 1
+  "The Labyrinth", // Map 2
+  "Boxes Here", // Map 3
+  "Going In Circles", // Map 4
+  "Storage Room" // Map 5
 ]
 
 // Active Sprites
@@ -917,7 +942,7 @@ const keyFoundSFX = tune`
 50: G5^50,
 1400`;
 const stepSFX = tune`
-100: C4~100,
+100: C4~100 + D4^100,
 3100`;
 const unlockSFX = tune`
 100: D4-100,
@@ -940,94 +965,132 @@ const dingSFX = tune`
 3000`;
 
 // Music
-const gameOneStem = tune`
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300,
-300: C4~300,
-300`;
-const gameTwoStem = tune`
-300,
-300: B4/300,
-300: F5^300,
-900,
-300: E4^300,
-600,
-300: B4/300,
-300: F5^300,
-300: F5^300,
-600,
-300: E4^300,
-600,
-300: B4/300,
-300: F5^300,
-900,
-300: E4^300,
-600,
-300: B4/300,
-300: F5^300,
-300: F5^300,
-600,
-300: E4^300,
-300`;
-const gameThreeStem = tune`
-600,
-300: B4~300,
-900,
-300: E4~300 + B4~300,
-900,
-300: B4~300,
-300: B4~300,
-600,
-300: E4~300 + B4~300,
-900,
-300: B4~300,
-900,
-300: E4~300 + B4~300,
-900,
-300: B4~300,
-300: B4~300,
-600,
-300: E4~300 + B4~300,
-300`;
-const gameFourStem = tune`
-300: E4^300,
-1500,
-300: D4^300,
-300: E4^300,
-2400,
-300: E4^300,
-1500,
-300: D4^300,
-300: E4^300,
-2400`;
+const stemDefault = tune`
+16000`;
+const menuOneStem = tune`
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: D4~250,
+250: E4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250,
+250: C4~250,
+250: D4~250`;
+const menuTwoStem = tune`
+500: B4~500,
+500: B4~500,
+500: A4~500,
+500: C5~500,
+500: G4~500,
+500: D5~500,
+500: F4~500,
+500,
+500: B4~500,
+500: B4~500,
+500: A4~500,
+500: C5~500,
+500: G4~500,
+500: D5~500,
+500: F4~500,
+500,
+500: B4~500,
+500: B4~500,
+500: A4~500,
+500: C5~500,
+500: G4~500,
+500: D5~500,
+500: F4~500,
+500,
+500: B4~500,
+500: B4~500,
+1000,
+500: B4~500,
+500: B4~500,
+1000`;
+const menuThreeStem = tune`
+500: B4^500,
+500: B4^500,
+1000,
+500: B4^500,
+500: B4^500,
+1000,
+500: B4^500,
+500: B4^500,
+500: A4^500,
+500: C5^500,
+500: G4^500,
+500: D5^500,
+500: F4^500,
+500,
+500: B4^500,
+500: B4^500,
+500: A4^500,
+500: C5^500,
+500: G4^500,
+500: D5^500,
+500: F4^500,
+500,
+500: B4^500,
+500: B4^500,
+500: A4^500,
+500: C5^500,
+500: G4^500,
+500: D5^500,
+500: F4^500,
+500`;
+const menuFourStem = tune`
+250: E4^250,
+250,
+250: D4^250,
+250,
+250: C4^250,
+250: C4^250,
+250: C4^250,
+250,
+250: C4^250,
+250: D4^250,
+250: C4^250,
+250: D4^250,
+250: C4^250,
+750,
+250: E4^250,
+250,
+250: D4^250,
+250,
+250: C4^250,
+250: C4^250,
+250: C4^250,
+250,
+250: C4^250,
+250: D4^250,
+250: C4^250,
+250: D4^250,
+250: C4^250,
+750`;
 const endSong = tune`
 250: D5^250,
 250: D5^250,
@@ -1153,33 +1216,41 @@ You finished the
 using assists :O`;
 
 // Configurables
-let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // Used to keep track of the default solid blocks
-let lightRange = 3; // Used to set the distance the light can reach for displaySpritesInRange()
-let playerRange = 3; // Used to set the distance the player can see for displaySpritesInRange()
-let toastDelay = 3000; // Used to set the delay for text that appears when a key is found or door is unlocked, and how long the player is paused
-let shortToastDelay = 1500; // Used to set the delay for text that appears when no key is found or door is locked, and how long the player is paused
-let textHeightOffset = 4; // Used to set which height the toast texts appear
-let flashBrightness = 10; // Used to set how far the player can light up when doing mapFlash()
+let defaultSolids = [player, wall, doorOne, doorTwo, doorThree, box, boxKeyOne, boxKeyTwo, boxKeyThree]; // List of solid blocks
+let mapLevels = [2, 4, 7, 9, 10, 12]; // List of levels that are the beginning of a map
+let lightRange = 3; // The default distance a light can reach, for displaySpritesInRange()
+let playerRange = 3; // The default distance the player can see, for displaySpritesInRange()
+let flashBrightness = 10; // How far the player can see when using mapFlash()
+let toastDelay = 3000; // How long a toast lasts (Used when a key is found or door is unlocked)
+let shortToastDelay = 1500; // How long a short toast lasts (Used when the player cant unlock a door or finds an empty box)
+let textHeightOffset = 4; // How high toast texts should appear
+let mapHeightOffset = 2; // How high map name toast texts should appear
+
+// Music
+let stemOne; // Used to set playback of stem one
+let stemTwo; // Used to set playback of stem two
+let stemThree; // Used to set playback of stem three
+let stemFour; // Used to set playback of stem four
+let musicTimeouts = [0, 1, 2, 3, 4, 5, 6]; // Used to set the timeout of each phase
+
 
 // Background Game States
-let stemOne; // Used to control playback of game stem one (music)
-let stemTwo; // Used to control playback of game stem one (music)
-let stemThree; // Used to control playback of game stem one (music)
-let stemFour; // Used to control playback of game stem one (music)
-let widthX; // Used (during spawn) to get actual map width
-let gameState; // menu for Main Menu; game for In-game; pause for etc; end for End Screen
-let menuMode = 1; // 1 for Main Menu; 2 for Guide
-let pointerOption = 0;
-let currentPointer; // Check pointer functions
-let backButtonState = "2"; // 1 is Gray (unselected); 2 is White (selected)
-let pingError; // Used to ping error soundl (reduce error spam)
-let allSprites; // Used to track blocks inside a level
-let solidSprites = defaultSolids; //  Used to track which blocks are solid
-let currentPlayerCoord; // Used to track player's last position. Used in stepPing()
-let keyFound; // Used to track if a key was found. Used to feature key while gameState paused, for setSprites()
-let textHeight; // Used to set which height the toast texts appear
-let flashingMap; // Used to track if the player pressed the map flash button, used to adjust player texture
-let usedAssist; // Used to track if the player ever used the assists (flash map and key magic)
+let widthX; // Stores actual map width (Stored on spawn)
+let gameState; // Stores the current game state (menu, game, pause, end) used for certain functions, such as updateGameIntervals()
+let menuMode = 1; // Stores the current screen (1: Main Menu, 2: Guide) used for certain functions, such as updateGameIntervals()
+let pointerOption = 0; // Stores which option is currently selected
+let currentPointer; // Stores which texture the pointer is using
+let backButtonState = "2"; // Stores the state of the back button in the guide (1: Inactive, 2: Active)
+let pingError; // Notifies errorPing() if an error occured (reduces error spam)
+let allSprites; // Stores all blocks inside a level
+let solidSprites = defaultSolids; //  Stores which blocks are currently solid
+let currentPlayerCoord; // Stores player's last position. Used in stepPing()
+let keyFound; // Stores if a key was found. Used to feature key while gameState paused, for setSprites()
+let textHeight; // Stores which height toast texts appear
+let flashingMap; // Stores if the player pressed the map flash button, used to adjust player texture
+let usedAssist; // Stores if the player ever used the assists (flash map and key magic)
+let mapIndex = 0; // Stores the current map number
+let lastDisplayed; // Stores the last displayed map name
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -1195,13 +1266,14 @@ let pointerChangeInterval;
 let flickerLightsInterval;
 
 // Start the main menu
+playMusic("startup")
 mainMenu();
 
 // Controls
 onInput("w", () => {
   if (gameState == "menu") {
     pointerUp();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     getFirst(player).y--
   }
 });
@@ -1209,7 +1281,7 @@ onInput("w", () => {
 onInput("s", () => {
   if (gameState == "menu") {
     pointerDown();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     getFirst(player).y++
   }
 });
@@ -1217,7 +1289,7 @@ onInput("s", () => {
 onInput("a", () => {
   if (gameState == "menu") {
     pointerUp();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == 0) {
       // Check if at border and move to last map
       levelCheck("down");
@@ -1231,7 +1303,7 @@ onInput("a", () => {
 onInput("d", () => {
   if (gameState == "menu") {
     pointerDown();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     if (getFirst(player).x == widthX) {
       // Check if at border and move to next map
       levelCheck("up");
@@ -1243,7 +1315,7 @@ onInput("d", () => {
 });
 
 onInput("i", () => {
-  if (gameState == "game") {
+  if (gameState == "game" || gameState == "toast") {
     mapFlash();
   }
 });
@@ -1252,7 +1324,7 @@ onInput("k", () => {
   if (gameState == "menu") {
     pointerContinue("k");
     pointerBack();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     // usedAssist = true
     if (currentKey == 1) {
       currentKey = 2
@@ -1306,6 +1378,7 @@ function mainMenu() {
   menuMode = 1;
   pointerOption = 0;
   updateGameIntervals();
+  playMusic("menu");
 
   // Check for current level
   if (level != 0 && level < 2) {
@@ -1579,7 +1652,7 @@ function initializeGame() {
   setBackground(background);
   level = lastLevel; // Restore lastLevel if applicable
   // level = 6
-  playMusic("game");
+  playMusic("stop");
   spawn(); // Start Game
 }
 
@@ -1590,7 +1663,8 @@ function spawn() {
   characterInit();
   updateGameIntervals();
   setMap(levels[level]);
-  levelCheck("wall")
+  nextMapCheck();
+  levelCheck("next")
   widthX = width() - 1 // Check map actual width
   addSprite(spawnX, spawnY, player)
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
@@ -1773,6 +1847,26 @@ function toastTextClear() {
   characterInit();
 }
 
+function nextMapCheck() {
+  let leftWall = getTile(0, 1)[0]
+  textHeight = height() - mapHeightOffset
+  if (mapLevels.includes(level)) {
+    gameState = "toast";
+    lastDisplayed = lastLevel;
+    addText(nextMapName(), {y: textHeight, color: color`2` });
+    setTimeout(toastTextClear, toastDelay);
+  }
+}
+
+function nextMapName() {
+  if (mapIndex < mapNames.length && lastLevel != lastDisplayed) {
+    return mapNames[mapIndex++];
+    } else {
+      mapIndex = 0;
+      return mapNames[mapIndex];
+    }
+}
+
 function levelCheck(move) {
   if (level == levels.length - 2) {
     if (move == "up") {
@@ -1802,7 +1896,7 @@ function levelCheck(move) {
       level--;
       spawn();
     }
-    if (leftWall && lastLevel < level && move == "wall") {
+    if (leftWall && lastLevel < level && move == "next") {
       if (leftWall.type == wall) {
         currentKey = 0 // Make sure the player does not bring over a key
         solidSprites = defaultSolids;
@@ -2015,7 +2109,7 @@ function setSprites() {
         [box, boxSprite],
       );
     }
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     setLegend(
       [background, backgroundSprite],
       [wall, wallSprite],
@@ -2080,8 +2174,7 @@ function setSprites() {
       [fenceWall, fenceWallSprite],
       [hangingLantern, hangingLanternSprite],
       [player, currentPlayer],
-      [keyOne, keyOneSprite],
-      [keyTwo, keyTwoSprite],
+      [keyOne, keyOneSprite], l[keyTwo, keyTwoSprite],
       [keyThree, keyThreeSprite],
       [doorOne, doorOneSprite],
       [doorTwo, doorTwoSprite],
@@ -2096,26 +2189,67 @@ function setSprites() {
 
 // Music Engine
 function playMusic(mode) {
-  if (mode == "game") {
-    stemOne = playTune(gameOneStem, Infinity)
-    setTimeout(() => {
-      stemTwo = playTune(gameTwoStem, Infinity)
-    }, 2400);
-    setTimeout(() => {
-      stemThree = playTune(gameThreeStem, Infinity)
-    }, 4800);
-    setTimeout(() => {
+  if (mode == "startup") {
+    // Initialize Stem and stop thes
+    stemOne = playTune(stemDefault);
+    stemTwo = playTune(stemDefault);
+    stemThree = playTune(stemDefault);
+    stemFour = playTune(stemDefault);
+    stemOne.end();
+    stemTwo.end();
+    stemThree.end();
+    stemFour.end();
+  } else if (mode == "menu") {
+    let isPlaying;
+    if (!stemOne.isPlaying() && !stemFour.isPlaying()) {
+      stemOne = playTune(menuOneStem, Infinity)
+      musicTimeouts[0] = setTimeout(() => {
+        stemTwo = playTune(menuTwoStem, Infinity)
+      }, 16000);
+      musicTimeouts[1] = setTimeout(() => {
+        stemThree = playTune(menuThreeStem, Infinity)
+      }, 28000);
+      musicTimeouts[2] = setTimeout(() => {
+        stemTwo.end();
+      }, 32000);
+      musicTimeouts[3] = setTimeout(() => {
+        stemOne.end();
+        stemFour = playTune(menuFourStem, Infinity)
+      }, 48000);
+      musicTimeouts[4] = setTimeout(() => {
+        stemThree.end();
+        stemFour.end();
+        stemOne = playTune(menuOneStem, Infinity)
+        stemTwo = playTune(menuTwoStem, Infinity)
+      }, 64000);
+      musicTimeouts[5] = setTimeout(() => {
+        stemTwo.end();
+      }, 80000);
+      musicTimeouts[6] = setTimeout(() => {
+        stemOne.end();
+      }, 88000);
+    }
+  } else if (mode == "stop") {
+    if (stemOne != undefined) {
+      stemOne.end();
+      // delete stemOne;
+    }
+    if (stemTwo != undefined) {
       stemTwo.end()
+    }
+    if (stemThree != undefined) {
       stemThree.end()
-      stemThree = playTune(gameFourStem, Infinity)
-    }, 12000);
-    setTimeout(() => {
-      stemThree.end();
-      stemTwo = playTune(gameTwoStem, Infinity)
-    }, 26400);
-    setTimeout(() => {
-      stemThree = playTune(gameThreeStem, Infinity)
-    }, 28800);
+    }
+    if (stemFour != undefined) {
+      stemFour.end()
+    }
+    for (let i = 0; i < musicTimeouts.length; i++) {
+      // Check if the timeout ID exists
+      if (musicTimeouts[i]) {
+        // Clear the timeout
+        clearTimeout(musicTimeouts[i]);
+      }
+    }
   }
 }
 
@@ -2136,7 +2270,7 @@ function stepPing() {
 
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 500); // Set interval for error sound being played
-  if (gameState == "game" || gameState == "pause") {
+  if (gameState == "game" || gameState == "pause" || gameState == "toast") {
     // Clear any existing intervals
     clearInterval(pointerChangeInterval);
     clearInterval(flickerLightsInterval);

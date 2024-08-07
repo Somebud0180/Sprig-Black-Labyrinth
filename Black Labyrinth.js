@@ -390,6 +390,40 @@ w.w.w.w.w..w.w.w.w.w
 ...................w
 wwwwwwwwwwwwwwwwwwww`, // Level 19 || Map 9: Level 2
   map`
+wwwwwwwwwwwwwwwwwwww
+w..................o
+wwwwwwwwww.wwwwwwwww
+w00000000w.w.......w
+w........w.w.ww.wwww
+w02.ww.00w.w..w.w..w
+w00.ww.00w.w..w....w
+w........w.ww.wwwwww
+w........u.i..w.d..w
+w00.ww.00w.ww.wwww.w
+w00.ww.00w.w..w....w
+w........w.w.ww.wwww
+w00000000w.w.......w
+wwwwwwwwww.wwwwwwwww
+w..................w
+wwwwwwwwwwwwwwwwwwww`, // Level 20 || Map 10: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
+w..w...............w
+w..w.0000.000000r00w
+w.rw...............w
+w..w00r00000.00000.w
+w..w...............w
+wr.wwwwwwwwwwwwwwwww
+w......r.....r.....r
+w...r.....r.....r...
+wwwwwwwwwwwwwwwwwwww
+w..................w
+w00r000.00000.00000w
+w..................w
+w.00000000.00000r00w
+w..................w
+wwwwwwwwwwwwwwwwwwww`, // Level 21 || Map 11: Level 1
+  map`
 ....................
 ....................
 ....................
@@ -725,8 +759,8 @@ const fenceWallSprite = bitmap`
 ................
 ................
 ................
+................
 .LLLLLL..LLLLLL.
-.L1111L..L1111L.
 .L1111L..L1111L.
 .L1111L..L1111L.
 LLLLLLLLLLLLLLLL
@@ -1479,16 +1513,16 @@ onInput("k", () => {
     usedAssist = true
     if (currentKey == 1) {
       currentKey = 2
-      characterInit();
+      playerInit();
     } else if (currentKey == 2) {
       currentKey = 3
-      characterInit();
+      playerInit();
     } else if (currentKey == 3) {
       currentKey = 0
-      characterInit();
+      playerInit();
     } else {
       currentKey = 1
-      characterInit();
+      playerInit();
     }
   }
 });
@@ -1774,34 +1808,34 @@ function updateSprite(activeOption) {
 function guideText() {
   addBack();
   if (pointerOption == 1) {
-    addText(upLGuide, { x: 1, y: 12, color: color`2` });
+    addText(upLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 2) {
-    addText(leftLGuide, { x: 1, y: 12, color: color`2` });
+    addText(leftLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 3) {
-    addText(downLGuide, { x: 1, y: 12, color: color`2` });
+    addText(downLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 4) {
-    addText(rightLGuide, { x: 1, y: 12, color: color`2` });
+    addText(rightLGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 5) {
-    addText(upRGuide, { x: 1, y: 12, color: color`2` });
+    addText(upRGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 6) {
-    addText(leftRGuide, { x: 1, y: 11, color: color`2` });
+    addText(leftRGuide, { x: 1, y: 11, color: color`2`});
   } else if (pointerOption == 7) {
-    addText(downRGuide, { x: 1, y: 12, color: color`2` });
+    addText(downRGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 8) {
-    addText(rightRGuide, { x: 1, y: 12, color: color`2` });
+    addText(rightRGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 9) {
-    addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
+    addText(tipOneGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 10) {
-    addText(tipTwoGuide, { x: 1, y: 12, color: color`2` });
+    addText(tipTwoGuide, { x: 1, y: 12, color: color`2`});
   } else if (pointerOption == 11) {
     addSprite(9, 12, buttonI);
-    addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
+    addText(tipThreeGuide, { x: 1, y: 11, color: color`2`});
   } else if (pointerOption == 12) {
     addSprite(9, 12, buttonK);
-    addText(tipFourGuide, { x: 1, y: 11, color: color`2` });
+    addText(tipFourGuide, { x: 1, y: 11, color: color`2`});
   } else if (pointerOption == 13) {
     addSprite(9, 12, buttonI);
-    addText(tipFiveGuide, { x: 1, y: 12, color: color`2` });
+    addText(tipFiveGuide, { x: 1, y: 12, color: color`2`});
   }
 }
 
@@ -1817,7 +1851,7 @@ function initializeGame() {
 // Spawn Code
 function spawn() {
   gameState = "pause";
-  characterInit();
+  playerInit();
   updateGameIntervals();
   clearText(); // Cleans text before spawn
   setSolids(solidSprites);
@@ -1828,7 +1862,7 @@ function spawn() {
   addSprite(spawnX, spawnY, player)
   levelCheck("next")
   gameState = "game";
-  characterInit();
+  playerInit();
   updateGameIntervals();
   allSprites = getAll(); // Grabs all sprites in the map and saves them.
   displaySpritesInRange(); // Make sure the player is in the map when this is runned
@@ -1842,13 +1876,13 @@ function mapFlash() {
   flashingMap = 2;
   updateGameIntervals()
   displaySpritesInRange();
-  characterInit();
+  playerInit();
   playTune(flashSFX)
   setTimeout(() => {
     // Reduce range after a period of time
     playerRange = 4
     flashingMap = 1;
-    characterInit();
+    playerInit();
     displaySpritesInRange();
   }, 1000);
   setTimeout(() => {
@@ -1857,7 +1891,7 @@ function mapFlash() {
     gameState = "game"
     flashingMap = 0;
     updateGameIntervals()
-    characterInit();
+    playerInit();
     displaySpritesInRange();
   }, 3000);
 }
@@ -1867,7 +1901,7 @@ function itemInteract() {
   grabKey(); // Check if on a key and grab it
   grabBox(); // Check if next to a box and if it has a key and grab it
   unlockDoor(); // Check if next to a door and unlock it
-  characterInit(); // Refreshes character sprite for every interaction
+  playerInit(); // Refreshes player sprite for every interaction
 }
 
 // Checks around the player for a key
@@ -2027,7 +2061,7 @@ function toastTextClear() {
   keyFound = false;
   gameState = "game"
   updateGameIntervals()
-  characterInit();
+  playerInit();
 }
 
 // Checks if the current level is a different map
@@ -2055,15 +2089,18 @@ function nextMapText() {
   }
 }
 
+// Checks current level and acts based on it
 function levelCheck(move) {
   gameState = "pause"
   playerY = getFirst(player).y
   if (level == levels.length - 2) {
     // If current level is the level right before the end
     if (move == "up") {
+      // If moving to the right, trigger the end screen
       level++;
       endScreen();
     } else if (move == "down") {
+      // If moving to the left, go back a level
       playerY = getFirst(player).y
       spawnX = widthX;
       spawnY = playerY;
@@ -2074,12 +2111,14 @@ function levelCheck(move) {
   } else if (level < levels.length - 2) {
     // If current level is not the level right before the end
     if (move == "up") {
+      // If moving to the right, go up a level
       playerY = getFirst(player).y
       spawnX = 0;
       spawnY = playerY;
       level++;
       spawn();
     } else if (move == "down") {
+      // If moving to the left, go back a level
       playerY = getFirst(player).y
       spawnX = widthX;
       spawnY = playerY;
@@ -2088,15 +2127,17 @@ function levelCheck(move) {
       spawn();
     }
     if (mapLevels.includes(level) && level > lastLevel && move == "next") {
+      // If current level is the beginning of a new map and is higher than the last level
       currentKey = 0 // Make sure the player does not bring over a key
-      solidSprites = defaultSolids;
-      characterInit();
+      solidSprites = defaultSolids; // Reset solid sprites to default, AKA lock everything
+      playerInit();
       setSolids(solidSprites);
       playTune(nextMapSFX);
     }
   }
 }
 
+// Hide blocks far away from a light source or the player
 function displaySpritesInRange() {
   // Filter out the player sprite and wallLantern from allSprites
   const otherSprites = allSprites.filter(sprite => sprite.type != player && sprite.type != hangingLantern);
@@ -2113,6 +2154,7 @@ function displaySpritesInRange() {
     addSprite(spriteX, spriteY, allSprite.type);
   }
 
+  // Loop for each block
   for (let allSprite of otherSprites) {
     let spriteX = allSprite.x;
     let spriteY = allSprite.y;
@@ -2120,7 +2162,7 @@ function displaySpritesInRange() {
     // Calculate the distance between the block and the player
     const distancePlayer = Math.abs(spriteX - playerX) + Math.abs(spriteY - playerY);
 
-    // Check if the block is within the specified range around the player or wallLantern
+    // Check if the block is within the specified range around the player
     if (distancePlayer <= playerRange) {
       if (!getTile(spriteX, spriteY)) {
         // If block is within range, add it to the game
@@ -2132,19 +2174,21 @@ function displaySpritesInRange() {
         clearTile(spriteX, spriteY);
       }
     }
+
+    // Check if the block is within the specified range around the hanging lantern
     if (getFirst(hangingLantern)) {
+      // Check if there is a hanging lantern in the map
       let lanternAmount = getAll(hangingLantern).length
       for (let i = 0; i < lanternAmount; i++) {
+        // Loop for each lantern
         let lanternCoord = getAll(hangingLantern)[i];
         let lanternX = lanternCoord.x;
         let lanternY = lanternCoord.y;
 
         // Calculate the distance between the block and the lantern
-        let spriteX = allSprite.x;
-        let spriteY = allSprite.y;
         const distanceLantern = Math.abs(spriteX - lanternX) + Math.abs(spriteY - lanternY);
 
-        // Check if the block is within the specified range around the player or wallLantern
+        // Check if the block is within the specified range around the hanging lantern
         if (distanceLantern <= lightRange) {
           // If block is within range, add it to the game
           addSprite(spriteX, spriteY, allSprite.type);
@@ -2154,19 +2198,24 @@ function displaySpritesInRange() {
   }
 }
 
+// Randomizes hanging lantern's light range
 function flickerLights() {
   let randomness = Math.random()
   if (randomness < 0.2) {
     lightRange = 2
+    // return 2;
   } else if (randomness > 0.8) {
     lightRange = 4
+    // return 4;
   } else {
     lightRange = 3
+    // return 3;
   }
-  displaySpritesInRange();
+  displaySpritesInRange(); // Update lantern range
 }
 
-function characterInit() {
+// Initializes player texture
+function playerInit() {
   if (flashingMap == 1) {
     currentPlayer = playerWeakBrightSprite;
   } else if (flashingMap == 2) {
@@ -2183,6 +2232,7 @@ function characterInit() {
   setSprites();
 }
 
+// Plays out the end screen
 function endScreen() {
   // Initialize
   gameState = "end";
@@ -2192,7 +2242,7 @@ function endScreen() {
   addSprite(0, 14, player);
   const playback = playTune(endSong, Infinity);
 
-  // Body
+  // Movement
   setTimeout(moveRight, 500);
   setTimeout(moveRight, 1000);
   setTimeout(moveRight, 1500);
@@ -2202,6 +2252,7 @@ function endScreen() {
   setTimeout(moveRight, 3500);
   setTimeout(moveRight, 4000);
 
+  // Text
   addText(titleText, { x: 5, y: 0, color: color`2` });
 
   setTimeout(() => {
@@ -2231,16 +2282,19 @@ function endScreen() {
   }, 15000);
 }
 
+// Moves player to the right and plays the accompanying sound effect
 function moveRight() {
   getFirst(player).x++;
   playTune(stepSFX);
 }
 
+// Updates every sprite's texture
 function setSprites() {
   // This function loads the required Sprites for each gameState and menuMode
   if (gameState == "menu") {
-    // Main Menu or Guide check
+    // If at the Menu
     if (menuMode == 1) {
+      // If at the Main Menu
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
@@ -2270,6 +2324,7 @@ function setSprites() {
         [boxKeyThree, boxSprite],
       );
     } else if (menuMode == 2) {
+      // If at the Guide
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
@@ -2294,6 +2349,7 @@ function setSprites() {
       );
     }
   } else if (gameState == "game" || gameState == "toast") {
+    // If In-Game
     setLegend(
       [background, backgroundSprite],
       [wall, wallSprite],
@@ -2312,7 +2368,9 @@ function setSprites() {
       [boxKeyThree, boxSprite],
     );
   } else if (gameState == "pause") {
+    // If Paused
     if (keyFound) {
+      // If a key is found
       setLegend(
         [background, backgroundSprite],
         [wall, wallSprite],
@@ -2350,6 +2408,7 @@ function setSprites() {
       );
     }
   } else if (gameState == "end") {
+    // If at the end screen
     setLegend(
       [lightPost, lightPostSprite],
       [lightLantern, lightLanternSprite],
@@ -2372,10 +2431,10 @@ function setSprites() {
   }
 }
 
-// Music Engine
+// Music Player
 function musicPlayer(mode) {
   if (mode == "startup") {
-    // Initialize Stem and stop thes
+    // Initialize stems and stop them
     stemOne = playTune(stemDefault);
     stemTwo = playTune(stemDefault);
     stemThree = playTune(stemDefault);
@@ -2385,6 +2444,7 @@ function musicPlayer(mode) {
     stemThree.end();
     stemFour.end();
   } else if (mode == "menu" && !isMusicMuted) {
+    // Plays the song
     let isPlaying;
     if (!stemOne.isPlaying() && !stemFour.isPlaying()) {
       stemOne = playTune(menuOneStem, Infinity)
@@ -2415,9 +2475,9 @@ function musicPlayer(mode) {
       }, 88000);
     }
   } else if (mode == "stop") {
+    // Stops the song
     if (stemOne != undefined) {
       stemOne.end();
-      // delete stemOne;
     }
     if (stemTwo != undefined) {
       stemTwo.end()
@@ -2429,7 +2489,7 @@ function musicPlayer(mode) {
       stemFour.end()
     }
     for (let i = 0; i < musicTimeouts.length; i++) {
-      // Check if the timeout ID exists
+      // Check if the timeout exists
       if (musicTimeouts[i]) {
         // Clear the timeout
         clearTimeout(musicTimeouts[i]);
@@ -2438,21 +2498,25 @@ function musicPlayer(mode) {
   }
 }
 
-// Error Player Code
+// Plays the error sound effect (every half a second)
 function errorPing() {
   if (pingError == true) {
+    // Check if an error occured
     playTune(errorSFX);
     pingError = false;
   }
 }
 
+// Plays the step effect
 function stepPing() {
-  currentPlayerCoord = getFirst(player)
+  currentPlayerCoord = getFirst(player) // Get the player coordinates
   if (currentPlayerCoord.dx != 0 || currentPlayerCoord.dy != 0) {
+    // Check if the player moved
     playTune(stepSFX);
   }
 }
 
+// Refreshes game intervals
 function updateGameIntervals() {
   errorPingInterval = setInterval(errorPing, 500); // Set interval for error sound being played
   if (gameState == "game" || gameState == "pause" || gameState == "toast") {

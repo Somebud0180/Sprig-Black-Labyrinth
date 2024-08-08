@@ -1508,6 +1508,7 @@ let flashingMap; // Stores if the player pressed the map flash button, used to a
 let usedAssist; // Stores if the player ever used the assists (flash map and key magic)
 let mapIndex = 0; // Stores the current map number
 let lastDisplayed; // Stores the last displayed map name
+let toastTimeout; // Stores the timeout used for toast text clear
 
 // In-Game States
 let spawnX = 1; // Default X value used to spawn player on start, used to tell where player to spawn in checkBorder()
@@ -1618,7 +1619,7 @@ onInput("j", () => {
 onInput("l", () => {
   if (gameState == "menu") {
     pointerContinue();
-  } else if (gameState == "game") {
+  } else if (gameState == "game" || gameState == "toast") {
     itemInteract()
   }
 });
@@ -1913,7 +1914,7 @@ function guideText() {
 // Setup the game
 function initializeGame() {
   // level = lastLevel; // Restore lastLevel if applicable
-  level = 20;
+  level = 21;
   setBackground(background);
   musicPlayer("stop");
   spawn(); // Start Game
@@ -1993,39 +1994,43 @@ function grabBox() {
     currentKey = 1;
     keyFound = true
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   } else if (boxTwoFound) {
     currentKey = 2;
     keyFound = true
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   } else if (boxThreeFound) {
     currentKey = 3;
     keyFound = true
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   } else if (boxFound) {
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(boxEmptyText, { x: 1, y: textHeight, color: color`2` });
-    setTimeout(toastTextClear, shortToastDelay);
+    toastTimeout = setTimeout(toastTextClear, shortToastDelay);
   }
 }
 
@@ -2041,34 +2046,37 @@ function grabKey() {
     currentKey = 1;
     keyFound = true;
     gameState = "toast"
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` });
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   } else if (keyTwoCoord && playerCoord.x == keyTwoCoord.x && playerCoord.y == keyTwoCoord.y) {
     // Player and key are on the same tile
     currentKey = 2;
     keyFound = true;
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   } else if (keyThreeCoord && playerCoord.x == keyThreeCoord.x && playerCoord.y == keyThreeCoord.y) {
     // Player and key are on the same tile
     currentKey = 3;
     keyFound = true;
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
     addText(keyFoundText, { x: 1, y: textHeight, color: color`2` })
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   }
 }
 
@@ -2096,10 +2104,12 @@ function unlockDoor() {
   } else if (doorOneFound && solidSprites.includes(doorOne)) {
     // Checks if the door is locked
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
+    clearText();
     addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-    setTimeout(toastTextClear, shortToastDelay);
+    toastTimeout = setTimeout(toastTextClear, shortToastDelay);
     return;
   } else if (doorTwoFound && solidSprites.includes(doorTwo) && currentKey == 2) {
     // Checks if player has key 2
@@ -2111,10 +2121,12 @@ function unlockDoor() {
   } else if (doorTwoFound && solidSprites.includes(doorTwo)) {
     // Checks if the door is locked
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
+    clearText();
     addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-    setTimeout(toastTextClear, shortToastDelay);
+    toastTimeout = setTimeout(toastTextClear, shortToastDelay);
     return;
   } else if (doorThreeFound && solidSprites.includes(doorThree) && currentKey == 3) {
     // Checks if player has key 3
@@ -2126,10 +2138,12 @@ function unlockDoor() {
   } else if (doorThreeFound && solidSprites.includes(doorThree)) {
     // Checks if the door is locked
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
+    clearText();
     addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-    setTimeout(toastTextClear, shortToastDelay);
+    toastTimeout = setTimeout(toastTextClear, shortToastDelay);
     return;
   }
 }
@@ -2149,9 +2163,10 @@ function nextMapCheck() {
   if (mapLevels.includes(level) && lastDisplayed != level) {
     // Check if the current level is the beginning of a map and if the current level hasn't been displayed yet
     gameState = "toast";
+    clearTimeout(toastTimeout);
     updateGameIntervals()
     addText(nextMapText(), { y: textHeight, color: color`2` });
-    setTimeout(toastTextClear, toastDelay);
+    toastTimeout = setTimeout(toastTextClear, toastDelay);
   }
 }
 
@@ -2351,15 +2366,17 @@ function endScreen() {
     }, 8000);
   }
 
-  // Exit
+  // Cleanup
   setTimeout(() => {
     playback.end();
     level = 1;
     spawnX = 1;
     spawnY = 1;
     solidSprites = defaultSolids;
-    mainMenu();
   }, 15000);
+
+  // Exit
+  setTimeout(mainMenu, 18000);
 }
 
 // Moves player to the right and plays the accompanying sound effect

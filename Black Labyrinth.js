@@ -1648,7 +1648,7 @@ function mainMenu() {
     // Check if game hasn't started yet and is not from the guide then set default level
     lastLevel = 2;
   }
-  
+
   currentLevelText = `Current level: ${lastLevel - 1}`;
   clearText();
   setSprites();
@@ -1879,41 +1879,41 @@ function updateSprite(activeOption) {
 function guideText() {
   addBack();
   if (pointerOption == 1) {
-    addText(upLGuide, { x: 1, y: 12, color: color`2`});
+    addText(upLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 2) {
-    addText(leftLGuide, { x: 1, y: 12, color: color`2`});
+    addText(leftLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 3) {
-    addText(downLGuide, { x: 1, y: 12, color: color`2`});
+    addText(downLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 4) {
-    addText(rightLGuide, { x: 1, y: 12, color: color`2`});
+    addText(rightLGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 5) {
-    addText(upRGuide, { x: 1, y: 12, color: color`2`});
+    addText(upRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 6) {
-    addText(leftRGuide, { x: 1, y: 11, color: color`2`});
+    addText(leftRGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 7) {
-    addText(downRGuide, { x: 1, y: 12, color: color`2`});
+    addText(downRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 8) {
-    addText(rightRGuide, { x: 1, y: 12, color: color`2`});
+    addText(rightRGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 9) {
-    addText(tipOneGuide, { x: 1, y: 12, color: color`2`});
+    addText(tipOneGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 10) {
-    addText(tipTwoGuide, { x: 1, y: 12, color: color`2`});
+    addText(tipTwoGuide, { x: 1, y: 12, color: color`2` });
   } else if (pointerOption == 11) {
     addSprite(9, 12, buttonI);
-    addText(tipThreeGuide, { x: 1, y: 11, color: color`2`});
+    addText(tipThreeGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 12) {
     addSprite(9, 12, buttonK);
-    addText(tipFourGuide, { x: 1, y: 11, color: color`2`});
+    addText(tipFourGuide, { x: 1, y: 11, color: color`2` });
   } else if (pointerOption == 13) {
     addSprite(9, 12, buttonI);
-    addText(tipFiveGuide, { x: 1, y: 12, color: color`2`});
+    addText(tipFiveGuide, { x: 1, y: 12, color: color`2` });
   }
 }
 
 // Setup the game
 function initializeGame() {
-  level = lastLevel; // Restore lastLevel if applicable
-  // level = 19
+  // level = lastLevel; // Restore lastLevel if applicable
+  level = 20;
   setBackground(background);
   musicPlayer("stop");
   spawn(); // Start Game
@@ -1951,7 +1951,7 @@ function mapFlash() {
   playTune(flashSFX)
   setTimeout(() => {
     // Reduce range after a period of time
-    playerRange = 4
+    playerRange = flashBrightness / 2;
     flashingMap = 1;
     playerInit();
     displaySpritesInRange();
@@ -2085,14 +2085,14 @@ function unlockDoor() {
   let doorTwoFound = surroundingTiles.some((tile) => tile && (tile.type == doorTwo));
   let doorThreeFound = surroundingTiles.some((tile) => tile && (tile.type == doorThree));
 
-  if (doorOneFound) {
-    if (currentKey == 1) {
-      // Checks if player has key 1
-      solidSprites = solidSprites.filter(item => item != doorOne);
-      currentKey = 0;
-      setSolids(solidSprites);
-      playTune(unlockSFX);
-    } else if (solidSprites.includes(doorOne)) {
+  console.log(solidSprites)
+  if (doorOneFound && solidSprites.includes(doorOne) && currentKey == 1) {
+    // Checks if player has key 1
+    solidSprites = solidSprites.filter(item => item != doorOne);
+    currentKey = 0;
+    setSolids(solidSprites);
+    playTune(unlockSFX);
+  } else if (solidSprites.includes(doorOne)) {
       // Checks if the door is locked
       gameState = "pause";
       updateGameIntervals()
@@ -2100,7 +2100,7 @@ function unlockDoor() {
       addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
       setTimeout(toastTextClear, shortToastDelay);
     }
-  } else if (doorTwoFound) {
+  } else if (doorTwoFound && solidSprites.includes(doorOne)) {
     if (currentKey == 2) {
       // Checks if player has key 2
       solidSprites = solidSprites.filter(item => item != doorTwo);
@@ -2115,7 +2115,7 @@ function unlockDoor() {
       addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
       setTimeout(toastTextClear, shortToastDelay);
     }
-  } else if (doorThreeFound) {
+  } else if (doorThreeFound && solidSprites.includes(doorOne)) {
     if (currentKey == 3) {
       // Checks if player has key 3
       solidSprites = solidSprites.filter(item => item != doorThree);

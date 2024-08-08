@@ -1,12 +1,15 @@
 /*
-First time? Check out the tutorial game:
-https://sprig.hackclub.com/gallery/getting_started
-
 @title: Black Labyrinth
-@author: 
-@tags: []
+@author: Somebud0180
+@tags: [maze]
 @addedOn: 2024-00-00
 */
+
+// A game all about mazes, mazes with lights, and mazes with boxes, even both at the same time
+
+// Controls
+// They're in the guide
+// Use WS or AD to move up and down an L to enter
 
 // Game Bitmaps
 const background = "t";
@@ -1942,7 +1945,6 @@ function guideText() {
 // Setup the game
 function initializeGame() {
   level = lastLevel; // Restore lastLevel if applicable
-  // level = 21;
   setBackground(background);
   musicPlayer("stop");
   spawn(); // Start Game
@@ -2145,7 +2147,6 @@ function unlockDoor() {
     (tile) => tile && tile.type == doorThree,
   );
 
-  console.log(solidSprites);
   if (doorOneFound && solidSprites.includes(doorOne) && currentKey == 1) {
     // Checks if player has key 1
     solidSprites = solidSprites.filter((item) => item != doorOne);
@@ -2362,13 +2363,10 @@ function flickerLights() {
   let randomness = Math.random();
   if (randomness < 0.2) {
     lightRange = 2;
-    // return 2;
   } else if (randomness > 0.8) {
     lightRange = 4;
-    // return 4;
   } else {
     lightRange = 3;
-    // return 3;
   }
   displaySpritesInRange(); // Update lantern range
 }
@@ -2449,17 +2447,19 @@ function moveRight() {
   playTune(stepSFX);
 }
 
-function boxSpriteCheck(key) {
-  if (key == 1 && currentKey == 1) {
+// Returns the correct box sprite when a key in a box is found
+function boxSpriteCheck(boxKey) {
+  if (boxKey == 1 && currentKey == 1) {
     return boxOneHighlightSprite;
-  } else if (key == 2 && currentKey == 2) {
+  } else if (boxKey == 2 && currentKey == 2) {
     return boxTwoHighlightSprite;
-  } else if (key == 3 && currentKey == 3) {
+  } else if (boxKey == 3 && currentKey == 3) {
     return boxThreeHighlightSprite;
   } else {
     return boxSprite;
   }
 }
+
 // Updates every sprite's texture
 function setSprites() {
   // This function loads the required Sprites for each gameState and menuMode
@@ -2475,25 +2475,6 @@ function setSprites() {
         [arrow, arrowSprite],
         [buttonL, buttonLSprite],
         [muteIcon, currentMuteIcon],
-        // Game Sprites (Just to make map making easier)
-        [tipBoxOne, tipBoxSprite],
-        [tipBoxTwo, tipBoxSprite],
-        [tipBoxThree, tipBoxSprite],
-        [tipBoxFour, tipBoxSprite],
-        [tipBoxFive, tipBoxSprite],
-        [fenceWall, fenceWallSprite],
-        [hangingLantern, hangingLanternSprite],
-        [player, currentPlayer],
-        [keyOne, keyOneSprite],
-        [keyTwo, keyTwoSprite],
-        [keyThree, keyThreeSprite],
-        [doorOne, doorOneSprite],
-        [doorTwo, doorTwoSprite],
-        [doorThree, doorThreeSprite],
-        [box, boxSprite],
-        [boxKeyOne, boxSprite],
-        [boxKeyTwo, boxSprite],
-        [boxKeyThree, boxSprite],
       );
     } else if (menuMode == 2) {
       // If at the Guide
@@ -2520,7 +2501,7 @@ function setSprites() {
         [box, boxSprite],
       );
     }
-  } else if (gameState == "game" || gameState == "toast") {
+  } else if (gameState == "game" || gameState == "toast" || gameState == "pause") {
     // If In-Game
     if (keyFound) {
       // If a key is found
@@ -2560,25 +2541,6 @@ function setSprites() {
         [boxKeyThree, boxSprite],
       );
     }
-  } else if (gameState == "pause") {
-    // If Paused
-      setLegend(
-      [background, backgroundSprite],
-      [wall, wallSprite],
-      [fenceWall, fenceWallSprite],
-      [hangingLantern, hangingLanternSprite],
-      [player, currentPlayer],
-      [keyOne, keyOneSprite],
-      [keyTwo, keyTwoSprite],
-      [keyThree, keyThreeSprite],
-      [doorOne, doorOneSprite],
-      [doorTwo, doorTwoSprite],
-      [doorThree, doorThreeSprite],
-      [box, boxSprite],
-      [boxKeyOne, boxSprite],
-      [boxKeyTwo, boxSprite],
-      [boxKeyThree, boxSprite],
-    );
   } else if (gameState == "end") {
     // If at the end screen
     setLegend(

@@ -476,7 +476,7 @@ w....w...w000w0w000w
 wwwwwwwwwwwwwwwwwwww`, // Level 24 || Map 12: Level 3
   map`
 wwwww.wwwwwwwww.wwww
-wwwww.wwwwwwwww.wwww
+wwwwwrwwwwwwwwwrwwww
 w.....w.....w......w
 w.r...i.r...w....r.w
 w...r.w..ar.w.r....w
@@ -489,11 +489,11 @@ w.......w......r..0w
 w.r...r.w.r.r.w0..2w
 w.......w.....w00.rw
 ww.wwwwwwwwuwwwwwwww
-....................
+...r...r....r...r...
 wwwwwwwwwwwwwwwwwwww`, // Level 25 || Map 12: Level 4
   map`
 wwwwwwwwwwwwwwwwwwww
-w...w.w..r..r...r..w
+wr..w.w..r..r...r..w
 w.w.r.w.wwwwww.www.w
 w.wwwww.w....w.w.wrw
 w.r.w.r.w.rw.w.w.w.w
@@ -503,9 +503,9 @@ wwwwwwwwwwwwwwwwwwww
 ...................w
 wwwwwwwwwwwwwwww...w
 w0000000w..w...w...w
-w..r0..rw..w.r.w...w
+w..r0..rw.rw.r.w...w
 w.0.3.0.w..w...w...w
-wr0..r0.i....r.w...w
+wr0..r0.ir...r.w...w
 w0000000w..w...w...o
 wwwwwwwwwwwwwwwwwwww`, // Level 26 || Map 12: Level 5
   map`
@@ -1941,8 +1941,8 @@ function guideText() {
 
 // Setup the game
 function initializeGame() {
-  // level = lastLevel; // Restore lastLevel if applicable
-  level = 21;
+  level = lastLevel; // Restore lastLevel if applicable
+  // level = 21;
   setBackground(background);
   musicPlayer("stop");
   spawn(); // Start Game
@@ -2449,6 +2449,17 @@ function moveRight() {
   playTune(stepSFX);
 }
 
+function boxSpriteCheck(key) {
+  if (key == 1 && currentKey == 1) {
+    return boxOneHighlightSprite;
+  } else if (key == 2 && currentKey == 2) {
+    return boxTwoHighlightSprite;
+  } else if (key == 3 && currentKey == 3) {
+    return boxThreeHighlightSprite;
+  } else {
+    return boxSprite;
+  }
+}
 // Updates every sprite's texture
 function setSprites() {
   // This function loads the required Sprites for each gameState and menuMode
@@ -2511,25 +2522,6 @@ function setSprites() {
     }
   } else if (gameState == "game" || gameState == "toast") {
     // If In-Game
-    setLegend(
-      [background, backgroundSprite],
-      [wall, wallSprite],
-      [fenceWall, fenceWallSprite],
-      [hangingLantern, hangingLanternSprite],
-      [player, currentPlayer],
-      [keyOne, keyOneSprite],
-      [keyTwo, keyTwoSprite],
-      [keyThree, keyThreeSprite],
-      [doorOne, doorOneSprite],
-      [doorTwo, doorTwoSprite],
-      [doorThree, doorThreeSprite],
-      [box, boxSprite],
-      [boxKeyOne, boxSprite],
-      [boxKeyTwo, boxSprite],
-      [boxKeyThree, boxSprite],
-    );
-  } else if (gameState == "pause") {
-    // If Paused
     if (keyFound) {
       // If a key is found
       setLegend(
@@ -2545,9 +2537,9 @@ function setSprites() {
         [doorTwo, doorTwoSprite],
         [doorThree, doorThreeSprite],
         [box, boxSprite],
-        [boxKeyOne, boxOneHighlightSprite],
-        [boxKeyTwo, boxTwoHighlightSprite],
-        [boxKeyThree, boxThreeHighlightSprite],
+        [boxKeyOne, boxSpriteCheck(1)],
+        [boxKeyTwo, boxSpriteCheck(2)],
+        [boxKeyThree, boxSpriteCheck(3)],
       );
     } else {
       setLegend(
@@ -2568,6 +2560,25 @@ function setSprites() {
         [boxKeyThree, boxSprite],
       );
     }
+  } else if (gameState == "pause") {
+    // If Paused
+      setLegend(
+      [background, backgroundSprite],
+      [wall, wallSprite],
+      [fenceWall, fenceWallSprite],
+      [hangingLantern, hangingLanternSprite],
+      [player, currentPlayer],
+      [keyOne, keyOneSprite],
+      [keyTwo, keyTwoSprite],
+      [keyThree, keyThreeSprite],
+      [doorOne, doorOneSprite],
+      [doorTwo, doorTwoSprite],
+      [doorThree, doorThreeSprite],
+      [box, boxSprite],
+      [boxKeyOne, boxSprite],
+      [boxKeyTwo, boxSprite],
+      [boxKeyThree, boxSprite],
+    );
   } else if (gameState == "end") {
     // If at the end screen
     setLegend(

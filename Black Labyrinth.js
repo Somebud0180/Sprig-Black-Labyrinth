@@ -486,9 +486,9 @@ wwwwwwwwwwwwwwwwwwww
 ...................w
 wwwwwwwwwwwwwwww...w
 w0000000w..w...w...w
-w...0...w..w.r.w...w
+w..r0..rw..w.r.w...w
 w.0.3.0.w..w...w...w
-w.0...0.i....r.w...w
+wr0..r0.i....r.w...w
 w0000000w..w...w...o
 wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 5
   map`
@@ -1992,7 +1992,7 @@ function grabBox() {
   if (boxOneFound) {
     currentKey = 1;
     keyFound = true
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2002,7 +2002,7 @@ function grabBox() {
   } else if (boxTwoFound) {
     currentKey = 2;
     keyFound = true
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2012,7 +2012,7 @@ function grabBox() {
   } else if (boxThreeFound) {
     currentKey = 3;
     keyFound = true
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2020,7 +2020,7 @@ function grabBox() {
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
     setTimeout(toastTextClear, toastDelay);
   } else if (boxFound) {
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2040,7 +2040,7 @@ function grabKey() {
     // Player and key are on the same tile
     currentKey = 1;
     keyFound = true;
-    gameState = "pause"
+    gameState = "toast"
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2051,7 +2051,7 @@ function grabKey() {
     // Player and key are on the same tile
     currentKey = 2;
     keyFound = true;
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2062,7 +2062,7 @@ function grabKey() {
     // Player and key are on the same tile
     currentKey = 3;
     keyFound = true;
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     playTune(keyFoundSFX);
     clearText();
@@ -2092,39 +2092,45 @@ function unlockDoor() {
     currentKey = 0;
     setSolids(solidSprites);
     playTune(unlockSFX);
+    return;
   } else if (doorOneFound && solidSprites.includes(doorOne)) {
     // Checks if the door is locked
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
     addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
     setTimeout(toastTextClear, shortToastDelay);
+    return;
   } else if (doorTwoFound && solidSprites.includes(doorTwo) && currentKey == 2) {
     // Checks if player has key 2
     solidSprites = solidSprites.filter(item => item != doorTwo);
     currentKey = 0;
     setSolids(solidSprites);
     playTune(unlockSFX);
+    return;
   } else if (doorTwoFound && solidSprites.includes(doorTwo)) {
     // Checks if the door is locked
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
     addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
     setTimeout(toastTextClear, shortToastDelay);
+    return;
   } else if (doorThreeFound && solidSprites.includes(doorThree) && currentKey == 3) {
     // Checks if player has key 3
     solidSprites = solidSprites.filter(item => item != doorThree);
     currentKey = 0;
     setSolids(solidSprites);
     playTune(unlockSFX);
+    return;
   } else if (doorThreeFound && solidSprites.includes(doorThree)) {
     // Checks if the door is locked
-    gameState = "pause";
+    gameState = "toast";
     updateGameIntervals()
     addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
     addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
     setTimeout(toastTextClear, shortToastDelay);
+    return;
   }
 }
 

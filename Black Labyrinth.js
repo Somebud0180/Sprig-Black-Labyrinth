@@ -2092,44 +2092,39 @@ function unlockDoor() {
     currentKey = 0;
     setSolids(solidSprites);
     playTune(unlockSFX);
-  } else if (solidSprites.includes(doorOne)) {
-      // Checks if the door is locked
-      gameState = "pause";
-      updateGameIntervals()
-      addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
-      addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
-      setTimeout(toastTextClear, shortToastDelay);
-    }
-  } else if (doorTwoFound && solidSprites.includes(doorOne)) {
-    if (currentKey == 2) {
-      // Checks if player has key 2
-      solidSprites = solidSprites.filter(item => item != doorTwo);
-      currentKey = 0;
-      setSolids(solidSprites);
-      playTune(unlockSFX);
-    } else if (solidSprites.includes(doorTwo)) {
-      // Checks if the door is locked
-      gameState = "pause";
-      updateGameIntervals()
-      addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
-      addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
-      setTimeout(toastTextClear, shortToastDelay);
-    }
-  } else if (doorThreeFound && solidSprites.includes(doorOne)) {
-    if (currentKey == 3) {
-      // Checks if player has key 3
-      solidSprites = solidSprites.filter(item => item != doorThree);
-      currentKey = 0;
-      setSolids(solidSprites);
-      playTune(unlockSFX);
-    } else if (solidSprites.includes(doorThree)) {
-      // Checks if the door is locked
-      gameState = "pause";
-      updateGameIntervals()
-      addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
-      addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
-      setTimeout(toastTextClear, shortToastDelay);
-    }
+  } else if (doorOneFound && solidSprites.includes(doorOne)) {
+    // Checks if the door is locked
+    gameState = "pause";
+    updateGameIntervals()
+    addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyOneText, { x: 1, y: textHeight + 2, color: color`6` });
+    setTimeout(toastTextClear, shortToastDelay);
+  } else if (doorTwoFound && solidSprites.includes(doorTwo) && currentKey == 2) {
+    // Checks if player has key 2
+    solidSprites = solidSprites.filter(item => item != doorTwo);
+    currentKey = 0;
+    setSolids(solidSprites);
+    playTune(unlockSFX);
+  } else if (doorTwoFound && solidSprites.includes(doorTwo)) {
+    // Checks if the door is locked
+    gameState = "pause";
+    updateGameIntervals()
+    addText(keyNeededText, { x: 1, y: textHeight, color: color`2` });
+    addText(keyTwoText, { x: 1, y: textHeight + 2, color: color`7` });
+    setTimeout(toastTextClear, shortToastDelay);
+  } else if (doorThreeFound && solidSprites.includes(doorThree) && currentKey == 3) {
+    // Checks if player has key 3
+    solidSprites = solidSprites.filter(item => item != doorThree);
+    currentKey = 0;
+    setSolids(solidSprites);
+    playTune(unlockSFX);
+  } else if (doorThreeFound && solidSprites.includes(doorThree)) {
+    // Checks if the door is locked
+    gameState = "pause";
+    updateGameIntervals()
+    addText(keyNeededText, { x: 1, y: textHeight, color: color`2` })
+    addText(keyThreeText, { x: 1, y: textHeight + 2, color: color`9` });
+    setTimeout(toastTextClear, shortToastDelay);
   }
 }
 

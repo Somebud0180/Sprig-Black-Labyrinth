@@ -170,6 +170,23 @@ wwww.wwwww.wwwwwwwww
 wwwwwwwwwwwwwwwwwwww`, // Level 6 || Map 2: Level 3
   map`
 wwwwwwwwwwwwwwwwwwww
+w.w.0d0.0.0.0.0w010w
+w.w.0.0...0.0.0w0.0w
+w.w.0.0.0.0...0w0.0w
+w.w.....0...0.0w0.0w
+w.w.0.0.0.0.0.0w0.0w
+w.wwwwwwwiwwwwwww.ww
+w.....r..r.......r.w
+wwwwwwuwwwwwwwwwww.w
+w................w.w
+w.000000.00000000w.w
+w................w.w
+w00000.000000000.w.w
+w............s...w.w
+w.000000.0000000.w.o
+wwwwwwwwwwwwwwwwwwww`, // Level 7 || Map 3: Level 1
+  map`
+wwwwwwwwwwwwwwwwwwww
 w...r..........r....
 wwwwww.wwwwww.wwwwww
 w.0w............w0.w
@@ -184,7 +201,7 @@ w0.....r....r.....0w
 w00....w....w......w
 www.wwwwwwwwwwww.www
 w...r..........r....
-wwwwwwwwwwwwwwwwwwww`, // Level 7 || Map 3: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 8 || Map 4: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 ....r..........r...o
@@ -201,7 +218,7 @@ w.r...r....i.0.0.0.w
 w.......w..w...0...w
 wwwwwwwww..wwwwwwwww
 ....r..........r...w
-wwwwwwwwwwwwwwwwwwww`, // Level 8 || Map 3: Level 2
+wwwwwwwwwwwwwwwwwwww`, // Level 9 || Map 4: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
 w........r........sw
@@ -218,7 +235,7 @@ w.w.wwwwwwwwwww.ww.w
 w.w..............w.w
 w.wwwwwwwwwwwwwwww.w
 w..................w
-wwwwwwwwwwwwwwwwwwww`, // Level 9 || Map 4: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 10 || Map 5: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 w00...00w..w00...00w
@@ -235,7 +252,7 @@ w...0...w..w.....r.w
 w.0.3.0.w..w.......w
 w.0...0.i....r.....w
 w0000000w..w.......w
-wwwwwwwwwwwwwwwwwwww`, // Level 10 || Map 5: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 6: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 w...r..........r...w
@@ -252,7 +269,7 @@ w0.............1wr.w
 w....w....w...00w..w
 wwwwwww..wwwwwwww..w
 w...r..........r...o
-wwwwwwwwwwwwwwwwwwww`, // Level 11 || Map 5: Level 2
+wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
 w...................
@@ -269,7 +286,7 @@ w0.000.00.w00000r0.w
 w..0......w........w
 wwwwiiwwwwwwwwwwwwww
 w...................
-wwwwwwwwwwwwwwwwwwww`, // Level 12 || Map 6: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 13 || Map 7: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 ...................o
@@ -286,7 +303,7 @@ w..w0...ww...ww...0w
 w.0w0000ww010ww1000w
 w.wwwwwwwwwwwwwwwwww
 ...................w
-wwwwwwwwwwwwwwwwwwww`, // Level 13 || Map 6: Level 2
+wwwwwwwwwwwwwwwwwwww`, // Level 14 || Map 7: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
 w..................w
@@ -303,7 +320,7 @@ w...0...w.wwwwwwww.w
 w.00000.w.w........w
 w...0...w.wwwwwwwwww
 w0030000w..........o
-wwwwwwwwwwwwwwwwwwww`, // Level 14 || Map 7: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 15 || Map 8: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 w.....w...w........u
@@ -320,7 +337,7 @@ w.wwwww.wwwwww.w.www
 w.....w............w
 wwwwwwwwwwwwwwwwww.w
 w..................w
-wwwwwwwwwwwwwwwwwwww`, // Level 15 || Map 8: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 16 || Map 9: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 .........w.....w..sw
@@ -337,7 +354,7 @@ w.ww.w.w.w...wwwww.w
 w..w.w.w.w.w.....w.w
 ww.www.wwwwwwwwwww.w
 w....w...........w.i
-wwwwwwwwwwwwwwwwwwww`, // Level 16 || Map 8: Level 2
+wwwwwwwwwwwwwwwwwwww`, // Level 17 || Map 9: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
 w...w.w............w
@@ -354,7 +371,7 @@ wwww.wwww..........w
 w.......w..........w
 ww.wwwwwwwwwwwwwww.w
 .................w.o
-wwwwwwwwwwwwwwwwwwww`, // Level 17 || Map 8: Level 3
+wwwwwwwwwwwwwwwwwwww`, // Level 18 || Map 9: Level 3
   map`
 wwwwwwwwwwwwwwwwwwww
 w.....w...aw.......w
@@ -371,7 +388,7 @@ w.w.w.w.w..w.w.w.w.w
 w..................w
 www..............www
 w..r...r....r...r..i
-wwwwwwwwwwwwwwwwwwww`, // Level 18 || Map 9: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 19 || Map 10: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 w...w..w...........o
@@ -388,7 +405,7 @@ w.w.w.w.w..w.w.w.w.w
 w.w.w.w.w..w.w.w.w.w
 w.w.w.w.w..w.w.w.w.w
 ...................w
-wwwwwwwwwwwwwwwwwwww`, // Level 19 || Map 9: Level 2
+wwwwwwwwwwwwwwwwwwww`, // Level 20 || Map 10: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
 w..................o
@@ -405,7 +422,7 @@ w........w.w.ww.wwww
 w00000000w.w.......w
 wwwwwwwwww.wwwwwwwww
 wa.................w
-wwwwwwwwwwwwwwwwwwww`, // Level 20 || Map 10: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 21 || Map 11: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 w..w...............w
@@ -422,7 +439,7 @@ w00r000.00000.00000w
 w..................w
 w.00000000.00000r00w
 w..................w
-wwwwwwwwwwwwwwwwwwww`, // Level 21 || Map 11: Level 1
+wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 12: Level 1
   map`
 wwwwwwwwwwwwwwwwwwww
 w.................0w
@@ -439,7 +456,7 @@ w.wwwwwwwwwwwwwwww.w
 w..................w
 w.wwwwwwwwwwwwwwww.w
 w................wsw
-wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 2
+wwwwwwwwwwwwwwwwwwww`, // Level 23 || Map 12: Level 2
   map`
 wwwwwwwwwwwwwwwwwwww
 w..................w
@@ -456,7 +473,7 @@ wwww.w.w.w.w.w.w.w.w
 w.dw.w.w.w.w.w.w.w.w
 w..w.w...w...w.w...w
 w....w...w000w0w000w
-wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 3
+wwwwwwwwwwwwwwwwwwww`, // Level 24 || Map 12: Level 3
   map`
 wwwww.wwwwwwwww.wwww
 wwwww.wwwwwwwww.wwww
@@ -473,7 +490,7 @@ w.r...r.w.r.r.w0..2w
 w.......w.....w00.rw
 ww.wwwwwwwwuwwwwwwww
 ....................
-wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 4
+wwwwwwwwwwwwwwwwwwww`, // Level 25 || Map 12: Level 4
   map`
 wwwwwwwwwwwwwwwwwwww
 w...w.w..r..r...r..w
@@ -490,7 +507,7 @@ w..r0..rw..w.r.w...w
 w.0.3.0.w..w...w...w
 wr0..r0.i....r.w...w
 w0000000w..w...w...o
-wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 5
+wwwwwwwwwwwwwwwwwwww`, // Level 26 || Map 12: Level 5
   map`
 ....................
 ....................
@@ -507,22 +524,23 @@ wwwwwwwwwwwwwwwwwwww`, // Level 22 || Map 11: Level 5
 ...e...e....e...e...
 ...q...q....q...q...
 pppqpppqppppqpppqppp
-wwwwwwwwwwwwwwwwwwww`, // Level last || End Screen
+wwwwwwwwwwwwwwwwwwww`, // Level 27 || End Screen
 ];
 
 // Map name
 const mapNames = [
   "Starting Somewhere", // Map 1
   "The Labyrinth", // Map 2
-  "Boxes Here", // Map 3
-  "Going In Circles", // Map 4
-  "Storage Room", // Map 5
-  "Logistics", // Map 6
-  "Dark Rooms", // Map 7
-  "Massive Mazes", // Map 8
-  "Flowing Mazes", // Map 9
-  "Half and Half", // Map 10
-  "Familiarity", // Map 11
+  "Not all boxes", // Map 3
+  "Boxes Here", // Map 4
+  "Going In Circles", // Map 5
+  "Storage Room", // Map 6
+  "Logistics", // Map 7
+  "Dark Rooms", // Map 8
+  "Massive Mazes", // Map 9
+  "Flowing Mazes", // Map 10
+  "Half and Half", // Map 11
+  "Familiarity", // Map 12
 ];
 
 // Menu Sprites
@@ -1483,7 +1501,7 @@ let defaultSolids = [
   boxKeyTwo,
   boxKeyThree,
 ]; // List of solid blocks
-let mapLevels = [2, 4, 7, 9, 10, 12, 14, 15, 18, 20, 21]; // List of levels that are the beginning of a map
+let mapLevels = [2, 4, 7, 8, 10, 11, 13, 15, 16, 19, 21, 22]; // List of levels that are the beginning of a map
 let lightRange = 3; // The default distance a light can reach, for displaySpritesInRange()
 let playerRange = 3; // The default distance the player can see, for displaySpritesInRange()
 let flashBrightness = 10; // How far the player can see when using mapFlash()
